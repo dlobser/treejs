@@ -1,5 +1,6 @@
 var sc1 = {
 
+	//spider tentacles
 
 	setup:function(){
 

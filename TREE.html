@@ -13,7 +13,9 @@
 		width:500px
 	}
 	body{
-		background-color:black;
+		background-color:green;
+		background-image:url('http://31.media.tumblr.com/tumblr_ljpji3Bc8o1qisa2ko1_1280.jpg');
+
 	}
     </style>
 	</head>
@@ -28,8 +30,9 @@
 		<input type="button" id="buttonid" value="saveObj" style="width:175px"onclick="saver()" style="padding:10"><br>
 
 		<script src="lib/three.js"></script>
-		
-		<script src="sketches/sc22.js"></script>
+
+
+		<script src="sketches/sc17_radial.js"></script>
 
 		<script src="lib/library.js"></script>
 
@@ -42,7 +45,7 @@
 			var camera, controls, scene, renderer, 
 				mouseX, mouseY, omouseX, omouseY, pmouseX, pmouseY, opmouseX, opmouseY, rmouseX, rmouseY, mousePressed,
 				pmx, pmy,
-				frameRate;
+				frameRate,pause;
 
 			var tree;
 
@@ -60,6 +63,7 @@
 			function init() {
 
 				frameRate = 1000/30;
+				pause = false;
 
 				count=0;
 
@@ -99,14 +103,18 @@
 				light.position.set( -1, -1, -1 );
 				scene.add( light );
 				
-				light = new THREE.DirectionalLight( 0x556699,1,0 );
-				light.position.set( 1, -1, 1 );
-				scene.add( light );
+				// light = new THREE.DirectionalLight( 0x556699,1,0 );
+				// light.position.set( 1, -1, 1 );
+				// scene.add( light );
 
-				light = new THREE.AmbientLight( 0x222222 );
-				scene.add( light );
+				// light = new THREE.AmbientLight( 0x222222 );
+				// scene.add( light );
 
-				renderer = new THREE.WebGLRenderer( { clearColor: 0xff0000, antialias: true } );
+				renderer = new THREE.WebGLRenderer( { clearColor: 0xff0000, antialias: true ,alpha: true } );
+				renderer.setClearColor( 0x000000, 0);
+
+
+// var renderer = new THREE.WebGLRenderer( { alpha: true } );
 				// renderer.setClearColor( scene.fog.color, 1 );
 				renderer.setSize( window.innerWidth-20, window.innerHeight-70);
 				
@@ -135,7 +143,8 @@
 					count++;
 					pm(4);
 
-					sc1.draw(-time);
+					if(!pause)
+						sc1.draw(-time);
 
 					setSpan("mouseInfoX","mouseX: " + truncateDecimals(mouseX,3) + " rmouseX: " + rmouseX + " omouseX: " + truncateDecimals(omouseX,3));
 					setSpan("mouseInfoY","mouseY: " + truncateDecimals(mouseY,3) + " rmouseY: " + rmouseY + " omouseY: " + truncateDecimals(omouseY,3));
@@ -184,12 +193,16 @@
 			window.onkeyup = onKeyUp;
 			
 			function onKeyUp(evt) {
+				console.log(evt.keyCode);
 
 				if(evt.keyCode == 65){
 					tree.position.y -= 30;
 				}
 				if(evt.keyCode == 81){
 					tree.position.y += 30;
+				}
+				if(evt.keyCode == 32){
+					pause = !pause;
 				}
 			}
 
