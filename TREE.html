@@ -13,8 +13,7 @@
 		width:500px
 	}
 	body{
-		background-color:green;
-		background-image:url('http://31.media.tumblr.com/tumblr_ljpji3Bc8o1qisa2ko1_1280.jpg');
+		background-color:black;
 
 	}
     </style>
@@ -32,7 +31,7 @@
 		<script src="lib/three.js"></script>
 
 
-		<script src="sketches/sc17_radial.js"></script>
+		<script src="sketches/sc24.js"></script>
 
 		<script src="lib/library.js"></script>
 
@@ -103,12 +102,12 @@
 				light.position.set( -1, -1, -1 );
 				scene.add( light );
 				
-				// light = new THREE.DirectionalLight( 0x556699,1,0 );
-				// light.position.set( 1, -1, 1 );
-				// scene.add( light );
+				light = new THREE.DirectionalLight( 0x556699,1,0 );
+				light.position.set( 1, -1, 1 );
+				scene.add( light );
 
-				// light = new THREE.AmbientLight( 0x222222 );
-				// scene.add( light );
+				light = new THREE.AmbientLight( 0x222222 );
+				scene.add( light );
 
 				renderer = new THREE.WebGLRenderer( { clearColor: 0xff0000, antialias: true ,alpha: true } );
 				renderer.setClearColor( 0x000000, 0);

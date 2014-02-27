@@ -1,5 +1,6 @@
 var sc1 = {
 
+	//jiggle world orient example
 
 	setup:function(){
 
@@ -26,6 +27,8 @@ var sc1 = {
 	draw:function(time){
 
 		axis.x=mouseY;
+
+
 
 		tree.xform(tree.makeInfo([
 			[0,0,[70,99]],{axis:axis.normalize(),radians:omouseX}

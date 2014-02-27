@@ -1,5 +1,7 @@
 var sc1 = {
 
+	//basil twist
+
 	setup:function(){
 
 		tree = new TREE({color:new THREE.Color(0x55ee22)});
@@ -56,7 +58,7 @@ var sc1 = {
 			[0,0,[0,49],0,[1,30]],{sc:1,rz:omouseX*.1,jMult:.3,jFreq:omouseX*3,jFract:omouseY*.3,jOff:-time*1,jOffset:Math.PI*.12},
 			[0,0,[0,49],0,[20,30]],{sc:.9},
 
-			[0,0,[0,49],0,0],{ry:Math.PI/2}//,jMult:.3,jFreq:omouseX,jFract:omouseY*.5,jOff:-time*1,jOffset:Math.PI*.01},
+			[0,0,[0,49],0,0],{ry:0,jMult:2.3,jFreq:omouseX,jFract:omouseY*.5,jOff:-time*1,jOffset:Math.PI*.01},
 			// [0,0,[0,49],0,0],{ry:time,jMult:.3,jFreq:omouseX,jFract:omouseY*.5,jOff:-time*1,jOffset:Math.PI*8.08},
 
 

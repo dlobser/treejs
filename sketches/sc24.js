@@ -25,6 +25,8 @@ var sc1 = {
 				rads:   [1,2,5],
 		});
 
+		console.log(tree);
+
 		// tree.xform(tree.makeInfo([
 		// 	//head and body
 		// 	[0,0,[75,85]],{rz:-Math.PI/2,sc:10,amount:5},
