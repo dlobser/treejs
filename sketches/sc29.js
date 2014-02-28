@@ -86,7 +86,7 @@ var sc1 = {
 
 		tree.xform(tree.makeInfo([
 			[0,0,"all"],{sc:.99,rz:omouseY*.1,rx:mouseY*.01,jFreq:.03,jMult:.05,jOff:mouseX*5},
-			[0,0,[0,10],[0,1],"all"],{rz:.1},
+			[0,0,[0,8],[0,1],"all"],{rz:.1},
 
 		]),tree.transform);
 
