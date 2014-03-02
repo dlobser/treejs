@@ -14,6 +14,9 @@ var sc1 = {
 	
 	setup:function(){
 
+		tree=new TREE();
+		scene.add(tree);
+
 		d = new Debug();
 		d.overflow=100;
 
@@ -23,58 +26,36 @@ var sc1 = {
 		scene.add(tim);
 
 		fNodes = [];
+		var nodeHolder = new THREE.Object3D();
 
 		for (var i = 0; i < 500; i++) {
 			var newNode = new fNode(new THREE.Color(0xffffff));
 			newNode.construct();
 			newNode.position = new THREE.Vector3(50-Math.random()*100,50-Math.random()*100,50-Math.random()*100);
 			fNodes.push(newNode);
-			scene.add(newNode);
+			nodeHolder.add(newNode);
 		}
 
-
+		scene.add(nodeHolder);
 
 		g = sphere(10);
-		// g = new THREE.Mesh(new THREE.CylinderGeometry(.1,1,1),new THREE.MeshLambertMaterial());
-
-		// scene.add(sphere(2));
 		scene.add(g);
-		// g.acceleration = new THREE.Vector3();
-		// g.velocity = new THREE.Vector3();
-		// g.damp = .01;
-		// g.maxVelocity=.1;
-
-
+		
 		b = sphere(1);
 		scene.add(b);
-
-
-		// d = new THREE.Mesh(new THREE.CylinderGeometry(.1,2),new THREE.MeshLambertMaterial());
-		// dp = new THREE.Object3D();
-		// d.rotation.x=Math.PI/2;
-		// dp.add(d);
-		// scene.add(dp);
-
-		// t = new THREE.Mesh(new THREE.CylinderGeometry(.1,2),new THREE.MeshLambertMaterial());
-		// tp = new THREE.Object3D();
-		// t.rotation.x=Math.PI/2;
-		// tp.add(t);
-		// scene.add(tp);
-
 
 	},
 
 	draw:function(time){
 
-
-		// pos2 = new THREE.Vector3(0,0,0);
-
 		b.position = new THREE.Vector3(omouseX*300,omouseY*-300,-omouseX*300);
 
 		tim.checkAngle(b);
 
-		tim.aim.lookAt(b.position);
-		// tim.aimCheck.lookAt(b.position);
+		if(varW)
+			tim.aimAt(b.position);
+		else
+			tim.aimAt(g.position);
 
 		whiteNodes(fNodes);
 
@@ -82,45 +63,19 @@ var sc1 = {
 		tim.colorAimArray();
 
 		g.position = tim.findAveragePosition();
+		tim.moveToward(g);
+		tim.update();
 
+		var arr = [];
+		arr.push(tim.trail);
 
-		// pos = new THREE.Vector3().subVectors(b.position,g.position);
-		// pos3 = pos.clone().normalize();
+		if(tree.params.tubeGeo.length>2){
+			scene.remove(scene.children[scene.children.length-1]);
+			tree.params.tubeGeo.shift();
+		}
 
-		// dist = b.position.distanceTo(g.position);
-		// // console.log(dist);
-
-		// // if(dist>100)
-		// // 	dist=g.damp;
-		// dp.updateMatrixWorld();
-		// dp.position = g.position;
-		// tp.position = g.position;
-		// tp.lookAt(pos2);
-		// dp.lookAt(b.position);
-
-
-		// // g.aimAt(pos);
-		// g.acceleration.add(pos);
-		// g.velocity.add(g.acceleration);
-		// g.velocity.multiplyScalar(g.damp);
-		// g.position.add(g.velocity);
-		// // g.rotation.x=pos3.y;
-		// // g.rotation.y=pos3.z;
-		// // g.rotation.z=pos3.x;
-		// g.acceleration.multiplyScalar(0);
-
-		// rot = new THREE.Vector3(dp.rotation.x,dp.rotation.y,dp.rotation.z);
-		// rot2 = new THREE.Vector3(tp.rotation.x,tp.rotation.y,tp.rotation.z);
-
-		// col = (rot.angleTo(rot2));
-
-		// // console.log(dp);
-
-		// if(col<.1)
-		// 	dp.children[0].material.color=(new THREE.Color(0xff0000))
-		// else
-		// 	dp.children[0].material.color=(new THREE.Color(0xffffff))
-
+		var adder = tree.tubes(arr,{width:1,minWidth:1});
+		scene.add(adder);
 		
 	}
 }
@@ -129,12 +84,15 @@ fSPK = function(params){
 
 	THREE.Object3D.call(this);
 
-	this.acceleration = new THREE.Vector3();
-	this.velocity = new THREE.Vector3();
+	this.acceleration = new THREE.Vector3(0,0,0);
+	this.velocity = new THREE.Vector3(0,0,0);
 	this.mass = 1;
-	this.damp = .01;
-	this.maxVelocity = .1;
+	this.damp = .5;
+	this.maxVelocity = 5;
 	this.angle = .3;
+	this.trail = [];
+	this.maxTrailSize = 500;
+	this.aimNodes = [];
 
 	this.geo = new THREE.CylinderGeometry(.1,2,10);
 	this.mat = new THREE.MeshLambertMaterial();
@@ -147,10 +105,8 @@ fSPK = function(params){
 	this.aim = new THREE.Object3D();
 	this.aimCheck = new THREE.Object3D();
 
-	this.add(this.aim);
+	scene.add(this.aim);
 	this.add(this.aimCheck);
-	
-
 }
 
 fSPK.prototype = Object.create(THREE.Object3D.prototype);
@@ -158,26 +114,47 @@ fSPK.prototype = Object.create(THREE.Object3D.prototype);
 fSPK.prototype.applyForce = function(force){
 
     this.acceleration.add(force.clone().divideScalar(this.mass));
+}
 
+fSPK.prototype.moveToward = function(obj){
+
+	var pos = new THREE.Vector3().subVectors(this.position,obj.position);
+	this.applyForce(pos.negate());
 }
 
 fSPK.prototype.update = function() {
 
     this.velocity.add(this.acceleration);
-    this.position.add(this.velocity);
-    acceleration.mult(0);
+    this.velocity.multiplyScalar(this.damp);
 
+    if(this.velocity.length()>this.maxVelocity){
+    	this.velocity.normalize();
+    	this.velocity.multiplyScalar(this.maxVelocity);
+    }
+    this.position.add(this.velocity);
+
+    this.acceleration.multiplyScalar(0);
+
+    this.aim.position = this.position.clone();
+
+    this.addToTrail(this.aim.position);
+}
+
+fSPK.prototype.addToTrail = function(pos){
+
+	this.trail.push(pos);
+	if(this.trail.length>this.maxTrailSize)
+		this.trail.shift();
 }
 
 fSPK.prototype.checkAngle = function(other){
 
 	thisRot = new THREE.Vector3(this.aim.rotation.x,this.aim.rotation.y,this.aim.rotation.z);
-	var tempAimCheck = this.aimCheck;
-
+	var tempAimCheck = this.aimCheck.clone();
+	tempAimCheck.position = this.position.clone();
 	tempAimCheck.lookAt(other.position);
 	var checkRot = new THREE.Vector3(tempAimCheck.rotation.x,tempAimCheck.rotation.y,tempAimCheck.rotation.z);
 	return checkRot.angleTo(thisRot);
-
 }
 
 fSPK.prototype.makeAimArray = function(arr){
@@ -189,7 +166,14 @@ fSPK.prototype.makeAimArray = function(arr){
 		if(checked<this.angle && checked>-this.angle)
 			this.aimNodes.push(arr[i]);
 	}
+}
 
+fSPK.prototype.aimAt = function(other){
+
+	// thisRot = this.clone();//new THREE.Vector3(this.aim.rotation.x,this.aim.rotation.y,this.aim.rotation.z);
+	// // thisRot.position = this.position.clone();
+	// thisRot.lookAt(other);
+	this.aim.lookAt(other);
 }
 
 fSPK.prototype.colorAimArray = function(arr){
@@ -197,7 +181,6 @@ fSPK.prototype.colorAimArray = function(arr){
 	for (var i = 0; i < this.aimNodes.length; i++) {
 		this.aimNodes[i].makeRed();
 	};
-
 }
 
 fSPK.prototype.findAveragePosition = function(){
