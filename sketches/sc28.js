@@ -1,4 +1,4 @@
-var sc1 = {
+sc1 = {
 	
 	setup:function(){
 
@@ -29,7 +29,8 @@ var sc1 = {
 		tree.passFunc(tree.makeInfo([
 			[0,0,[0,9],[0,1],9],{obj:sph,ty:5},
 		]),tree.appendObj);
-
+        
+        data.var1=-.2;
 
 		scene.add(tree);
 
@@ -37,7 +38,16 @@ var sc1 = {
 
 	draw:function(time){
 
-
+		tree.passFunc(tree.makeInfo([
+		    [0,0,"all"],{rz:data.var2},
+			[0,0,[0,9],[0,1],"all"],{rz:data.var1},
+		]),tree.transform);
+		
+		if(varE){
+		     scene.add(tree.makeTubes());
+		    varE=false;
+		    console.log(varE);
+		}
 
 	}
 }

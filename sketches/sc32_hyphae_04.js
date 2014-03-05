@@ -1,135 +1,20 @@
 var sc1 = {
 
-	//create a substrate cloud
-	//create a dynamic object
-	//which leaves behind a trail of points which know the angle of their creation
-	//	or just the position of the following point so it can figure it out
-	//	this point will have an age and after a certain age it will spawn a new dynamic object
-	//	this will only happen if it has no available substrate around
-	//the original object will aim in a random direction and it will store the points that are
-	//	within a certain angle of it's direction
-	//points that are not stored by an object will be stored in a 'fair game' array
-	//once a point that's been left behind is surrounded by enough 'fair game' points - it will
-	//	spawn another forager
-	
 	setup:function(){
 
 		f = new fungus(3000);
+		f.digestRadius=25;
 
-		tree = new TREE();
-
-		tree.params.mat = new THREE.MeshPhongMaterial({color:0x111111,specular:0x888888});
-		tree.params.color = new THREE.Color(0x111111);
-
-		tree.position.y=-70;
-
-		tree.generate({
-			joints: [1,10,5],
-			divs:   [1,1],
-			start:  [0],
-			angles: [0,Math.PI/2],
-			length: [0.0001,10,5],
-			rads:   [1,10,1],
-			width:  [2,2,2]
-		});
-
-		tree.setScale(5);
-
-		// scene.add(tree);
-
-		tree.xform(tree.makeInfo([
-			[0,0,0,[0,9],[0,9]],{rz:Math.PI*-.11,sc:.9,jOffset:2.3,offMult:.2,freq:1.4,jFract:1,jFreq:.8,jMult:.1},
-			[0,0,0,[0,9],[0,9],0,"all"],{sc:.7,rz:Math.PI*.11,offMult:.2,freq:1.4,jOffset:2.3},
-		]),tree.transform);
-
-		var arr = tree.worldPositionsArray(tree.report());
-		// console.log(arr);
-		f.makeSubstrate(50);
-
-		f.addSPK(new THREE.Vector3(0,0,0));
-		f.update();
-		f.showInfoBall();
-
+		f.makeSubstrate();
+		f.addSPK(zero());
+	
 		scene.add(f);
-
-		// tree=new TREE();
-		// scene.add(tree);
-
-
-
-		// d = new Debug();
-		// d.overflow=100;
-
-		// tim = new fSPK();
-		// console.log(tim);
-		// tim.showGeo();
-		// scene.add(tim);
-
-		// fNodes = [];
-		// var nodeHolder = new THREE.Object3D();
-
-		// for (var i = 0; i < 500; i++) {
-		// 	var newNode = new fNode(new THREE.Color(0xffffff));
-		// 	newNode.construct();
-		// 	newNode.position = new THREE.Vector3(200-Math.random()*400,200-Math.random()*400,200-Math.random()*400);
-		// 	fNodes.push(newNode);
-		// 	nodeHolder.add(newNode);
-		// }
-
-		// scene.add(nodeHolder);
-
-		// g = sphere(10);
-		// scene.add(g);
-		
-		// b = sphere(1);
-		// scene.add(b);
 
 	},
 
 	draw:function(time){
 
-		
-		if(f.substrate.length>10)
-			f.update();
-		// console.log(f);
-
-		// b.position = new THREE.Vector3(omouseX*300,omouseY*-300,-omouseX*300);
-
-		// tim.checkAngle(b);
-
-		// if(varW)
-		// 	tim.aimAt(b.position);
-		// else
-		// 	tim.aimAt(g.position);
-
-		// whiteNodes(fNodes);
-
-		// tim.makeAimArray(fNodes);
-
-		// console.log(fNodes.length);
-
-		// tim.colorAimArray();
-
-		// if(tim.aimNodes.length>0)
-		// 	g.position = tim.findAveragePosition();
-		// else
-		// 	g.position = new THREE.Vector3(25-Math.random()*50,25-Math.random()*50,25-Math.random()*50);
-
-
-		// tim.moveToward(g);
-		// tim.update();
-
-		// var arr = [];
-		// arr.push(tim.trail);
-
-		// if(tree.params.tubeGeo.length>2){
-		// 	scene.remove(scene.children[scene.children.length-1]);
-		// 	tree.params.tubeGeo.shift();
-		// }
-
-		// var adder = tree.tubes(arr,{width:1,minWidth:1});
-		// scene.add(adder);
-		// pause = true;
+		f.update();
 		
 	}
 }
@@ -144,8 +29,13 @@ fungus = function(num){
 	this.substrate = [];
 	this.substrateAmount = num || 500;
 	this.substrateObj = new THREE.Object3D();
-	this.substrateSpread = 500;
+	this.substrateSpread = 300;
 	this.add(this.substrateObj);
+
+	this.digestRadius = 30;
+
+	this.overflow = 500;
+	this.overflowCounter = 0;
 
 	this.SPKNodes = [];
 	this.SPKAim = [];
@@ -167,12 +57,14 @@ fungus.prototype = Object.create(THREE.Object3D.prototype);
 
 fungus.prototype.makeSubstrate = function(amount){
 
-	for (var i = 0; i < this.substrateAmount; i++) {
+	var amt = amount || this.substrateAmount
+
+	for (var i = 0; i < amt; i++) {
 
 		var sp = this.substrateSpread;
 		var newNode = new fNode(new THREE.Color(0xffffff));
 		newNode.construct();
-		newNode.position = new THREE.Vector3(sp/2-Math.random()*sp,sp/2-Math.random()*sp,sp*.1/2-Math.random()*sp*.1);
+		newNode.position = new THREE.Vector3(sp/2-Math.random()*sp,sp/2-Math.random()*sp,sp*.15/2-Math.random()*sp*.15);
 		if(newNode.position.distanceTo(new THREE.Vector3(0,0,0))<sp/2){
 			this.substrate.push(newNode);
 			this.substrateObj.add(newNode);
@@ -201,7 +93,6 @@ fungus.prototype.makeSubstrateFromArray = function(arr){
 		console.log("hi");
 
 	}
-
 }
 
 fungus.prototype.digest = function(pos,dist){
@@ -235,12 +126,14 @@ fungus.prototype.addSPK = function(pos,pos2){
 
 		// position2.x+=500;
 		if(this.SPKNodes.length>0){
+			// console.log("checking");
 			position = this.findNearestTrailPoint(position2);
 		}
 
 		var newSPK = new fSPK();
+		// console.log(position);
 		// newSPK.showGeo();
-		newSPK.position = position;//new THREE.Vector3(position.x,position.y,position.z);
+		newSPK.position = new THREE.Vector3(position.x,position.y,position.z);
 
 		var newTarget = new THREE.Object3D();
 		newTarget.position = position2;
@@ -286,7 +179,7 @@ fungus.prototype.update = function(amount){
 	// this.tubeParent.children = [];
 	// console.log(this.tubeParent.children.length);
 
-	if(this.substrate.length>1){
+	if(this.substrate.length>10){
 
 		if(this.tubeParent.children.length>this.SPKNodes.length){
 			this.tubeParent.remove(this.tubeParent.children[this.tubeParent.children.length-1]);
@@ -307,6 +200,12 @@ fungus.prototype.update = function(amount){
 			var target = this.SPKAim[i];
 
 			spk.aimAt(target.position);
+
+			if(spk.angle>.3)
+				spk.angle-=.1;
+
+			spk.moveToward(target);
+
 			this.infoBall.position = target.position;
 
 			spk.makeAimArray(this.substrate);
@@ -314,36 +213,44 @@ fungus.prototype.update = function(amount){
 			var arr = [];
 			arr.push(spk.trail);
 
-			this.digest(spk.position,30);
+			if(spk.trail.length==3)
+				spk.trail[1]=spk.trail[0];
+
+			this.digest(spk.position,this.digestRadius);
 
 			redNodes(spk.aimNodes);
 
-			spk.moveToward(target);
+			
 			// spk.applyForce(new THREE.Vector3(noise(time*.01)*50000000,noise(time*.01+.2),noise(time+.3)));
 			// spk.applyForce(new THREE.Vector3(1000,0,0));
 			spk.update();
 
-			if(spk.aimNodes.length>0){
+			if(spk.aimNodes.length>2){
 				target.position = spk.findAveragePosition();
 			}
 			else{
 				spk.done=true;
-				if(spk.trail.length>3)
-					var emergePos=(spk.trail[2]);
-				else
-					var emergePos=(spk.trail[0]);
+				// if(spk.trail.length>3)
+				// 	var emergePos=(spk.trail[2]);
+				// else
+				// 	var emergePos=(spk.trail[0]);
 
 
-				var trailPoint = this.findNearestTrailPoint(spk.position);
+				// var trailPoint = this.findNearestTrailPoint(spk.position);
 				// console.log("spk trail length: " + spk.trail.length);
-				this.addSPK();
+				this.overflowCounter++;
+				if( this.overflowCounter < this.overflow )
+					this.addSPK();
+				else
+					break;
 			}
 
-			var adder = this.tree.tubes(arr,{width:1,minWidth:1});
+			var adder = this.tree.tubes(arr,{lengthSegs:7,width:1,minWidth:1});
 			this.tubeParent.add(adder);
 		}
+		this.cleanSPKNodes();
+
 	}
-	this.cleanSPKNodes();
 }
 
 /////////////
@@ -356,8 +263,8 @@ fSPK = function(params){
 	this.velocity = new THREE.Vector3(0,0,0);
 	this.mass = .01;
 	this.damp = .01;
-	this.maxVelocity = 25;
-	this.angle = .3;
+	this.maxVelocity = 15;
+	this.angle = 1;
 	this.trail = [];
 	this.maxTrailSize = 500;
 	this.aimNodes = [];
@@ -422,7 +329,7 @@ fSPK.prototype.ageTrail = function(){
 
 	for (var i = 0; i < this.trail.length; i++) {
 		this.trail[i].age++;
-		if(this.trail[i].age<50)
+		if(this.trail[i].age<5)
 			this.trail[i].w = this.trail[i].age*.5;
 	}
 }
@@ -440,6 +347,14 @@ fSPK.prototype.checkAngle = function(other){
 	return checkRot.angleTo(thisRot);
 }
 
+fSPK.prototype.checkDistance = function(other){
+
+	var pos = this.position;
+	var otherPos = other.position;
+
+	return pos.distanceTo(otherPos);
+}
+
 fSPK.prototype.makeAimArray = function(arr){
 
 
@@ -451,19 +366,12 @@ fSPK.prototype.makeAimArray = function(arr){
 
 	for (var i = 0; i < arr.length; i++) {
 		var checked = this.checkAngle(arr[i]);
-		// this.finishedIndex.push(true);
-		if(checked<this.angle && checked>-this.angle){
+		var checkDist = this.checkDistance(arr[i]);
+		
+		if(checked<this.angle && checked>-this.angle && checkDist < 100){
 			this.aimNodes.push(arr[i]);
-			// this.finishedIndex.push(false);
 		}
 	}
-	// for (var i = 0; i < arr.length; i++) {
-	// 	if(this.finishedIndex[i])
-	// 		newArray.push(arr[i]);
-	// }
-
-	// arr = newArray;
-	// return arr;
 }
 
 fSPK.prototype.aimAt = function(other){
@@ -481,8 +389,8 @@ fSPK.prototype.colorAimArray = function(arr){
 	};
 }
 
-fSPK.prototype.findAveragePosition = function(){
-	var arr = this.aimNodes;
+fSPK.prototype.findAveragePosition = function(arr){
+	var arr = arr || this.aimNodes;
 	var x = y = z = 0;
 	for (var i = 0; i < arr.length; i++) {
 		x+=arr[i].position.x;
