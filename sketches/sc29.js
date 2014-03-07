@@ -1,5 +1,7 @@
 var sc1 = {
 	
+	//metballs
+	
 	setup:function(){
 
 		tree = new TREE();
