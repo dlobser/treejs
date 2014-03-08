@@ -5,31 +5,18 @@ sc1 = {
         frameRate = 1;
 
         tree = new TREE();
-
         tree.params.jointScale.y=5;
 
         // tree.position.y=-10;
-        // tree.branch(100);
-
-        tree.generate({joints:[5,5,5],});
-
-        scene.add(tree);
-
-        var ml = (tree.reportMirrorLayers());
-
-        // console.log(tree.parts["0,0,0"]);
-        console.log(tree.parts);
-
-        var bob = (tree.parts["0,0,0,0,0"]);
-        bob.rotation.z = 1;
+        tree.branch(100);
 
 
-        // tree.xform(tree.makeInfo([
-        //     [0,0,"all"],{rz:0,amount:10,sc:10},
-        //     // [0,0,[0,99]],{rz:0,amount:20,sc:10},
-        // ]),tree.appendBranch);
+        tree.xform(tree.makeInfo([
+            [0,0,"all"],{rz:0,amount:20,sc:10},
+            // [0,0,[0,99]],{rz:0,amount:20,sc:10},
+        ]),tree.appendBranch);
 
-        thing = tree.GPUaccelerate();
+                thing = tree.GPUaccelerate();
 
 
         // var geo = new THREE.Geometry();
@@ -106,85 +93,23 @@ sc1 = {
         // thing = new THREE.SkinnedMesh(geo,material,true);
 
         // console.log(thing);
-        // scene.add(thing);
+        scene.add(thing);
 
-        //            // console.log(thing.bones[5].scale);
+                   // console.log(thing.bones[5].scale);
 
-        // tree.passFunc(tree.makeInfo([
-        //     [0,[0,2],"all"],{rz:omouseX},
-        // ]),
-        // function(obj,args){
-        //     obj._rotation.z=1;
-        //     // console.log(obj);
-        // }
-        // ,true);
-
-        // var mx = {};
-        // mx.mouseX = mouseX;
-        // console.log(mx.mouseX);
-        // allofit = tree.utils.processInfo(tree.makeInfo([[0,[0,2],"all"],{rz:omouseX}]));
-
-        // console.log(tree.FIND(allofit[0][0]));
-
-        // allofit.things = [];
-
-        // for (var i = 0; i < allofit[0].length; i++) {
-        //     allofit.things[allofit[0][i].toString()]=tree.FIND(allofit[0][i]);
-        // };
-
-        // allofit.things[allofit[0][0].toString()]=tree.FIND(allofit[0][0]);
-
-        // console.log(allofit.things[allofit[0][0].toString()]);
-
-        // tree.passFunc(tree.makeInfo([
-        //     [0,[0,2],"all"],{rz:omouseX},
-        // ]),
-        // function(obj,args){
-        //     obj._rotation.z=1;
-        //     // console.log(obj);
-        // }
-        // ,true);
-    // bill = tree.utils.makeListAll([0,0,[0,2],[0,1],"all"]);
-    // chuck = tree.utils.makeList(bill);
-
-    // console.log(chuck);
-
-    allofit = tree.utils.processInfo(tree.makeInfo([[0,0,[0,2],[0,1],"all"],{rz:omouseX}]));
 
      
 
     },
 
     draw:function(time){
-       //  for(var i = 0 ; i < thing.bones.length ; i++){
-       //      thing.bones[i]._rotation.z = Math.sin((time*data.var3)+i*.1)*omouseX*2;//*i*.0005*data.var6;
-       //      thing.bones[i]._rotation.x = Math.sin((time*data.var3)+i*.01)*omouseY;//*i*.0005*data.var5;
-       //      thing.bones[i]._rotation.y = Math.sin((time*data.var3)+i*.01)*omouseY;//*i*.0005*data.var4;
-       //      // thing.bones[i].scale = new THREE.Vector3(.9,.9,.9);
-       //  }
-
-
-        // for(var i = 0 ; i < tree.mirrorJointArray.length ; i++){
-
-        //     var thisTree = allofit.things["0,0,"+i];//tree.FIND([0,0,i]);
-        //     tree.transform(thisTree,{rz:mouseX});
-        //     // thisTree.rotation.z = Math.sin((time*data.var3)+i*.1)*omouseX*3;//*i*.0005*data.var6;
-        //     // thisTree.rotation.x = Math.sin((time*data.var3)+i*.01)*omouseY;//*i*.0005*data.var5;
-        //     // thisTree.rotation.y = Math.sin((time*data.var3)+i*.01)*omouseY;//*i*.0005*data.var4;
-        //     // thing.bones[i].scale = new THREE.Vector3(.9,.9,.9);
-        // }
-
-       //  tree.passFunc(tree.makeInfo([
-       //      [0,0,"all"],{rz:mouseY,jFreq:.2,jMult:mouseX},
-       //  ]),
-       // tree.transform
-       //  ,true);
-
-        tree.passFunc2(allofit,tree.transform);
-        // for (var i = 0; i < allofit[0].length; i++) {
-        //     tree.transform(tree.FIND(allofit[0][i]),{rz:mouseX});
-        // };
-        // tree.transform()
+        for(var i = 0 ; i < thing.bones.length ; i++){
+            thing.bones[i]._rotation.z = Math.sin((time*data.var3)+i*.1)*omouseX*2;//*i*.0005*data.var6;
+            thing.bones[i]._rotation.x = Math.sin((time*data.var3)+i*.01)*omouseY;//*i*.0005*data.var5;
+            thing.bones[i]._rotation.y = Math.sin((time*data.var3)+i*.01)*omouseY;//*i*.0005*data.var4;
+            // thing.bones[i].scale = new THREE.Vector3(.9,.9,.9);
+        }
+         
        
     }
 }
@@ -210,7 +135,7 @@ Joint.prototype.mergeGeo = function(){
     var meshes = [];
 
     this.updateMatrixWorld();
-    // this.traverse(function(t){t.updateMatrixWorld()});
+    this.traverse(function(t){t.updateMatrixWorld()});
 
     meshes[0] = this.ballMesh.geometry.clone();
     meshes[1] = this.jointMesh.geometry.clone();
@@ -223,19 +148,23 @@ Joint.prototype.mergeGeo = function(){
     THREE.GeometryUtils.merge(meshes[0],meshes[1]);
     THREE.GeometryUtils.merge(meshes[0],meshes[2]);
 
+    // var bob = new THREE.CubeGeometry(10,10,10);
+    // this.children[0].children.pop();
+    // this.children[0].children[0].geometry = meshes[0];
+    // this.children[0].children[0].children.pop();
+
     return meshes[0];
 }
 
 TREE.prototype.GPUaccelerate = function(){
 
-
-    var geo = new THREE.Geometry();
+ var geo = new THREE.Geometry();
        
     geo.skinIndices = [];
     geo.skinWeights = [];
 
     geo.bones = [];
-   
+
     var reportArray = tree.report();
 
     this.mirrorJointArray = [];
@@ -257,8 +186,10 @@ TREE.prototype.GPUaccelerate = function(){
              var len = geo.bones.length;
 
             for(var j = 0 ; j < mergedGeo.vertices.length ; j++){
+
                 geo.skinIndices.push( new THREE.Vector4(len,len,0,0 ));
                 geo.skinWeights.push( new THREE.Vector4(1,1,0,0 ));
+
             }
 
             var bone = {};
@@ -273,41 +204,20 @@ TREE.prototype.GPUaccelerate = function(){
             bone.joint = thisJoint.joint;
             bone.offset = thisJoint.offset;
             bone.offset2 = thisJoint.offset2;
-            bone.rotator = bone;
-            bone.scalar = bone;
 
+            console.log(thisJoint.nameArray);
 
-            // console.log(thisJoint.nameArray);
-
-            if(k>0 && i==0){
-                bone.parent = this.utils.findParentInMirrorArray(thisJoint,this.mirrorJointArray);
-            }
+            if(k>0 && i==0)
+                bone.parent = findParentInMirrorArray(thisJoint,this.mirrorJointArray);
             else
                 bone.parent = geo.bones.length-1;
-
 
             geo.bones.push(bone);
         }
     }
 
-
     this.params.skinMaterial = new THREE.MeshLambertMaterial({color:0xffffff,skinning:true});
-    var skinned = new THREE.SkinnedMesh(geo,this.params.skinMaterial,true);
-
-    for (var i = 0; i < skinned.bones.length; i++) {
-        skinned.bones[i].joint = geo.bones[i].joint;
-        skinned.bones[i].joints = geo.bones[i].joints;
-        skinned.bones[i].offset = geo.bones[i].offset;
-        skinned.bones[i].offset2 = geo.bones[i].offset2;
-        skinned.bones[i].rotator = geo.bones[i].rotator;
-        skinned.bones[i].scalar = geo.bones[i].scalar;
-    };
-    // console.log(skinned.bones);
-    this.bones = skinned.bones;
-
-
-
-    return skinned;
+    return new THREE.SkinnedMesh(geo,this.params.skinMaterial,true);
 
 }
 

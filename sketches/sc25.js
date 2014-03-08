@@ -9,7 +9,7 @@ var sc1 = {
 
 		tree = new TREE();
 
-		scene.add(tree);
+		// scene.add(tree);
 
 		tree.rotation.z=Math.PI/2;
 
@@ -23,7 +23,7 @@ var sc1 = {
 		var arr = tree.worldPositionsMultiArray(tree.reportLayers());
 		var mirror = tree.solidSurface(arr[1]);
 		mirror.material.map = videoTexture;
-		// scene.add(mirror);
+		scene.add(mirror);
 
 		// scene.add(tree.makeTubes({minWidth:1,func:function(t){return Math.sin(t)*2}}));
 	},
