@@ -24,17 +24,14 @@ sc1 = {
         moth.add(lrwing);
 
         scene.add(moth);
-        
+
         countUp = 0;
     },
 
     draw:function(time){
 
-        // lwing.rotation.y = Math.cos(count*Math.PI*.05);
-        // rwing.rotation.y = -Math.cos(count*Math.PI*.05);
-        // llwing.rotation.y = Math.cos(.3-count*Math.PI*.05);
-        // lrwing.rotation.y = -Math.cos(.3-count*Math.PI*.05);
-
+        lwing.rotation.y = Math.cos(count*Math.PI*.05);
+        rwing.rotation.y = -Math.cos(count*Math.PI*.05);
 
         lwing.position.x = -5;
         rwing.position.x = 5;
@@ -47,9 +44,7 @@ sc1 = {
         LowerWing.draw(llwing,1);
         LowerWing.draw(lrwing,-1);
 
-        // moth.rotation.y = count*Math.PI*.05;
-        // moth.rotation.x = count*Math.PI*.05;
-        // moth.rotation.z = count*Math.PI*.05;
+        // moth.rotation.x = Math.PI/2;
 
 
         if(varE){
@@ -126,7 +121,7 @@ Wing = {
 
 
         wing.applyFunc([
-            wingVeinsAll,           {rx:Math.cos(count*Math.PI*.05)*.05},
+            wingVeinsAll,           {rx:0},
             wingRootAll,            {rz: -mult*.18},
             wingVeins1b,            {rz: mult*.065},
             wingVeins1bo,           {rz: mult*1.4},
@@ -154,6 +149,7 @@ Wing = {
 
     }
 }
+
 
 LowerWing = {
 
@@ -235,6 +231,8 @@ LowerWing = {
         root3root =             wing.makeList([0,0,3,0,0]);
         root0all =              wing.makeList([0,0,0,0,-2]);
         root3all =              wing.makeList([0,0,3,0,-2]);
+
+        // console.log(rootlimbsall);
        
 
         wing.makeDictionary();
@@ -246,14 +244,14 @@ LowerWing = {
 
     draw:function(wing,mult){
 
-        wing.rotation.z=(mult*(-.327+2));
-        wing.position.y = -.023*100;
+        wing.rotation.z=(mult*(-.4+2));
+        wing.position.y = -.025*100;
 
 
         wing.applyFunc([
-
             rootRootsAll,         {rz:mult*Math.PI/2},
 
+            // // rootMiddleRootsAll,   {rz:mult*mouseY},
             wingRootAll,          {rz: -mult*.365, sc:1.05},
             root0all,             {sc:0.018+1,rz:-mult*.022},
             root3all,             {sc:-0.024+1,rz:mult*.03},
@@ -283,18 +281,6 @@ LowerWing = {
         wing.applyFunc([
         ],wing.transform)
 
-
-    }
-}
-
-Head = {
-
-    setup:function(){
-        
-
-    }
-
-    draw:function(){
 
     }
 }

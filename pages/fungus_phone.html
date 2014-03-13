@@ -1,0 +1,253 @@
+
+<html>
+  <head>
+    <title>TREE.js</title>
+ 
+    <style>
+    #container{
+		width:500px
+	}
+	body{
+		background-color:white;
+	}
+	 body {
+        overflow: hidden;
+    }
+    
+    #editor { 
+        margin: 0;
+        margin-right:50%;
+        margin-bottom:10px;
+        position: absolte;
+        z-index:1;
+        background-colo:transparent;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+    </style>
+	</head>
+<body>
+	<div id="container">
+				<div id="info"  style="font-family:sans-serif;font-size:.2em;color:gray;z-index:10;position:absolute">
+					<span id="mouseInfoX"></span><br>
+					<span id="mouseInfoY"></span>
+				</div>
+			<!-- <div style="position:absolute;z-index:5;padding-left:200px">
+				<input type="button" id="buttonid" value="saveObj" style="width:75px"onclick="saver()" style="position:absolute">
+				<input type="button" id="buttonid" value="showCode" style="width:75px"onclick="activateAce()" style="position:absolute">
+				<input type="button" id="buttonid" value="runCode" style="width:75px"onclick="updateCode()" style="position:relative">
+				<a href="README.html" target="_newtab">readme</a>
+			</div> -->
+		</div>
+
+		<script src="../lib/dat.gui.min.js"></script>
+		<script src="../lib/three.js"></script>
+		<script src="../lib/library.js"></script>
+		<script src="../lib/TREE.js"></script>
+
+		<script src="../lib/fungus.js"></script>
+		<script src="../lib/template.js"></script>
+		
+		<script>
+
+		// console.log(gui);
+		onscreengui=false;
+		pause = true;
+
+		f=0;
+		sc1 = {
+    
+		    setup:function(){
+
+		    	console.log("blh");
+		        
+		        tree = new TREE();
+
+		        tree.generate({joints:[20,10],
+		            rads:[2,2],angles:[Math.PI/2],
+		            length:[7,8]
+		        });
+
+		        tree.rotation.z = 1;
+		        tree.rotation.y = 1;
+		        
+		        tree.makeList = tree.makeList;
+		        
+		        ends = tree.makeList([0,[0,1],19]);
+		        enda = tree.makeList([0,0,18]);
+		        endb = tree.makeList([0,1,18]);
+		        
+		        spinea = tree.makeList([0,0,[1,19]])
+		        spineb = tree.makeList([0,1,[1,19]])
+
+		        
+		        spine1 = tree.makeList([0,0,[0,19],0,[1,9]])
+		        spine2 = tree.makeList([0,0,[0,19],1,[1,9]])
+		        spine3 = tree.makeList([0,1,[0,19],0,[1,9]])
+		        spine4 = tree.makeList([0,1,[0,19],1,[1,9]])
+		        
+		        spinea1 = tree.makeList([0,0,[0,19],0,3])
+		        spinea2 = tree.makeList([0,0,[0,19],1,3])
+		        spinea3 = tree.makeList([0,1,[0,19],0,3])
+		        spinea4 = tree.makeList([0,1,[0,19],1,3])
+		        
+		        spineb1 = tree.makeList([0,0,[0,19],0,7])
+		        spineb2 = tree.makeList([0,0,[0,19],1,7])
+		        spineb3 = tree.makeList([0,1,[0,19],0,7])
+		        spineb4 = tree.makeList([0,1,[0,19],1,7])
+
+		        tree.passFunc(tree.makeInfo([[0,0,0],{tx:10}]),tree.transform);
+		        
+		        // 
+		        console.log(ends);
+		        
+		        tree.applyFunc([
+		            ends,{tree:{
+		                joints:[30],
+		                rads:[30],
+		                angles:[Math.PI/2]
+		                
+		            }}],
+		            appendtree
+		        );
+		        
+		        tree.makeDictionary();
+		        
+		        muffs = tree.makeList([0,[0,1],19,[0,29],"all"])
+		        muffRoot = tree.makeList([0,[0,1],19,[2,31],0])
+		        muffTop = tree.makeList([0,[0,1],19,[2,31],[1,19]])
+		        muffFlange = tree.makeList([0,[0,1],19,[2,31],20])
+		        muffDangle = tree.makeList([0,[0,1],19,[2,31],10])
+
+		        muffEar = tree.makeList([0,[0,1],19,[2,31],[21,29]])
+
+		        
+		        tree.applyFunc([
+		            spine1,{rx:.2},
+		            muffRoot,{rz:Math.PI/2},
+		            muffFlange,{rz:-0.804},
+		            muffTop,{rz:-.1},
+		            muffEar,{rz:-.2}
+		            ],
+		            tree.transform
+		        );
+		        
+		        codeName="fungusPhone";
+		            
+		       
+		        
+		        // console.log(tree);
+		        scene.add(tree);
+		        
+		        tree.applyFunc([
+		             
+		            spinea,{rx:data.var1*.2},
+		            spineb,{rx:-data.var1*.2},
+
+		            
+		            spine1,{rx:0.241},
+		            spine2,{rx:-0.241},
+		            spine3,{rx:-0.241},
+		            spine4,{rx:0.241},
+		            
+		            spinea1,{rx:0.716},
+		            spinea2,{rx:-0.716},
+		            spinea3,{rx:-0.716},
+		            spinea4,{rx:0.716},
+		        
+		            spineb1,{rx:0.749},
+		            spineb2,{rx:-0.749},
+		            spineb3,{rx:-0.749},
+		            spineb4,{rx:0.749},
+		            
+		            enda,{rx:data.var2*2},
+		            endb,{rx:-data.var2*2},
+		        
+		            muffRoot,{rz:0.582*3},
+		            muffFlange,{rz:-0.804*2},
+		            muffTop,{rz:data.var3},
+		            muffEar,{rz:0.062},
+		            muffDangle,{rz:-0.262}
+
+		            ],
+		            tree.transform
+		        );
+		        
+		        report = (tree.report());
+
+		        
+		        balls = tree.worldPositionsArray(report);
+
+		        var flatArray = [];
+
+		        for (var i = 0; i < balls.length; i++) {
+		            for (var j = 0; j < balls[i].length; j++) {
+		                flatArray.push(balls[i][j]);
+		            }
+		        }
+
+		        console.log(tree.metaBalls.init);
+		        
+		        bls = tree.metaBalls.init();
+		        // tree.metaBalls.effect.animate=true;
+		        // console.log(tree.metaBalls.effect);
+		        // tree.metaBalls.updateBalls(balls);
+		        tree.metaBalls.setSize(200);
+		        tree.metaBalls.setResolution(80);
+		        tree.metaBalls.ballSize = 3.5;
+		        tree.metaBalls.updateBalls();
+		        // tree.metaBalls.showBox();
+		        scene.add(bls);
+		        
+		        // var arr = tree.worldPositionsArray(tree.report());
+		        // console.log(arr);
+
+		        f = new fungus(3000);
+		        f.digestRadius=15;
+		        f.substrateRadius = .001;
+
+		        f.makeSubstrateFromArray(flatArray);
+
+		        f.addSPK();
+		        f.update();
+		        scene.add(f);
+
+		    },
+
+		    draw:function(time){
+
+		        f.overflowCounter=0;
+		        f.overflow=1500;
+		        f.update();
+
+		        var arr = f.returnSubstratePositionsArray();
+
+		        tree.metaBalls.updateBalls(arr);
+
+		        if(varE){
+		            var thing = tree.metaBalls.generateGeo();
+		            scene.add(thing);
+		            console.log(scene);
+		            pause = true;
+		        }
+		         
+		     
+		    }
+		}
+
+		function appendtree(obj,args){
+		    tree.generate(args.tree,obj);   
+		}
+
+
+		</script>
+
+		
+
+
+	</body>
+</html>
+
+
