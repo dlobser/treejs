@@ -20,14 +20,23 @@ sc1 = {
 
         body = 0;
 
+
+
         body = Body.setup();
 
+        // connect(lwing,scene,body.tips[1]);
+
+        body.tips[1].rotator.add(lwing);
+        lwing.position.y = body.tips[1].params.jointScale.y;
+        body.tips[1].rotator.add(llwing);
+        llwing.position.y = body.tips[1].params.jointScale.y;
+
         moth = new THREE.Object3D();
+        console.log(body);
 
-
-        moth.add(lwing);
+        // moth.add(lwing);
         moth.add(rwing);
-        moth.add(llwing);
+        // moth.add(llwing);
         moth.add(lrwing);
         moth.add(body);
 
@@ -45,19 +54,28 @@ sc1 = {
         // lrwing.rotation.y = -Math.cos(.3-count*Math.PI*.05);
 
 
-        lwing.position.x =  -15;
+        // lwing.position.x =  -15;
         rwing.position.x =   15;
-        llwing.position.x = -15;
+        // llwing.position.x = -15;
         lrwing.position.x =  15;
 
         body.position.y=-15;
         body.setScale(.8);
 
-
         Wing.draw(lwing,1);
         Wing.draw(rwing,-1);
         LowerWing.draw(llwing,1);
         LowerWing.draw(lrwing,-1);
+
+        body.tips[1].rotation.x = data.var1*6;
+        body.tips[1].rotation.y = data.var2*6;
+        body.tips[1].rotation.z = data.var3*6;
+
+
+
+        // THREE.sceneUtils.attach(lwing,scene,body.tips[1]);
+
+        // console.log(body.tips[1]);
 
         Body.draw(body,1);
 
@@ -340,12 +358,13 @@ Body = {
         bodySpineAll = body.makeList([0,-1,-1]);
         // bodySpineAll = body.makeList([0,-1,-1]);
 
-        console.log(body);
+         bodySpineConnectors = body.makeList([0,0,[2,5]]);
+
 
         body.passFunc([
             bodySpineAll,{amount:5,sc:3,rz:Math.PI/2},
-            // wingRootAll,{amount:10,sc:10,rz:Math.PI/2}
-
+            bodySpineConnectors,{amount:8,sc:3,rz:-Math.PI/2},
+            bodySpineConnectors,{amount:8,sc:3,rz:Math.PI/2},
         ],body.appendBranch);
 
         bodyVertAll = body.makeList([0,-1,-1,0,-3]);
@@ -365,11 +384,25 @@ Body = {
 
         ],body.transform);
 
-        upperVertsRoot = body.makeList([0,0,-1,-1,0]);
-        upperVertsAll =  body.makeList([0,0,-1,-1,-2]);
+        upperVertsRoot = body.makeList([0,0,-1,0,0]);
+        upperVertsAll =  body.makeList([0,0,-1,0,-2]);
 
-        lowerVertsRoot = body.makeList([0,1,-1,-1,0]);
-        lowerVertsAll =  body.makeList([0,1,-1,-1,-2]);
+        lowerVertsRoot = body.makeList([0,1,-1,0,0]);
+        lowerVertsAll =  body.makeList([0,1,-1,0,-2]);
+
+        connectorTips = body.makeList([0,0,[2,5],[1,2],-3]);
+
+        body.tips = [];
+
+        body.passFunc([
+            connectorTips,{}
+        ],function(obj,args){body.tips.push(obj)})
+
+
+        connectorsLeftRoot = body.makeList([0,0,[2,5],1,0]);
+        connectorsLeftAll = body.makeList([0,0,[2,5],1,-2]);
+        connectorsRightRoot = body.makeList([0,0,[2,5],2,0]);
+        connectorsRightAll = body.makeList([0,0,[2,5],2,-2]);
 
 
         upperRibsLeftAll =      body.makeList([0,0,-1,-1,-1,0,-2]);
@@ -450,10 +483,15 @@ Body = {
             // bodyAbdomenRoot,    {sc:data.var4},
             // bodyAbdomenAll,     {sinScale:data.var1,sinScaleMult:data.var2,sinOff:data.var3*9},
             bodyAbdomenRoot,    {sc:0.885},
-            bodyAbdomenAll,     {sinScale:0.582,sinScaleMult:0.192,sinOff:0.127*9},
+            bodyAbdomenAll,     {sc:.94,sinScale:0.582,sinScaleMult:0.192,sinOff:0.127*9},
             // bodyAbdomenAll,     {sinScale:-0.067,sinScaleMult:0.755,sinOff:-0.002*9},
             // upperVertsRoot,     {sc:data.var4,offScale:data.var1,offScaleMult:data.var2,offScaleOff:data.var3*9}
             // upperVertsRoot,     {sc:0.3,offScale:0.343,offScaleMult:0.907,offScaleOff:0.148*9}
+
+            connectorsLeftRoot, {ry:.47*3},
+            connectorsLeftAll, {rx:.37},
+            connectorsRightRoot, {ry:-mult*.47*3},
+            connectorsRightAll, {rx:.37},
 
 
 
