@@ -1,8 +1,10 @@
+// convert -alpha opaque -resize 300 -delay 4 moth_*.png moh_02_300.gif
+
 sc1 = {
     
     setup:function(){
         
-        frameRate = 1;
+        // frameRate = 1;
 
         lwing = 0;
         rwing = 0;
@@ -16,15 +18,22 @@ sc1 = {
         llwing = LowerWing.setup();
         lrwing = LowerWing.setup();
 
+        body = 0;
+
+        body = Body.setup();
+
         moth = new THREE.Object3D();
+
 
         moth.add(lwing);
         moth.add(rwing);
         moth.add(llwing);
         moth.add(lrwing);
+        moth.add(body);
 
         scene.add(moth);
-        
+
+
         countUp = 0;
     },
 
@@ -36,16 +45,21 @@ sc1 = {
         // lrwing.rotation.y = -Math.cos(.3-count*Math.PI*.05);
 
 
-        lwing.position.x = -5;
-        rwing.position.x = 5;
-        llwing.position.x = -5;
-        lrwing.position.x = 5;
+        lwing.position.x =  -15;
+        rwing.position.x =   15;
+        llwing.position.x = -15;
+        lrwing.position.x =  15;
+
+        body.position.y=-15;
+        body.setScale(.8);
 
 
         Wing.draw(lwing,1);
         Wing.draw(rwing,-1);
         LowerWing.draw(llwing,1);
         LowerWing.draw(lrwing,-1);
+
+        Body.draw(body,1);
 
         // moth.rotation.y = count*Math.PI*.05;
         // moth.rotation.x = count*Math.PI*.05;
@@ -65,7 +79,10 @@ sc1 = {
             console.log(scene);
             varT=false;
         }
+                    // pause = true;
+
     }
+
 }
 
 Wing = {
@@ -287,14 +304,162 @@ LowerWing = {
     }
 }
 
-Head = {
+Body = {
 
     setup:function(){
+
+        var body = new TREE();
+
+        body.params.jointScale.y=5;
         
+        body.branch(8);
 
-    }
+        body.params.jointScale.y=7;
 
-    draw:function(){
+        body.branch(12);
+
+
+        // bodyRootEnd = body.makeList([0,0,0]);
+
+
+        // body.passFunc([
+        //     bodyRootEnd,{amount:10,sc:5,rz:Math.PI,ty:0.01},
+        //     // wingRootAll,{amount:10,sc:10,rz:Math.PI/2}
+
+        // ],body.appendBranch);
+
+        bodyThorax = body.makeList([0,1,0]);
+
+        bodyThoraxAll =  body.makeList([0,1,-2]);
+        bodyThoraxRoot = body.makeList([0,1,0]);
+
+        bodyAbdomenAll = body.makeList([0,0,-2]);
+        bodyAbdomenRoot = body.makeList([0,0,0]);
+
+
+        bodySpineAll = body.makeList([0,-1,-1]);
+        // bodySpineAll = body.makeList([0,-1,-1]);
+
+        console.log(body);
+
+        body.passFunc([
+            bodySpineAll,{amount:5,sc:3,rz:Math.PI/2},
+            // wingRootAll,{amount:10,sc:10,rz:Math.PI/2}
+
+        ],body.appendBranch);
+
+        bodyVertAll = body.makeList([0,-1,-1,0,-3]);
+
+
+        body.passFunc([
+            bodyVertAll,{amount:10,sc:5,rz:Math.PI/2},
+            bodyVertAll,{amount:10,sc:5,rz:Math.PI/2},
+
+            // wingRootAll,{amount:10,sc:10,rz:Math.PI/2}
+
+        ],body.appendBranch);
+
+        body.passFunc([
+            bodyThorax,{rz:Math.PI},
+            // wingRootAll,{amount:10,sc:10,rz:Math.PI/2}
+
+        ],body.transform);
+
+        upperVertsRoot = body.makeList([0,0,-1,-1,0]);
+        upperVertsAll =  body.makeList([0,0,-1,-1,-2]);
+
+        lowerVertsRoot = body.makeList([0,1,-1,-1,0]);
+        lowerVertsAll =  body.makeList([0,1,-1,-1,-2]);
+
+
+        upperRibsLeftAll =      body.makeList([0,0,-1,-1,-1,0,-2]);
+        upperRibsLeftRoot =     body.makeList([0,0,-1,-1,-1,0,0]);
+        upperRibsRightAll =     body.makeList([0,0,-1,-1,-1,1,-2]);
+        upperRibsRightRoot =    body.makeList([0,0,-1,-1,-1,1,0]);
+
+        lowerRibsLeftAll =      body.makeList([0,1,-1,-1,-1,0,-2]);
+        lowerRibsLeftRoot =     body.makeList([0,1,-1,-1,-1,0,0]);
+        lowerRibsRightAll =     body.makeList([0,1,-1,-1,-1,1,-2]);
+        lowerRibsRightRoot =    body.makeList([0,1,-1,-1,-1,1,0]);
+
+
+
+
+        body.makeDictionary();
+
+         body.passFunc([
+            bodyThoraxRoot,{length:3},
+            bodyAbdomenRoot,{length:3},
+
+            // wingRootAll,{amount:10,sc:10,rz:Math.PI/2}
+
+        ],body.setJointLength);
+
+
+        return body;
+
+
+    },
+
+    draw:function(body, mult){
+
+        // sjoff = ( Math.sin ( (obj.parentJoint.joint * offScale) + offScaleOff ) ) * offScaleMult;
+
+
+        body.applyFunc([
+
+            upperVertsRoot,         {rz:Math.PI,rx:-Math.PI/2},
+            lowerVertsRoot,         {rz:Math.PI,rx:-Math.PI/2},
+
+            // upperVertsAll,         {rx:data.var2,offMult:data.var3,freq:data.var4,off:data.var5*3},
+            upperVertsAll,         {rx:0.018,offMult:0.062,freq:0.69,off:-0.067*3},
+            // lowerVertsAll,         {rx:data.var2,offMult:data.var3,freq:data.var4,off:data.var5*3},
+            lowerVertsAll,         {rx:0,offMult:-0.111,freq:-0.436,off:0.04*3},
+
+
+            upperRibsLeftAll,    {rx:mult*.34},
+            upperRibsRightAll,   {rx:-mult*.34},
+            upperRibsLeftRoot,   {ry: mult*(Math.PI/2+ -.51)*3, rx:-Math.PI/2 },//offScale:.625,offScaleMult:.265},
+            upperRibsRightRoot,  {ry:-mult*(-Math.PI/2+-.51)*3,rx:-Math.PI/2},//offScale:.625,offScaleMult:.265},
+
+            // upperRibsLeftAll,    {ry:mult*data.var2,offMult:data.var3,freq:-mult*data.var4*3,off:data.var5*3,offsetter4:-mult*data.var6},
+            // upperRibsRightAll,   {ry:-mult*data.var2,offMult:data.var3,freq:data.var4*3,off:data.var5*3,offsetter4:data.var6},
+
+            upperRibsLeftAll,    {ry:mult*-.05},
+            upperRibsRightAll,   {ry:-mult*-.05},
+
+            lowerRibsLeftAll,    {ry:-mult*data.var2,rx:mult*.34},
+            lowerRibsRightAll,   {rx:-mult*.34},
+
+            // lowerRibsLeftAll,    {ry:mult*data.var2,offMult:-mult*data.var3,freq:data.var4*3,off:data.var5*3,offsetter4:-mult*data.var6*.01},
+            // lowerRibsRightAll,   {ry:-mult*data.var2,offMult:data.var3,freq:data.var4*3,off:data.var5*3,offsetter4:data.var6*.01},
+
+            lowerRibsLeftAll,    {ry:mult*0,offMult:-mult*-0.046,freq:0.083*3,off:0.062*3,offsetter4:-mult*1*.01},
+            lowerRibsRightAll,   {ry:-mult*0,offMult:-0.046,freq:0.083*3,off:0.062*3,offsetter4:1*.01},
+
+
+            // lowerRibsRightAll,   {ry:-mult*-0.024,offMult:0.343,freq:0.018*3,off:-0.176*3,offsetter4:data.var6},
+
+            lowerRibsLeftRoot,   {ry:mult*(Math.PI/2+ -.51)*3,rx:-Math.PI/2},
+            lowerRibsRightRoot,  {ry:-mult*(-Math.PI/2+ -.51)*3,rx:-Math.PI/2},
+
+            bodyThoraxRoot,     {sc:.9},
+            // bodyThoraxAll,        {sinScale:data.var1,sinScaleMult:data.var2,sinOff:data.var3*9},    
+            bodyThoraxAll,        {sinScale:-0.197,sinScaleMult:0.148,sinOff:0.755*9},
+
+            // bodyAbdomenRoot,    {sc:data.var4},
+            // bodyAbdomenAll,     {sinScale:data.var1,sinScaleMult:data.var2,sinOff:data.var3*9},
+            bodyAbdomenRoot,    {sc:0.885},
+            bodyAbdomenAll,     {sinScale:0.582,sinScaleMult:0.192,sinOff:0.127*9},
+            // bodyAbdomenAll,     {sinScale:-0.067,sinScaleMult:0.755,sinOff:-0.002*9},
+            // upperVertsRoot,     {sc:data.var4,offScale:data.var1,offScaleMult:data.var2,offScaleOff:data.var3*9}
+            // upperVertsRoot,     {sc:0.3,offScale:0.343,offScaleMult:0.907,offScaleOff:0.148*9}
+
+
+
+        ],body.transform);
+
+       
 
     }
 }
