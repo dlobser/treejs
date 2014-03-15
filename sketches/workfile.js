@@ -3,85 +3,20 @@
 sc1 = {
     
     setup:function(){
+
+        // Moth.setup();
+
+        head = Head.setup();
         
-        // frameRate = 1;
-
-        lwing = 0;
-        rwing = 0;
-
-        lwing = Wing.setup();
-        rwing = Wing.setup();
-
-        llwing = 0;
-        lrwing = 0;
-
-        llwing = LowerWing.setup();
-        lrwing = LowerWing.setup();
-
-        body = 0;
-
-
-
-        body = Body.setup();
-
-        // connect(lwing,scene,body.tips[1]);
-
-        body.tips[1].rotator.add(lwing);
-        lwing.position.y = body.tips[1].params.jointScale.y;
-        body.tips[1].rotator.add(llwing);
-        llwing.position.y = body.tips[1].params.jointScale.y;
-
-        moth = new THREE.Object3D();
-        console.log(body);
-
-        // moth.add(lwing);
-        moth.add(rwing);
-        // moth.add(llwing);
-        moth.add(lrwing);
-        moth.add(body);
-
-        scene.add(moth);
-
-
+        scene.add(head);
+        
         countUp = 0;
     },
 
     draw:function(time){
 
-        // lwing.rotation.y = Math.cos(count*Math.PI*.05);
-        // rwing.rotation.y = -Math.cos(count*Math.PI*.05);
-        // llwing.rotation.y = Math.cos(.3-count*Math.PI*.05);
-        // lrwing.rotation.y = -Math.cos(.3-count*Math.PI*.05);
-
-
-        // lwing.position.x =  -15;
-        rwing.position.x =   15;
-        // llwing.position.x = -15;
-        lrwing.position.x =  15;
-
-        body.position.y=-15;
-        body.setScale(.8);
-
-        Wing.draw(lwing,1);
-        Wing.draw(rwing,-1);
-        LowerWing.draw(llwing,1);
-        LowerWing.draw(lrwing,-1);
-
-        body.tips[1].rotation.x = data.var1*6;
-        body.tips[1].rotation.y = data.var2*6;
-        body.tips[1].rotation.z = data.var3*6;
-
-
-
-        // THREE.sceneUtils.attach(lwing,scene,body.tips[1]);
-
-        // console.log(body.tips[1]);
-
-        Body.draw(body,1);
-
-        // moth.rotation.y = count*Math.PI*.05;
-        // moth.rotation.x = count*Math.PI*.05;
-        // moth.rotation.z = count*Math.PI*.05;
+        // Moth.draw(time);
+        // Head.draw(head);
 
 
         if(varE){
@@ -101,6 +36,199 @@ sc1 = {
 
     }
 
+}
+
+Moth = {
+
+    setup:function(){
+
+        lwing = Wing.setup();
+        rwing = Wing.setup();
+
+        llwing = LowerWing.setup();
+        lrwing = LowerWing.setup();
+
+        // lfLeg = 0;
+        legs = [];
+
+        legs[0] = Leg.setup();
+        legs[1] = Leg.setup();
+        legs[2] = Leg.setup();
+
+        legs[3] = Leg.setup();
+        legs[4] = Leg.setup();
+        legs[5] = Leg.setup();
+
+        body = Body.setup();
+
+        // connect(lwing,scene,body.tips[1]);
+
+        body.tips[3].rotator.add(lwing);
+        lwing.position.y = body.tips[1].params.jointScale.y;
+        body.tips[3].rotator.add(llwing);
+        // llwing.position.y = body.tips[1].params.jointScale.y;
+
+        legs[0].setScale(.3);
+        legs[0].rotation.y = -Math.PI/2;
+        legs[1].setScale(.5);
+        legs[1].rotation.y = -Math.PI/2;
+        legs[2].setScale(.6);
+        legs[2].rotation.y = -Math.PI/2;
+
+        legs[3].setScale(.3);
+        legs[3].rotation.y = -Math.PI/2;
+        legs[4].setScale(.5);
+        legs[4].rotation.y = -Math.PI/2;
+        legs[5].setScale(.6);
+        legs[5].rotation.y = -Math.PI/2;
+
+        body.tips[1].rotator.add(legs[2]);
+        body.tips[5].rotator.add(legs[1]);
+        body.tips[7].rotator.add(legs[0]);
+
+        body.tips[0].rotator.add(legs[5]);
+        body.tips[4].rotator.add(legs[4]);
+        body.tips[6].rotator.add(legs[3]);
+
+        body.tips[2].rotator.add(rwing);
+        rwing.position.y = body.tips[1].params.jointScale.y;
+        body.tips[2].rotator.add(lrwing);
+        // llwing.position.y = body.tips[1].params.jointScale.y;
+
+        moth = new THREE.Object3D();
+        console.log(body);
+
+        // moth.add(lwing);
+        // moth.add(rwing);
+        // moth.add(llwing);
+        // moth.add(lrwing);
+        moth.add(body);
+
+        scene.add(moth);
+
+    },
+
+    draw:function(time){
+
+        for(var i = 0 ; i < legs.length ; i++){
+            Leg.draw(legs[i],1,.274);
+            legs[i].position.y = legs[i].parent.parent.params.jointScale.y;
+        }
+
+        body.position.y=-15;
+        body.setScale(.8);
+
+        Wing.draw(lwing,1,Math.cos(count*12*Math.PI*.05)*.05);
+        Wing.draw(rwing,-1,Math.cos(count*Math.PI*.05)*.05);
+        LowerWing.draw(llwing,1);
+        LowerWing.draw(lrwing,-1);
+
+        body.tips[3].rotation.x = -0.414*2;
+        body.tips[3].rotation.y = 0.17*2;
+        body.tips[3].rotation.z = -0.739*2;
+
+        body.tips[2].rotation.x = -0.414*2;
+        body.tips[2].rotation.y = -0.17*2;
+        body.tips[2].rotation.z = 0.739*2;
+
+
+
+        // THREE.sceneUtils.attach(lwing,scene,body.tips[1]);
+
+        // console.log(body.tips[1]);
+
+        Body.draw(body,1);
+
+
+    }
+}
+
+
+Head = {
+
+    setup:function(){
+
+        var head = new TREE();
+        
+        head.branch(4);
+        
+        // scene.add(head);
+        
+        headRootAll = head.makeList([0,0,-1]);
+
+
+        head.passFunc([
+            headRootAll,{amount:10,sc:10,rz:Math.PI/2},
+            headRootAll,{amount:10,sc:10,rz:Math.PI/2}
+
+        ],head.appendBranch);
+
+        headVeins1 =        head.makeList([0,0,2,0,4]);
+        headVeins2 =        head.makeList([0,0,1,1,7]);
+        headVeins2bb =      head.makeList([0,0,1,[0,1],-2]);
+        headVeins2bbo =     head.makeList([0,0,1,[0,1],0]);
+        headVeins1b =       head.makeList([0,0,2,[0,1],-2]);
+        headVeins1bo =      head.makeList([0,0,2,[0,1],0]);
+        headVeins1bos =     head.makeList([0,0,2,1,[5,9]]);
+        headVeins1boso =    head.makeList([0,0,2,1,4]);
+        headVeins2b =       head.makeList([0,0,[1,2],1,-2]);
+        //costal veins
+        headVeins3 =        head.makeList([0,0,3,0,0]);//costal
+        headVeins3b =       head.makeList([0,0,3,1,0]);//costal
+        headVeins3bo =      head.makeList([0,0,3,0,[6,9]]);//costal
+
+        headVeinsCostal =   head.makeList([0,0,3,[0,1],-2]);//costal
+
+        //jugum vein offset
+        headVeins4 =        head.makeList([0,0,0,1,2]);
+        headVeins4o =        head.makeList([0,0,0,1,[3,9]]);
+
+        headVeinsJugum =    head.makeList([0,0,0,[0,1],[1,4]]);
+        headVeinsJugumBase = head.makeList([0,0,0,[0,1],0]);
+        headVeinsJugumBase2 = head.makeList([0,0,0,0,0]);
+
+        headVeinsAll = head.makeList([0,0,-1,-1,-2]);
+
+        head.makeDictionary();
+
+
+        return head;
+
+    },
+
+    draw:function(head,mult,anim){
+
+        head.rotation.z=mult*.5;
+
+
+        head.applyFunc([
+            headVeinsAll,           {rx:anim},
+            headRootAll,            {rz: -mult*.18},
+            headVeins1b,            {rz: mult*.065},
+            headVeins1bo,           {rz: mult*1.4},
+            headVeins1bos,          {rz: -mult*.08},
+            headVeins1,             {rz: -mult*(.2*.25), },
+            headVeins2bb,           {rz:  mult*.04},
+            headVeins2bbo,          {sc:.915,rz:mult*(1+.21*2)},
+            headVeins2,             {sc:.579*2,rz:  mult*-.2},
+            headVeins1boso,         {rz: mult*.4},
+            headVeins3,             {sc:.98, rz:mult*.529*3},
+            headVeins3b,            {sc:.96, rz:mult*.52*3},
+            headVeinsCostal,        {rz:mult*.04},
+            headVeinsJugum,         {rz:mult*-.075},
+            headVeins4o,            {rz:mult*.058},
+            headVeins4,             {rz:mult*(.048-.5)},
+            headVeinsJugumBase,     {sc:.9,rz: mult*1.734},    
+            headVeinsJugumBase2,    {sc:.845-.02,rz: mult*1.734},      
+            headVeins3bo,           {sc:1.01,rz:  mult*.062},
+
+        ],head.transform)
+
+        head.applyFunc([
+        ],head.transform)
+
+
+    }
 }
 
 Wing = {
@@ -155,13 +283,13 @@ Wing = {
 
     },
 
-    draw:function(wing,mult){
+    draw:function(wing,mult,anim){
 
         wing.rotation.z=mult*.5;
 
 
         wing.applyFunc([
-            wingVeinsAll,           {rx:Math.cos(count*Math.PI*.05)*.05},
+            wingVeinsAll,           {rx:anim},
             wingRootAll,            {rz: -mult*.18},
             wingVeins1b,            {rz: mult*.065},
             wingVeins1bo,           {rz: mult*1.4},
@@ -206,7 +334,7 @@ LowerWing = {
         wingRoot00 = wing.makeList([0,0,0]);
         wingRoot30 = wing.makeList([0,0,3]);
 
-        console.log(wingRootMiddle);
+        // console.log(wingRootMiddle);
 
         wing.passFunc([
             wingRootMiddle,{amount:10,sc:9,rz:Math.PI/2},
@@ -282,7 +410,7 @@ LowerWing = {
     draw:function(wing,mult){
 
         wing.rotation.z=(mult*(-.327+2));
-        wing.position.y = -.023*100;
+        // wing.position.y = -.023*100;
 
 
         wing.applyFunc([
@@ -358,13 +486,13 @@ Body = {
         bodySpineAll = body.makeList([0,-1,-1]);
         // bodySpineAll = body.makeList([0,-1,-1]);
 
-         bodySpineConnectors = body.makeList([0,0,[2,5]]);
+         bodySpineConnectors = body.makeList([0,0,[1,4]]);
 
 
         body.passFunc([
             bodySpineAll,{amount:5,sc:3,rz:Math.PI/2},
-            bodySpineConnectors,{amount:8,sc:3,rz:-Math.PI/2},
-            bodySpineConnectors,{amount:8,sc:3,rz:Math.PI/2},
+            bodySpineConnectors,{amount:8,sc:3.2,rz:-Math.PI/2},
+            bodySpineConnectors,{amount:8,sc:3.2,rz:Math.PI/2},
         ],body.appendBranch);
 
         bodyVertAll = body.makeList([0,-1,-1,0,-3]);
@@ -390,7 +518,7 @@ Body = {
         lowerVertsRoot = body.makeList([0,1,-1,0,0]);
         lowerVertsAll =  body.makeList([0,1,-1,0,-2]);
 
-        connectorTips = body.makeList([0,0,[2,5],[1,2],-3]);
+        connectorTips = body.makeList([0,0,[1,4],[1,2],-3]);
 
         body.tips = [];
 
@@ -399,10 +527,13 @@ Body = {
         ],function(obj,args){body.tips.push(obj)})
 
 
-        connectorsLeftRoot = body.makeList([0,0,[2,5],1,0]);
-        connectorsLeftAll = body.makeList([0,0,[2,5],1,-2]);
-        connectorsRightRoot = body.makeList([0,0,[2,5],2,0]);
-        connectorsRightAll = body.makeList([0,0,[2,5],2,-2]);
+        connectorsLeftRoot =  body.makeList([0,0,[1,4],1,0]);
+        connectorsLeftAll =   body.makeList([0,0,[1,4],1,-2]);
+        connectorsRightRoot = body.makeList([0,0,[1,4],2,0]);
+        connectorsRightAll =  body.makeList([0,0,[1,4],2,-2]);
+
+        connectorsLeftWingRoot =    body.makeList([0,0,2,2,0]);
+        connectorsRightWingRoot =  body.makeList([0,0,2,1,0]);
 
 
         upperRibsLeftAll =      body.makeList([0,0,-1,-1,-1,0,-2]);
@@ -489,9 +620,12 @@ Body = {
             // upperVertsRoot,     {sc:0.3,offScale:0.343,offScaleMult:0.907,offScaleOff:0.148*9}
 
             connectorsLeftRoot, {ry:.47*3},
-            connectorsLeftAll, {rx:.37},
-            connectorsRightRoot, {ry:-mult*.47*3},
+            connectorsLeftAll,  {rx:.37},
+            connectorsRightRoot,{ry:-mult*.47*3},
             connectorsRightAll, {rx:.37},
+
+            connectorsLeftWingRoot, {ry:-mult},
+            connectorsRightWingRoot, {ry:mult},
 
 
 
@@ -502,3 +636,86 @@ Body = {
     }
 }
 
+Leg = {
+
+    setup:function(){
+
+        var leg = new TREE();
+
+        leg.params.jointScale.y=5;
+        
+        leg.branch(18);
+        
+        // scene.add(wing);
+        
+        trochanter = leg.makeList([0,0,[0,1]]);
+        femur = leg.makeList([0,0,[2,5]]);
+        tibia = leg.makeList([0,0,[6,9]]);
+        utarsis = leg.makeList([0,0,[10,13]]);
+        ltarsis = leg.makeList([0,0,[14,17]]);
+
+        lParts = {};
+
+        for(var i = 0 ; i < 18 ; i++){
+            lParts[i] = leg.makeList([0,0,i]);
+        }
+
+         leg.passFunc([
+            ltarsis,{length:10},
+            // wingRootAll,{amount:10,sc:10,rz:Math.PI/2}
+
+        ],leg.setJointLength);
+
+
+
+        leg.passFunc([
+            ltarsis,{amount:5,sc:2,rz:.2},
+            ltarsis,{amount:5,sc:2,rz:-.2},
+            // wingRootAll,{amount:10,sc:10,rz:Math.PI/2}
+
+        ],leg.appendBranch);
+
+        tarsishairLeft =        leg.makeList([0,0,-1,0,-2]);
+        tarsishairRight =        leg.makeList([0,0,-1,1,-2]);
+
+
+        return leg;
+
+    },
+
+    draw:function(leg,mult,anim){
+
+        la = anim*3;
+
+        leg.passFunc([
+            lParts[0], {sc:2,rz:la},
+            lParts[1], {sc:1,rz:la},
+            lParts[2], {sc:1,rz:la},
+            lParts[3], {sc:1.5,rz:-la*.1},
+            lParts[4], {sc:.75,rz:-la*.1},
+            lParts[5], {sc:.75,rz:-la*.1},
+
+            lParts[6], {sc:1,rz:-la*2.8},
+            lParts[7], {sc:1.5,rz:-la*.05},
+            lParts[8], {sc:.75,rz:-la*.05},
+            lParts[9], {sc:.75,rz:-la*.05},
+
+            lParts[10], {sc:1,rz:la*2.9},
+            lParts[11], {sc:1.5,rz:la*.1},
+            lParts[12], {sc:.75,rz:la*.1},
+            lParts[13], {sc:.75,rz:la*.1},
+
+            lParts[14], {sc:1,rz:-la*.1},
+            lParts[15], {sc:1.5,rz:-la*.1},
+            lParts[16], {sc:.75,rz:-la*.1},
+            lParts[17], {sc:.75,rz:-la*.2},
+
+            tarsishairLeft,  {sc:.8,rz:.2},
+            tarsishairRight,  {sc:.8,rz:-.2},
+
+
+
+        ],leg.transform);
+
+    }
+}
