@@ -1,11 +1,11 @@
 // convert -alpha opaque -resize 300 -delay 4 moth_*.png moh_02_300.gif
-
+imagesToSave = 0;
 sc1 = {
     
     setup:function(){
 
         moth = Moth.setup();
-        setScale(moth,1.5);
+        // setScale(moth,1.5);
         scene.add(moth);
 
         countUp = 0;
@@ -13,29 +13,80 @@ sc1 = {
         // rebuildGui({values:{
         
         // }})
+        // varW=true;
 
-    var legValues = {};
+        var legValues = {};
 
-    for (var i = 1 ; i <= 6 ; i++){
-        legValues["Leg"+i+"RootRX"]=0.001;
-        legValues["Leg"+i+"RootRY"]=0.001;
-        legValues["Leg"+i+"RootRZ"]=0.001;
-        legValues["Leg"+i+"Femur"]=0.7;
-        legValues["Leg"+i+"Tibia"]=-.28;
-        legValues["Leg"+i+"UTarsis"]=0.3;
-        legValues["Leg"+i+"LTarsis"]=-.075;
-    }
+        legValues.symmetry = 0;
 
-  rebuildGui({
+        for (var i = 1 ; i <= 6 ; i++){
+            legValues["Leg"+i+"RootRX"]=0.001;
+            legValues["Leg"+i+"RootRY"]=0.001;
+            legValues["Leg"+i+"RootRZ"]=0.001;
+            legValues["Leg"+i+"Femur"]=0.7;
+            legValues["Leg"+i+"Tibia"]=-.28;
+            legValues["Leg"+i+"UTarsis"]=0.3;
+            legValues["Leg"+i+"LTarsis"]=-.075;
+        }
+
+
+        rebuildGui({
             sliders:0.1,
             folders:[
-            {name:"main",values:{
+            {name:"body",values:{
                 bodyRX:0,
                 bodyRY:0,
                 bodyRZ:0,
+                abdomenRX:0,
+                abdomenRY:0,
+                abdomenRZ:0,
+                thoraxRX:0,
+                thoraxRY:0,
+                thoraxRZ:0,
+
+            },
+            },
+            {name:"anim",values:{
+                flapHeight:0,
+                flapSpeed:0,
+                // bodyRZ:0,
+                // abdomenRX:0,
+                // abdomenRY:0,
+                // abdomenRZ:0,
+                // thoraxRX:0,
+                // thoraxRY:0,
+                // thoraxRZ:0,
+
+            },
+            },
+            {name:"head",values:{
+                symmetry:0,
                 headRX:0,
                 headRY:0,
-                headRZ:0},
+                headRZ:0,
+                leftAntRootRX:0,
+                leftAntRootRY:0,
+                leftAntRootRZ:0,
+                leftAntAllRX:0,
+                leftAntAllRY:0,
+                leftAntAllRZ:0,
+                rightAntRootRX:0,
+                rightAntRootRY:0,
+                rightAntRootRZ:0,
+                rightAntAllRX:0,
+                rightAntAllRY:0,
+                rightAntAllRZ:0,
+                probAllRX:0,
+                probAllRY:0,
+                probAllRZ:0,
+                probRootRX:0,
+                probRootRY:0,
+                probRootRZ:0,
+                nFreqLeft:0,
+                nFreqRight:0,
+                nMultLeft:0,
+                nMultRight:0,
+            },
             },
             {name:"wings",values:{
                 LUWingRootRX:0,
@@ -59,45 +110,35 @@ sc1 = {
                 LLWingVeinsAllRY:0,
                 LLWingVeinsAllRZ:0,
 
+                RUWingRootRX:0,
+                RUWingRootRY:0,
+                RUWingRootRZ:0,
+                RUWingAllRX:0,
+                RUWingAllRY:0,
+                RUWingAllRZ:0,
+                RUWingVeinsAllRX:0,
+                RUWingVeinsAllRY:0,
+                RUWingVeinsAllRZ:0,
+
+
+                RLWingRootRX:0,
+                RLWingRootRY:0,
+                RLWingRootRZ:0,
+                RLWingAllRX:0,
+                RLWingAllRY:0,
+                RLWingAllRZ:0,
+                RLWingVeinsAllRX:0,
+                RLWingVeinsAllRY:0,
+                RLWingVeinsAllRZ:0,
+
             }},
              {name:"legs",values:legValues,
             }
             ]})
 
 
-        //   args.toString = function(){
-        //     Object.keys(this).forEach(function (key) {
-        //         console.log(args[key].toString());
-        //         Object.keys(key).forEach(function (hey) {
-        //             console.log(hey);
-        //         });
-        //     });
-        // }
-
-        // rebuildGui({
-        //     sliders:0.1,
-        //     folders:[
-        //     {name:"main",values:{
-        //         bodyRX:0,
-        //         bodyRY:0,
-        //         bodyRZ:0,
-        //         headRX:-.5,
-        //         headRY:1,
-        //         headRZ:0},
-        //     },
-        //     {name:"wings",values:{
-        //         bodyRX:0,
-        //         bodyRY:0,
-        //         bodyRZ:0,
-        //         headRX:0,
-        //         headRY:1,
-        //         headRZ:0,
-        //         bahoozereer:0},
-        //     }
-        //     ]})
-
-        // data.headRX=-.5;
-        // data.headRY=1;
+        info.head.headRX=-.5;
+        // info.head.headRY=1;
     },
 
     draw:function(time){
@@ -112,8 +153,14 @@ sc1 = {
         if(varE){
             saveIMG("moth_"+count+".png");
             countUp++;
-            if(countUp>30)
+            if(countUp>imagesToSave){
+                countUp=0;
                 varE = false;
+            }
+        }
+
+        if(varR){
+            console.log(imagesToSave);
         }
 
         if(varY){
@@ -145,18 +192,18 @@ sc1 = {
             var bod3 = wng.worldPositionsArray(body.lowerRibsLeft);
             var bod4 = wng.worldPositionsArray(body.lowerRibsRight);
 
-            var ob = {zero:1,xy:0,divx:20,divy:10,off:{freq:.5,mult:2,tipNoiseMult:3,tipNoiseFreq:.1,tipOff:-5,tipLength:5}};
-            var ob2 = {zero:1,xy:0,divx:20,divy:10,off:{freq:.5,mult:2,tipNoiseMult:3,tipNoiseFreq:.1,tipOff:5,tipLength:5}};
+            var ob = {zero:1,xy:0,divx:30,divy:10,off:{points:1,freq:.5,mult:2,tipNoiseMult:5,tipNoiseFreq:.1,tipOff:-5,tipLength:5},
+                tubeArgs:{lengthSegs:2,minWidth:0.01,width:2}};
+            var ob2 = {zero:1,xy:0,divx:30,divy:10,off:{points:1,freq:.5,mult:2,tipNoiseMult:5,tipNoiseFreq:.1,tipOff:5,tipLength:5},
+                tubeArgs:{lengthSegs:2,minWidth:0.01,width:2}};
 
-            // weave(bod,ob);
-            // weave(bod2,ob2);
+            weave(bod,ob);
+            weave(bod2,ob2);
            
-
-
-            // weave(mothParts[6],{zero:5});
-            // weave(mothParts[7],{zero:5});
-            // weave(mothParts[8],{zero:5});
-            // weave(mothParts[9],{zero:5});
+            weave(mothParts[6],{zero:5});
+            weave(mothParts[7],{zero:5});
+            weave(mothParts[8],{zero:5});
+            weave(mothParts[9],{zero:5});
             // weave(mothParts[11],2,1);
            
             // scene.add(geo);
@@ -258,6 +305,9 @@ Moth = {
 
         args.LeftUpperWing = makeArgs();
         args.LeftLowerWing = makeArgs();
+        args.RightUpperWing = makeArgs();
+        args.RightLowerWing = makeArgs();
+        args.Head = makeArgs();
         
         for(var i = 0 ; i < 6 ; i++){
             args["Leg"+(i+1)] = makeArgs();
@@ -273,33 +323,92 @@ Moth = {
     draw:function(time){
 
 
-        body.position.y=-15;
         body.setScale(.8);
+        body.position.y=-15;
 
-       
+        var flappity = Math.round(info.anim.flapSpeed*30) 
+        var flapSpeed = (flappity/30);
+        imagesToSave = (1/flapSpeed)*Math.PI*2;
+
+        body.position.z=  (Math.cos(.4+(flapSpeed*count))*5);
 
         args.LeftUpperWing = {
                 rootrx :  info.wings.LUWingRootRX*Math.PI,
                 rootry :  info.wings.LUWingRootRY*Math.PI,
                 rootrz :  info.wings.LUWingRootRZ*Math.PI,
-                allrx :   info.wings.LUWingAllRX*Math.PI,
-                allry :   info.wings.LUWingAllRY*Math.PI,
-                allrz :   info.wings.LUWingAllRZ*Math.PI,
-                veinsrx : info.wings.LUWingVeinsAllRX*Math.PI,
-                veinsry : info.wings.LUWingVeinsAllRY*Math.PI,
-                veinsrz : info.wings.LUWingVeinsAllRZ*Math.PI,
+                allrx :   info.wings.LUWingAllRX,
+                allry :   info.wings.LUWingAllRY,
+                allrz :   info.wings.LUWingAllRZ,
+                veinsrx : info.wings.LUWingVeinsAllRX*.3 + (.1*info.anim.flapHeight*(Math.sin(flapSpeed*count))),
+                veinsry : info.wings.LUWingVeinsAllRY*.3,
+                veinsrz : info.wings.LUWingVeinsAllRZ*.3,
         };
         args.LeftLowerWing = {
-                rootrx :  info.wings.LLWingRootRX*Math.PI,
+                rootrx :  info.wings.LLWingRootRX*Math.PI -(.2*info.anim.flapHeight) + (.2* info.anim.flapHeight*(Math.sin((Math.PI-(flapSpeed*count))))),
                 rootry :  info.wings.LLWingRootRY*Math.PI,
                 rootrz :  info.wings.LLWingRootRZ*Math.PI,
-                allrx :   info.wings.LLWingAllRX*Math.PI,
-                allry :   info.wings.LLWingAllRY*Math.PI,
-                allrz :   info.wings.LLWingAllRZ*Math.PI,
-                veinsrx : info.wings.LLWingVeinsAllRX*Math.PI,
-                veinsry : info.wings.LLWingVeinsAllRY*Math.PI,
-                veinsrz : info.wings.LLWingVeinsAllRZ*Math.PI,
+                allrx :   info.wings.LLWingAllRX,
+                allry :   info.wings.LLWingAllRY,
+                allrz :   info.wings.LLWingAllRZ,
+                veinsrx : info.wings.LLWingVeinsAllRX*.3 + (.1*info.anim.flapHeight*(Math.sin(flapSpeed*count))),
+                veinsry : info.wings.LLWingVeinsAllRY*.3,
+                veinsrz : info.wings.LLWingVeinsAllRZ*.3,
         };
+        args.RightUpperWing = {
+                rootrx :  info.wings.RUWingRootRX*Math.PI,
+                rootry :  info.wings.RUWingRootRY*Math.PI,
+                rootrz :  info.wings.RUWingRootRZ*Math.PI,
+                allrx :   info.wings.RUWingAllRX,
+                allry :   info.wings.RUWingAllRY,
+                allrz :   info.wings.RUWingAllRZ,
+                veinsrx : info.wings.RUWingVeinsAllRX*.3 + (.1*info.anim.flapHeight*(Math.sin(flapSpeed*count))),
+                veinsry : info.wings.RUWingVeinsAllRY*.3,
+                veinsrz : info.wings.RUWingVeinsAllRZ*.3,
+        };
+        args.RightLowerWing = {
+                rootrx :  info.wings.RLWingRootRX*Math.PI-(.2*info.anim.flapHeight) + (.2* info.anim.flapHeight*(Math.sin((Math.PI-(flapSpeed*count))))),
+                rootry :  info.wings.RLWingRootRY*Math.PI,
+                rootrz :  info.wings.RLWingRootRZ*Math.PI,
+                allrx :   info.wings.RLWingAllRX,
+                allry :   info.wings.RLWingAllRY,
+                allrz :   info.wings.RLWingAllRZ,
+                veinsrx : info.wings.RLWingVeinsAllRX*.3 + (.1*info.anim.flapHeight*(Math.sin(flapSpeed*count))),
+                veinsry : info.wings.RLWingVeinsAllRY*.3,
+                veinsrz : info.wings.RLWingVeinsAllRZ*.3,
+        };
+        args.Body = {
+                rootrx :  info.body.abdomenRX*.3 ,
+                rootry :  info.body.abdomenRY*.3,
+                rootrz :  info.body.abdomenRZ*.3,
+                allrx :   info.body.thoraxRX*.3 + (.02*info.anim.flapHeight*(Math.cos(1+(-flapSpeed*count))*5)),
+                allry :   info.body.thoraxRY*.3,
+                allrz :   info.body.thoraxRZ*.3,
+        }
+        args.Head = {
+                symmetry:         info.head.symmetry, 
+                leftAntRootrx :   info.head.leftAntRootRX,
+                leftAntRootry :   info.head.leftAntRootRY,
+                leftAntRootrz :   info.head.leftAntRootRZ - .2,
+                rightAntRootrx :  info.head.rightAntRootRX,
+                rightAntRootry :  info.head.rightAntRootRY,
+                rightAntRootrz :  info.head.rightAntRootRZ - .2,
+                leftAntAllrx :    info.head.leftAntAllRX + (.02*info.anim.flapHeight*(Math.cos(1.5+(-flapSpeed*count))*5)),
+                leftAntAllry :    info.head.leftAntAllRY,
+                leftAntAllrz :    info.head.leftAntAllRZ,
+                rightAntAllrx :   info.head.rightAntAllRX - (.02*info.anim.flapHeight*(Math.cos(1.5+(-flapSpeed*count))*5)),
+                rightAntAllry :   info.head.rightAntAllRY,
+                rightAntAllrz :   info.head.rightAntAllRZ,
+                proballrx:        info.head.probAllRX,
+                proballry:        info.head.probAllRY,
+                proballrz:        info.head.probAllRZ,
+                probrootrx :      info.head.probRootRX,
+                probrootry :      info.head.probRootRY,
+                probrootrz :      info.head.probRootRZ,
+                nfreqLeft  :      info.head.nFreqLeft,
+                nfreqRight :      info.head.nFreqRight,
+                nmultLeft  :      info.head.nMultLeft,
+                nmultRight :      info.head.nMultRight,
+        }
         for (var i = 1 ; i <= 6 ; i++){
             args["Leg"+i].rootrx  = info.legs["Leg"+i+"RootRX"]*Math.PI;
             args["Leg"+i].rootry  = info.legs["Leg"+i+"RootRY"]*Math.PI;
@@ -321,38 +430,45 @@ Moth = {
         // };
 
         // console.log(args);
-
+        var q = 0;
          for(var i = 0 ; i < legs.length ; i++){
-            Leg.draw(legs[i],1,args["Leg"+(i+1)]);
+            var mult = 1;
+            q=i;
+            if(i>2){
+                mult=-1;
+                if(info.legs.symmetry>0)
+                    q=i-3;
+            }
+            Leg.draw(legs[i],mult,args["Leg"+(q+1)]);
             legs[i].position.y = legs[i].parent.parent.params.jointScale.y;
         }   
 
        
 
-        // moth.rotation.x = data.bodyRX*Math.PI;
-        // moth.rotation.y = data.bodyRY*Math.PI;
-        // moth.rotation.z = data.bodyRZ*Math.PI;
+        moth.rotation.x = info.body.bodyRX*Math.PI + (.05*info.anim.flapHeight*(Math.sin(1+(-flapSpeed*count))*5));
+        moth.rotation.y = info.body.bodyRY*Math.PI;
+        moth.rotation.z = info.body.bodyRZ*Math.PI;
 
-        // head.rotation.x = data.headRX*Math.PI;
-        // head.rotation.y = data.headRY*Math.PI;
-        // head.rotation.z = data.headRZ*Math.PI;
+        head.rotation.x = info.head.headRX*Math.PI + (.02*info.anim.flapHeight*(Math.cos(1+(-flapSpeed*count))*5));
+        head.rotation.y = Math.PI+info.head.headRY*Math.PI;
+        head.rotation.z = info.head.headRZ*Math.PI;
 
         Wing.draw(lwing,1,args.LeftUpperWing);//lwing,1 ,Math.cos(time*Math.PI*.2)*.05);
-        Wing.draw(rwing,-1);//rwing,-1,Math.cos(time*Math.PI*.2)*.05);
+        Wing.draw(rwing,-1,args.RightUpperWing);//rwing,-1,Math.cos(time*Math.PI*.2)*.05);
         LowerWing.draw(llwing,1,args.LeftLowerWing);//llwing,1 ,Math.cos(time*Math.PI*.2)*.05);
-        LowerWing.draw(lrwing,-1);//lrwing,-1,Math.cos(time*Math.PI*.2)*.05);
+        LowerWing.draw(lrwing,-1,args.RightLowerWing);//lrwing,-1,Math.cos(time*Math.PI*.2)*.05);
 
-        Head.draw(head);
+        Head.draw(head,1,args.Head);
 
-        body.tips[3].rotation.x = -0.414*2;
-        body.tips[3].rotation.y = 0.17*2;
-        body.tips[3].rotation.z = -.34*5;//-0.739*2;
+        body.tips[3].rotation.x = (-0.414*2)+(info.anim.flapHeight*.5)+info.anim.flapHeight*1.3*(Math.cos(flapSpeed*count));
+        body.tips[3].rotation.y = (0.17*2);
+        body.tips[3].rotation.z = (-.34*5);//-0.739*2;
 
-        body.tips[2].rotation.x = -0.414*2;
+        body.tips[2].rotation.x = (-0.414*2)+(info.anim.flapHeight*.5)+info.anim.flapHeight*1.3*(Math.cos(flapSpeed*count));;
         body.tips[2].rotation.y = -0.17*2;
         body.tips[2].rotation.z = .34*5;
 
-        Body.draw(body,1);
+        Body.draw(body,1,args.Body);
 
     }
 }
@@ -460,8 +576,19 @@ Head = {
 
     },
 
-    draw:function(head,mult,anim){
+    draw:function(head,mult,args){
 
+        if(!args) args = makeArgs();
+
+        if(args.symmetry>0){
+            args.leftAntRootrx  =  -args.rightAntRootrx;
+            args.leftAntRootry  =  args.rightAntRootry;
+            args.leftAntRootrz  =  args.rightAntRootrz;
+            args.leftAntAllrx =    -args.rightAntAllrx;
+            args.leftAntAllry =    -args.rightAntAllry;
+            args.leftAntAllrz =    args.rightAntAllrz;
+           
+        }
 
         head.applyFunc([
 
@@ -502,18 +629,20 @@ Head = {
             palpRightBig,   {sc:1.5,rx:.5},
             palpRightSmall,  {sc:.75},
 
-            probLeftAll,    {sc:.97,rx:.06,jMult:.1,  jFract:.27},
-            probRightAll,   {sc:.97,rx:-.06,jMult:-.1,jFract:.27},
-            probLeftRoot,    {ry:.005*10,tz:-.37*20,ty:-.17*10},
-            probRightRoot,   {ry:-.005*10,tz:.37*20,ty:-.17*10},
+            probLeftAll,    {sc:.97,rx:args.proballrx,jMult:.1,  jFract:.27},
+            probRightAll,   {sc:.97,rx:-args.proballrx,jMult:-.1,jFract:.27},
+            probLeftAll,    {ry: args.proballry,rz:args.proballrz},
+            probRightAll,   {ry: args.proballry,rz:-args.proballrz},
+            probLeftRoot,    {ry:( .005*10)+args.probrootry,tz:(-.37*20)+args.probrootrz,ty:(-.17*10)},
+            probRightRoot,   {ry:(-.005*10)-args.probrootry,tz:( .37*20)-args.probrootrz,ty:(-.17*10)},
 
-            antLeftAll,      {rz:omouseX,nMult:-.4,nFreq:.17*3,sc:.95},
-            antLeftAll,      {ry:0,nMult:-.7,nFreq:.25*3,sc:.95},
-            antLeftRoot,     {rz:0,rx:0,rz:0},
+            // antLeftAll,      {rz:omouseX,nMult:-.4,nFreq:.17*3,sc:.95},
+            antLeftAll,      {rx:args.leftAntAllrx,ry:args.leftAntAllry,rz:args.leftAntAllrz,offsetter2:0.0001,sc:.95},
+            antLeftRoot,     {rx:args.leftAntRootrx,ry:args.leftAntRootry,rz:args.leftAntRootrz},
 
-            antRightAll,      {rz:omouseX,nMult:-.4,nFreq:.17*3,sc:.95},
-            antRightAll,      {ry:0,nMult:-.7,nFreq:.25*3,sc:.95},
-            antRightRoot,     {rz:0,rx:0,rz:0},
+            // antRightAll,      {rz:omouseX,nMult:-.4,nFreq:.17*3,sc:.95},
+            antRightAll,      {rx:args.rightAntAllrx,ry:args.rightAntAllry,rz:args.rightAntAllrz,offsetter2:0.0001,sc:.95},
+            antRightRoot,     {rx:args.rightAntRootrx,ry:-args.rightAntRootry,rz:args.rightAntRootrz},
 
             // headRootRight,       {rz:-.35*2,offsetter:(Math.PI/16)},
             // headRootLeft,       {rz:.35*2,offsetter:(Math.PI/16)},
@@ -521,7 +650,11 @@ Head = {
             // headRootAll,        {rx:.5},
             // headRootAll,        {rz:0,offMult:.1,freq:.5,off:-.5*Math.PI},
 
-          
+        ],head.transform)
+
+        head.applyFunc([
+            antRightAll,      {rx:0,rz:0,rz:0.0001,nMult:args.nmultRight,nFreq:args.nfreqRight,rotator:true,sc:.95},
+            antLeftAll,       {rx:0,rz:0,rz:0.0001,nMult:args.nmultLeft,nFreq:args.nfreqLeft,rotator:true,sc:.95},
 
         ],head.transform)
 
@@ -878,21 +1011,20 @@ Body = {
 
     },
 
-    draw:function(body, mult){
+    draw:function(body, mult, args){
 
         // sjoff = ( Math.sin ( (obj.parentJoint.joint * offScale) + offScaleOff ) ) * offScaleMult;
 
-
-        body.applyFunc([
-            bodyThoraxAll,        {ry:0,rx:0},
-
-            upperVertsRoot,         {rz:Math.PI,rx:-Math.PI/2},
-            lowerVertsRoot,         {rz:Math.PI,rx:-Math.PI/2},
+            body.applyFunc([
+            bodyThoraxAll,       {ry:args.allry,rx:args.allrx,rz:args.allrz},
+        
+            upperVertsRoot,      {rz:Math.PI,rx:-Math.PI/2},
+            lowerVertsRoot,      {rz:Math.PI,rx:-Math.PI/2},
 
             // upperVertsAll,         {rx:data.var2,offMult:data.var3,freq:data.var4,off:data.var5*3},
-            upperVertsAll,         {rx:0.018,offMult:0.062,freq:0.69,off:-0.067*3},
+            upperVertsAll,       {rx:0.018,offMult:0.062,freq:0.69,off:-0.067*3},
             // lowerVertsAll,         {rx:data.var2,offMult:data.var3,freq:data.var4,off:data.var5*3},
-            lowerVertsAll,         {rx:0,offMult:-0.111,freq:-0.436,off:0.04*3},
+            lowerVertsAll,       {rx:0,offMult:-0.111,freq:-0.436,off:0.04*3},
 
 
             upperRibsLeftAll,    {rx:-mult*.35},
@@ -931,7 +1063,7 @@ Body = {
             // bodyAbdomenRoot,    {sc:data.var4},
             // bodyAbdomenAll,     {sinScale:data.var1,sinScaleMult:data.var2,sinOff:data.var3*9},
             bodyAbdomenRoot,    {sc:0.885},
-            bodyAbdomenAll,     {sc:.94,sinScale:0.582,sinScaleMult:0.192,sinOff:0.127*9},
+            bodyAbdomenAll,     {rx:args.rootrx,ry:args.rootry,rz:args.rootrz,sc:.94,sinScale:0.582,sinScaleMult:0.192,sinOff:0.127*9},
             // bodyAbdomenAll,     {sinScale:-0.067,sinScaleMult:0.755,sinOff:-0.002*9},
             // upperVertsRoot,     {sc:data.var4,offScale:data.var1,offScaleMult:data.var2,offScaleOff:data.var3*9}
             // upperVertsRoot,     {sc:0.3,offScale:0.343,offScaleMult:0.907,offScaleOff:0.148*9}
@@ -1018,8 +1150,8 @@ Leg = {
         // ltarsis:0,
 
         leg.passFunc([
-            lParts[0], {sc:8, rz:args.rootrz,rx:args.rootrx,ry:args.rootry},
-            lParts[1], {sc:.5,rz:args.rootrz*.2,rx:args.rootrx*.2,ry:args.rootry*.2},
+            lParts[0], {sc:8, rz:args.rootrz,rx:mult*args.rootrx,ry:mult*args.rootry},
+            lParts[1], {sc:.5,rz:args.rootrz*.2,rx:mult*args.rootrx*.2,ry:mult*args.rootry*.2},
             lParts[2], {sc:.5,rz:args.femur},
             lParts[3], {sc:1.5,rz:-args.femur*.1},
             lParts[4], {sc:.75,rz:-args.femur*.1},
@@ -1050,7 +1182,7 @@ Leg = {
     }
 }
 
- function weave(wng,args){
+function weave(wng,args){
 
     if(!args) args={};
 
@@ -1060,6 +1192,11 @@ Leg = {
 
     var divx = args.divx || 50;
     var divy = args.divy || 10;
+
+    var tubeArgs = {lengthSegs:5,width:1,minWidth:1.5};
+    if(args.tubeArgs) tubeArgs = args.tubeArgs;
+
+    console.log(args);
 
     if(!args.off) args.off={};
 
@@ -1100,7 +1237,7 @@ Leg = {
 
         surf = tempTree.insertLerpVerts(surf,args.off);
         // }
-        var tubeGeo = tempTree.tubes(surf,{lengthSegs:5,width:1,minWidth:1.5});
+        var tubeGeo = tempTree.tubes(surf,tubeArgs);
         // console.log(tubeGeo);
         // console.log(ngeo[0]);
 
@@ -1125,9 +1262,7 @@ function sinChop(arr){
     // console.log(tempArr);
 
     return tempArr;
-
 }
-
 
 function makeArgs(){
   var args = {
@@ -1148,14 +1283,38 @@ function makeArgs(){
         tibia :0,
         utarsis:0,
         ltarsis:0,
+        leftAntRootrx:0,
+        leftAntRootry :0,
+        leftAntRootrz :0,
+        rightAntRootrx:0,
+        rightAntRootry:0,
+        rightAntRootrz:0,
+        leftAntAllrx:0,
+        leftAntAllry:0,
+        leftAntAllrz:0,
+        rightAntAllrx :0,
+        rightAntAllry :0,
+        rightAntAllrz :0,
+        proballrx:0,
+        proballry:0,
+        proballrz:0,
+        probrootrx :0,
+        probrootry :0,
+        probrootrz :0,
     }
     return args;
 }
 
 function updateArgs(){
-return JSON.parse('{"main":{"bodyRX":0,"bodyRY":0,"bodyRZ":0,"headRX":0,"headRY":0,"headRZ":0},"wings":{"LUWingRootRX":0,"LUWingRootRY":0,"LUWingRootRZ":0,"LUWingAllRX":0,"LUWingAllRY":0,"LUWingAllRZ":0,"LUWingVeinsAllRX":0,"LUWingVeinsAllRY":0,"LUWingVeinsAllRZ":0,"LLWingRootRX":0,"LLWingRootRY":0,"LLWingRootRZ":0,"LLWingAllRX":0,"LLWingAllRY":0,"LLWingAllRZ":0,"LLWingVeinsAllRX":0,"LLWingVeinsAllRY":0,"LLWingVeinsAllRZ":0},"legs":{"Leg1RootRX":-0.21071176885130372,"Leg1RootRY":-0.07540521494009866,"Leg1RootRZ":-0.12050739957716705,"Leg1Femur":0.7589852008456659,"Leg1Tibia":-0.21071176885130372,"Leg1UTarsis":0.26286116983791397,"Leg1LTarsis":-0.16560958421423533,"Leg2RootRX":0.15010570824524305,"Leg2RootRY":0.10500352360817478,"Leg2RootRZ":-0.07540521494009866,"Leg2Femur":0.5560253699788584,"Leg2Tibia":-0.2558139534883721,"Leg2UTarsis":0.2854122621564481,"Leg2LTarsis":-0.075,"Leg3RootRX":0.3305144467935166,"Leg3RootRY":-0.007751937984496138,"Leg3RootRZ":0.001,"Leg3Femur":0.398167723749119,"Leg3Tibia":-0.23326286116983797,"Leg3UTarsis":0.24031007751937983,"Leg3LTarsis":-0.3009161381254405,"Leg4RootRX":0.21071176885130372,"Leg4RootRY":0.07540521494009866,"Leg4RootRZ":-0.12050739957716705,"Leg4Femur":0.7589852008456659,"Leg4Tibia":-0.21071176885130372,"Leg4UTarsis":0.26286116983791397,"Leg4LTarsis":-0.16560958421423533,"Leg5RootRX":-0.15010570824524305,"Leg5RootRY":-0.10500352360817478,"Leg5RootRZ":-0.07540521494009866,"Leg5Femur":0.5560253699788584,"Leg5Tibia":-0.2558139534883721,"Leg5UTarsis":0.2854122621564481,"Leg5LTarsis":-0.075,"Leg6RootRX":-0.3305144467935166,"Leg6RootRY":0.007751937984496138,"Leg6RootRZ":0.001,"Leg6Femur":0.398167723749119,"Leg6Tibia":-0.23326286116983797,"Leg6UTarsis":0.24031007751937983,"Leg6LTarsis":-0.3009161381254405}}');
+return JSON.parse('{"body":{"bodyRX":0,"bodyRY":0,"bodyRZ":0},"head":{"headRX":-0.5,"headRY":0,"headRZ":0},"wings":{"LUWingRootRX":0,"LUWingRootRY":0,"LUWingRootRZ":0,"LUWingAllRX":0,"LUWingAllRY":0,"LUWingAllRZ":0,"LUWingVeinsAllRX":0,"LUWingVeinsAllRY":0,"LUWingVeinsAllRZ":0,"LLWingRootRX":0,"LLWingRootRY":0,"LLWingRootRZ":0,"LLWingAllRX":0,"LLWingAllRY":0,"LLWingAllRZ":0,"LLWingVeinsAllRX":0,"LLWingVeinsAllRY":0,"LLWingVeinsAllRZ":0},"legs":{"Leg1RootRX":-0.21071176885130372,"Leg1RootRY":-0.07540521494009866,"Leg1RootRZ":-0.12050739957716705,"Leg1Femur":0.7589852008456659,"Leg1Tibia":-0.21071176885130372,"Leg1UTarsis":0.26286116983791397,"Leg1LTarsis":-0.16560958421423533,"Leg2RootRX":0.15010570824524305,"Leg2RootRY":0.10500352360817478,"Leg2RootRZ":-0.07540521494009866,"Leg2Femur":0.5560253699788584,"Leg2Tibia":-0.2558139534883721,"Leg2UTarsis":0.2854122621564481,"Leg2LTarsis":-0.075,"Leg3RootRX":0.3305144467935166,"Leg3RootRY":-0.007751937984496138,"Leg3RootRZ":0.001,"Leg3Femur":0.398167723749119,"Leg3Tibia":-0.23326286116983797,"Leg3UTarsis":0.24031007751937983,"Leg3LTarsis":-0.3009161381254405,"Leg4RootRX":-0.21071176885130372,"Leg4RootRY":-0.07540521494009866,"Leg4RootRZ":-0.12050739957716705,"Leg4Femur":0.7589852008456659,"Leg4Tibia":-0.21071176885130372,"Leg4UTarsis":0.26286116983791397,"Leg4LTarsis":-0.16560958421423533,"Leg5RootRX":0.15010570824524305,"Leg5RootRY":0.10500352360817478,"Leg5RootRZ":-0.07540521494009866,"Leg5Femur":0.5560253699788584,"Leg5Tibia":-0.2558139534883721,"Leg5UTarsis":0.2854122621564481,"Leg5LTarsis":-0.075,"Leg6RootRX":0.3305144467935166,"Leg6RootRY":-0.007751937984496138,"Leg6RootRZ":0.001,"Leg6Femur":0.398167723749119,"Leg6Tibia":-0.23326286116983797,"Leg6UTarsis":0.24031007751937983,"Leg6LTarsis":-0.3009161381254405}}');
 
-    // return JSON.parse('{"main":{"bodyRX":0,"bodyRY":0,"bodyRZ":0,"headRX":0,"headRY":0,"headRZ":0},"wings":{"LUWingRootRX":0,"LUWingRootRY":0,"LUWingRootRZ":-0.4926762019645011,"LUWingAllRX":0,"LUWingAllRY":0,"LUWingAllRZ":0,"LUWingVeinsAllRX":0,"LUWingVeinsAllRY":0,"LUWingVeinsAllRZ":0,"LLWingRootRX":0,"LLWingRootRY":0,"LLWingRootRZ":0,"LLWingAllRX":0,"LLWingAllRY":0,"LLWingAllRZ":0,"LLWingVeinsAllRX":0,"LLWingVeinsAllRY":0,"LLWingVeinsAllRZ":0},"legs":{"Leg1RootRX":0.001,"Leg1RootRY":0.001,"Leg1RootRZ":0.001,"Leg1Femur":0.7,"Leg1Tibia":-0.28,"Leg1UTarsis":0.3,"Leg1LTarsis":-0.075,"Leg2RootRX":0.001,"Leg2RootRY":0.001,"Leg2RootRZ":0.001,"Leg2Femur":0.7,"Leg2Tibia":-0.28,"Leg2UTarsis":0.3,"Leg2LTarsis":-0.075,"Leg3RootRX":0.001,"Leg3RootRY":0.001,"Leg3RootRZ":0.001,"Leg3Femur":0.7,"Leg3Tibia":-0.28,"Leg3UTarsis":0.3,"Leg3LTarsis":-0.075,"Leg4RootRX":0.001,"Leg4RootRY":0.001,"Leg4RootRZ":0.001,"Leg4Femur":0.7,"Leg4Tibia":-0.28,"Leg4UTarsis":0.3,"Leg4LTarsis":-0.075,"Leg5RootRX":0.001,"Leg5RootRY":0.001,"Leg5RootRZ":0.001,"Leg5Femur":0.7,"Leg5Tibia":-0.28,"Leg5UTarsis":0.3,"Leg5LTarsis":-0.075,"Leg6RootRX":0.001,"Leg6RootRY":0.001,"Leg6RootRZ":0.001,"Leg6Femur":0.7,"Leg6Tibia":-0.28,"Leg6UTarsis":0.3,"Leg6LTarsis":-0.075}}');
+// return JSON.parse('{"body":{"bodyRX":0,"bodyRY":0,"bodyRZ":0,"abdomenRX":0.28487365870543435,"abdomenRY":-0.31325718241606093,"abdomenRZ":0.15195569401176878,"thoraxRX":0.39563862928348903,"thoraxRY":-0.4018691588785047,"thoraxRZ":-0.31325718241606093},"head":{"symmetry":0,"headRX":-0.5243319766413024,"headRY":0.177844629269156,"headRZ":0,"leftAntRootRX":0.22314634577950798,"leftAntRootRY":0,"leftAntRootRZ":0,"leftAntAllRX":0.10500352360817478,"leftAntAllRY":0,"leftAntAllRZ":0,"rightAntRootRX":-0.22987081932401343,"rightAntRootRY":0,"rightAntRootRZ":0,"rightAntAllRX":0.1325429127588038,"rightAntAllRY":0,"rightAntAllRZ":0,"probAllRX":-0.026013095027428768,"probAllRY":0.019288621482923318,"probAllRZ":-0.026013095027428768,"probRootRX":-0.09396566979295695,"probRootRY":-0.3657759688550699,"probRootRZ":0,"nFreqLeft":0.19520789288231155,"nFreqRight":0.4883720930232558,"nMultLeft":0.7815362931642,"nMultRight":0.6011275546159267},"wings":{"LUWingRootRX":-0.048663953282604866,"LUWingRootRY":-0.003362236772252669,"LUWingRootRZ":-0.026013095027428768,"LUWingAllRX":0,"LUWingAllRY":0,"LUWingAllRZ":0,"LUWingVeinsAllRX":0.3137497788002124,"LUWingVeinsAllRY":0.20049548752433188,"LUWingVeinsAllRZ":0,"LLWingRootRX":-0.003362236772252669,"LLWingRootRY":0.10500352360817478,"LLWingRootRZ":-0.12050739957716705,"LLWingAllRX":-0.007751937984496138,"LLWingAllRY":-0.030303030303030276,"LLWingAllRZ":0.014799154334038,"LLWingVeinsAllRX":0.177844629269156,"LLWingVeinsAllRY":0.014799154334038,"LLWingVeinsAllRZ":0.0599013389711065,"RUWingRootRX":0.0599013389711065,"RUWingRootRY":0.04193947973809942,"RUWingRootRZ":-0.030303030303030276,"RUWingAllRX":0,"RUWingAllRY":0,"RUWingAllRZ":0,"RUWingVeinsAllRX":0.1551937710139799,"RUWingVeinsAllRY":-0.030303030303030276,"RUWingVeinsAllRZ":-0.052854122621564525,"RLWingRootRX":-0.13926738630330915,"RLWingRootRY":-0.07540521494009866,"RLWingRootRZ":0.03735024665257214,"RLWingAllRX":0,"RLWingAllRY":0,"RLWingAllRZ":0,"RLWingVeinsAllRX":0.1551937710139799,"RLWingVeinsAllRY":-0.030303030303030276,"RLWingVeinsAllRZ":0},"legs":{"symmetry":0.20049548752433188,"Leg1RootRX":-0.21071176885130372,"Leg1RootRY":-0.07540521494009866,"Leg1RootRZ":0.06459033799327552,"Leg1Femur":1,"Leg1Tibia":-0.21071176885130372,"Leg1UTarsis":0.26286116983791397,"Leg1LTarsis":0.2684480622898602,"Leg2RootRX":-0.11661652804813305,"Leg2RootRY":0.10500352360817478,"Leg2RootRZ":-0.07540521494009866,"Leg2Femur":0.5560253699788584,"Leg2Tibia":-0.2558139534883721,"Leg2UTarsis":0.2854122621564481,"Leg2LTarsis":-0.4790302601309503,"Leg3RootRX":0.3305144467935166,"Leg3RootRY":-0.007751937984496138,"Leg3RootRZ":0.001,"Leg3Femur":0.398167723749119,"Leg3Tibia":-0.22987081932401343,"Leg3UTarsis":0.177844629269156,"Leg3LTarsis":-0.682887984427535,"Leg4RootRX":-0.21071176885130372,"Leg4RootRY":-0.07540521494009866,"Leg4RootRZ":-0.12050739957716705,"Leg4Femur":0.7589852008456659,"Leg4Tibia":-0.21071176885130372,"Leg4UTarsis":0.26286116983791397,"Leg4LTarsis":-0.16560958421423533,"Leg5RootRX":0.15010570824524305,"Leg5RootRY":0.10500352360817478,"Leg5RootRZ":-0.07540521494009866,"Leg5Femur":0.5560253699788584,"Leg5Tibia":-0.2558139534883721,"Leg5UTarsis":0.2854122621564481,"Leg5LTarsis":-0.075,"Leg6RootRX":0.3305144467935166,"Leg6RootRY":-0.007751937984496138,"Leg6RootRZ":0.001,"Leg6Femur":0.398167723749119,"Leg6Tibia":-0.23326286116983797,"Leg6UTarsis":0.24031007751937983,"Leg6LTarsis":-0.3009161381254405}} ');
+
+// return JSON.parse('{"body":{"bodyRX":0,"bodyRY":0,"bodyRZ":0,"abdomenRX":0.03735024665257214,"abdomenRY":0.08245243128964064,"abdomenRZ":-0.052854122621564525,"thoraxRX":0.08245243128964064,"thoraxRY":0.0599013389711065,"thoraxRZ":-0.07540521494009866},"head":{"symmetry":0,"headRX":-0.5,"headRY":0,"headRZ":0,"leftAntRootRX":0.24031007751937983,"leftAntRootRY":0,"leftAntRootRZ":0,"leftAntAllRX":0.10500352360817478,"leftAntAllRY":0,"leftAntAllRZ":0,"rightAntRootRX":-1,"rightAntRootRY":0,"rightAntRootRZ":0,"rightAntAllRX":-0.23326286116983797,"rightAntAllRY":0,"rightAntAllRZ":0,"probAllRX":-0.0979563072586328,"probAllRY":-0.16560958421423533,"probAllRZ":-0.052854122621564525,"probRootRX":0.26286116983791397,"probRootRY":-0.751937984496124,"probRootRZ":0,"nFreqLeft":0.19520789288231155,"nFreqRight":0.4883720930232558,"nMultLeft":0.7815362931642,"nMultRight":0.6011275546159267},"wings":{"LUWingRootRX":0.12755461592670891,"LUWingRootRY":0.3305144467935166,"LUWingRootRZ":-0.16560958421423533,"LUWingAllRX":0,"LUWingAllRY":0,"LUWingAllRZ":0,"LUWingVeinsAllRX":0.03735024665257214,"LUWingVeinsAllRY":0.03735024665257214,"LUWingVeinsAllRZ":0,"LLWingRootRX":0.2854122621564481,"LLWingRootRY":0.10500352360817478,"LLWingRootRZ":-0.12050739957716705,"LLWingAllRX":-0.007751937984496138,"LLWingAllRY":-0.030303030303030276,"LLWingAllRZ":0.014799154334038,"LLWingVeinsAllRX":0.014799154334038,"LLWingVeinsAllRY":0.014799154334038,"LLWingVeinsAllRZ":0.0599013389711065,"RUWingRootRX":0.0599013389711065,"RUWingRootRY":-0.3009161381254405,"RUWingRootRZ":-0.030303030303030276,"RUWingAllRX":0,"RUWingAllRY":0,"RUWingAllRZ":0,"RUWingVeinsAllRX":0.014799154334038,"RUWingVeinsAllRY":-0.030303030303030276,"RUWingVeinsAllRZ":-0.052854122621564525,"RLWingRootRX":0.15010570824524305,"RLWingRootRY":-0.07540521494009866,"RLWingRootRZ":0.03735024665257214,"RLWingAllRX":0,"RLWingAllRY":0,"RLWingAllRZ":0,"RLWingVeinsAllRX":0.03735024665257214,"RLWingVeinsAllRY":-0.030303030303030276,"RLWingVeinsAllRZ":0},"legs":{"symmetry":0,"Leg1RootRX":-0.21071176885130372,"Leg1RootRY":-0.07540521494009866,"Leg1RootRZ":-0.12050739957716705,"Leg1Femur":0.7589852008456659,"Leg1Tibia":-0.21071176885130372,"Leg1UTarsis":0.26286116983791397,"Leg1LTarsis":-0.16560958421423533,"Leg2RootRX":0.15010570824524305,"Leg2RootRY":0.10500352360817478,"Leg2RootRZ":-0.07540521494009866,"Leg2Femur":0.5560253699788584,"Leg2Tibia":-0.2558139534883721,"Leg2UTarsis":0.2854122621564481,"Leg2LTarsis":-0.075,"Leg3RootRX":0.3305144467935166,"Leg3RootRY":-0.007751937984496138,"Leg3RootRZ":0.001,"Leg3Femur":0.398167723749119,"Leg3Tibia":-0.23326286116983797,"Leg3UTarsis":0.24031007751937983,"Leg3LTarsis":-0.3009161381254405,"Leg4RootRX":-0.21071176885130372,"Leg4RootRY":-0.07540521494009866,"Leg4RootRZ":-0.12050739957716705,"Leg4Femur":0.7589852008456659,"Leg4Tibia":-0.21071176885130372,"Leg4UTarsis":0.26286116983791397,"Leg4LTarsis":-0.16560958421423533,"Leg5RootRX":0.15010570824524305,"Leg5RootRY":0.10500352360817478,"Leg5RootRZ":-0.07540521494009866,"Leg5Femur":0.5560253699788584,"Leg5Tibia":-0.2558139534883721,"Leg5UTarsis":0.2854122621564481,"Leg5LTarsis":-0.075,"Leg6RootRX":0.3305144467935166,"Leg6RootRY":-0.007751937984496138,"Leg6RootRZ":0.001,"Leg6Femur":0.398167723749119,"Leg6Tibia":-0.23326286116983797,"Leg6UTarsis":0.24031007751937983,"Leg6LTarsis":-0.3009161381254405}}');
+
+
+
+// {"body":{"bodyRX":0,"bodyRY":0,"bodyRZ":0,"abdomenRX":-0.0979563072586328,"abdomenRY":0,"abdomenRZ":0,"thoraxRX":0.03735024665257214,"thoraxRY":0.0599013389711065,"thoraxRZ":0.03735024665257214},"head":{"symmetry":0.1726568005637774,"headRX":-0.5,"headRY":0,"headRZ":0,"leftAntRootRX":0,"leftAntRootRY":0,"leftAntRootRZ":0,"rightAntRootRX":-0.7970401691331924,"rightAntRootRY":0,"rightAntRootRZ":0,"leftAntAllRX":0,"leftAntAllRY":0,"leftAntAllRZ":-0.052854122621564525,"rightAntAllRX":-0.23326286116983797,"rightAntAllRY":-0.16560958421423533,"rightAntAllRZ":0.15010570824524305,"probAllRX":-0.1430584918957012,"probAllRY":0,"probAllRZ":0.08245243128964064,"probRootRX":-0.16560958421423533,"probRootRY":0,"probRootRZ":0},"wings":{"LUWingRootRX":0,"LUWingRootRY":0,"LUWingRootRZ":0,"LUWingAllRX":0,"LUWingAllRY":0,"LUWingAllRZ":-0.007751937984496138,"LUWingVeinsAllRX":0.03735024665257214,"LUWingVeinsAllRY":-0.007751937984496138,"LUWingVeinsAllRZ":-0.030303030303030276,"LLWingRootRX":-0.030303030303030276,"LLWingRootRY":0,"LLWingRootRZ":-0.052854122621564525,"LLWingAllRX":0,"LLWingAllRY":0,"LLWingAllRZ":0,"LLWingVeinsAllRX":0.03735024665257214,"LLWingVeinsAllRY":0.014799154334038,"LLWingVeinsAllRZ":-0.030303030303030276,"RUWingRootRX":0,"RUWingRootRY":-0.12050739957716705,"RUWingRootRZ":0.014799154334038,"RUWingAllRX":0,"RUWingAllRY":0,"RUWingAllRZ":0,"RUWingVeinsAllRX":0.014799154334038,"RUWingVeinsAllRY":-0.030303030303030276,"RUWingVeinsAllRZ":0,"RLWingRootRX":0,"RLWingRootRY":0,"RLWingRootRZ":0,"RLWingAllRX":0,"RLWingAllRY":0,"RLWingAllRZ":0,"RLWingVeinsAllRX":0.03735024665257214,"RLWingVeinsAllRY":0,"RLWingVeinsAllRZ":0},"legs":{"symmetry":0,"Leg1RootRX":-0.21071176885130372,"Leg1RootRY":-0.07540521494009866,"Leg1RootRZ":-0.12050739957716705,"Leg1Femur":0.7589852008456659,"Leg1Tibia":-0.21071176885130372,"Leg1UTarsis":0.26286116983791397,"Leg1LTarsis":-0.16560958421423533,"Leg2RootRX":0.15010570824524305,"Leg2RootRY":0.10500352360817478,"Leg2RootRZ":-0.07540521494009866,"Leg2Femur":0.5560253699788584,"Leg2Tibia":-0.2558139534883721,"Leg2UTarsis":0.2854122621564481,"Leg2LTarsis":-0.075,"Leg3RootRX":0.3305144467935166,"Leg3RootRY":-0.007751937984496138,"Leg3RootRZ":0.001,"Leg3Femur":0.398167723749119,"Leg3Tibia":-0.23326286116983797,"Leg3UTarsis":0.24031007751937983,"Leg3LTarsis":-0.3009161381254405,"Leg4RootRX":-0.21071176885130372,"Leg4RootRY":-0.07540521494009866,"Leg4RootRZ":-0.12050739957716705,"Leg4Femur":0.7589852008456659,"Leg4Tibia":-0.21071176885130372,"Leg4UTarsis":0.26286116983791397,"Leg4LTarsis":-0.16560958421423533,"Leg5RootRX":0.15010570824524305,"Leg5RootRY":0.10500352360817478,"Leg5RootRZ":-0.07540521494009866,"Leg5Femur":0.5560253699788584,"Leg5Tibia":-0.2558139534883721,"Leg5UTarsis":0.2854122621564481,"Leg5LTarsis":-0.075,"Leg6RootRX":0.3305144467935166,"Leg6RootRY":-0.007751937984496138,"Leg6RootRZ":0.001,"Leg6Femur":0.398167723749119,"Leg6Tibia":-0.23326286116983797,"Leg6UTarsis":0.24031007751937983,"Leg6LTarsis":-0.3009161381254405}} 
 }
 
 
