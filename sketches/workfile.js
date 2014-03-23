@@ -2,170 +2,368 @@ sc1 = {
     
     setup:function(){
 
-        tree = new TREE();
-        
-        // scene.add(new THREE.AmbientLight({intensity:10}))
+        var poles = [];
 
-        tree.params.ballGeo =  new THREE.SphereGeometry(1,3,6),
-        tree.params.jointGeo = new THREE.CylinderGeometry( 1,1,1,5,1),
-        tree.params.mat = new THREE.MeshLambertMaterial({ color:0xffffff, shading: THREE.SmoothShading,vertexColors:THREE.FaceColors }),
+        for ( i = 0 ; i < 1 ; i++){
+            poles[i] = makePole();
+            // scene.add(poles[i]);
+        }
 
-        tree.generate({
-            joints: [40,5],
-            length: [5,2],
-            width: [1,2],
-            rads:[1,2],
-            start:[1,30],
-            angles:[0,.6]
-        });
-        
-        tree.position.y=-10;
-        tree.setScale(.1);
-        tree.updateMatrixWorld();
-        
-        budsAll = tree.makeList([0,0,-1,-1,-2]);
-        budsRoot = tree.makeList([0,0,-1,-1,0]);
-        budsEnd =  tree.makeList([0,0,-1,-1,-3]);
-        rootRoot = tree.makeList([0,0,0]);
-        rootAll = tree.makeList([0,0,-2]);
-        tipScale = tree.makeList([0,0,[35,39]])
-        tipScaleBuds = tree.makeList([0,0,[7,9],-1,0])
+        var mpoles = [];
 
-        tree.makeDictionary();
-        
-        codeName = "barley";
+        var lines = [];
 
-        // scene.add(tree);
-        
-        counter = 0;
+        for (var i = 0 ; i < 4 ; i++){
+            lines[i] = [];
+        }
 
-        counter-=.5+noise(count*.05);
-        
-        tree.applyFunc([
-            budsAll, {rz:-.05,sinScaleMult:1,sinOff:Math.PI,sinScale:0.2,sc:1.3},
-            budsEnd, {scy:8,scx:.2,scz:.2},
-            rootAll, {rz:0,jFreq:.1,jMult:.01+noise(count*.01)*.2,jOff:counter*.3,jFract:.01},
-            tipScale, {sc:.9},
-            tipScaleBuds, {rz:0,offsetter3:0.001,freq:.37,offMult:.655,off:.323*3}
-        ],tree.transform)
+        var path = new TREE();
+        path.generate({joints:[75],length:[200]});
+        path.makeDictionary();
 
-        // tree.applyFunc([
-        //     budsRoot, {color:new THREE.Color(0xff0000)}],
-        //     function(obj,args){for(var i = 0 ; i < obj.jointMesh.geometry.faces.length ; i++){obj.jointMesh.geometry.faces[i].color.setRGB(1,0,0)};console.log(obj.jointMesh.geometry.faces[0].color)})
+        var pathList = path.makeList([0,0,-1]);
+        // console.log(path.parts[pathList[0]]);
 
-        var geo = tree.mergeMeshes(tree);
+        path.passFunc(path.makeInfo([
+                [0,0,0],{rz:pi},
+                [0,0,-2],{rx:.5,sc:.99,nMult:2,nFreq:1.5}
+            ]),path.transform)
 
-        // scene.add(new THREE.Mesh(new THREE.CubeGeometry(20,20,20),new THREE.MeshLambertMaterial({transparent:true,opacity:.1})));
-      
+        var t = path.worldPositionsArray(path.report());
+        // console.log(t[0]);
+        scene.add(path);
 
-        // frameRate = 1;
+        for( i = 0 ; i < t[0].length-1 ; i++){
 
-        // var geo = new THREE.BoxGeometry(10,20,10,100,100,100);
+            var poser;
 
-        var material = new THREE.MeshLambertMaterial({color:0xffffff,skinning:true,vertexColors:THREE.FaceColors});
+            // if(i==0){
+                poser = new THREE.Vector3(0,-100,0);
+                    // -500+Math.random()*1000,
+                    // -100,
+                    // -500+Math.random()*1000
+                    
+                    // );
+            // }
+            // else{
+            //     poser  = new THREE.Vector3(
+            //   mpoles[i-1].position.x+(-.5+Math.random())*420,
+            //    -100,
+            //   mpoles[i-1].position.z+(-.5+Math.random())*420
+             
+            //     );
+            // }
+            // if(t[0][i].position)
+            poser = t[0][i];
+            // console.log(t[0][i].position);
 
-        geo.skinIndices = [];
-        geo.skinWeights = [];
+            var geo = poles[Math.floor(Math.random()*poles.length)];
+            mpoles.push(new THREE.Mesh(geo,new THREE.MeshLambertMaterial()));
+            scene.add(mpoles[i]);
 
-        for(var i = 0 ; i < geo.faces.length ; i++){
-            geo.faces[i].color.setRGB((geo.vertices[geo.faces[i].a].y/20)+.5,(geo.vertices[geo.faces[i].a].y/20)+.35,(geo.vertices[geo.faces[i].a].y/20)+.1);
-            if(i<5){
-                console.log(geo.faces[i]);
+            var spheres = new THREE.Object3D();
+
+            path.parts[pathList[i]].add(mpoles[i]);
+
+            for(var j = 0 ; j < geo.insulatorPositions.length ; j++){
+                var b = geo.insulatorPositions[j];
+                var c = b[b.length-1];
+                var ob = new THREE.Object3D();
+                ob.position = c;
+
+                spheres.add(ob);
+            }  
+            mpoles[i].add(spheres);
+            // mpoles[i].position = poser;
+            mpoles[i].rotation.z = -pi;
+            mpoles[i].insulators = [];
+
+            // mpoles[i].updateMatrixWorld();
+            spheres.updateMatrixWorld();
+            for(var j = 0 ; j < 4 ; j++){
+                // console.log(spheres);
+                var vec = new THREE.Vector3();
+                mpoles[i].updateMatrixWorld();
+                spheres.updateMatrixWorld();
+                spheres.children[j].updateMatrixWorld();
+                vec.setFromMatrixPosition(spheres.children[j].matrixWorld)
+                mpoles[i].insulators.push(vec);
+                lines[j].push(vec);
+            }
+          
+            // console.log(mpoles[i].position);
+            // console.log(mpoles[i].insulatorPositions[0][8]);
+        }
+
+        var brokenLines = [];
+
+        for(var i = 0 ; i < lines.length ; i++){
+            for(var j = 0 ; j < lines[i].length-1 ; j++){
+                var tempLine = [];
+                tempLine.push(lines[i][j]);
+                lerpVec = lines[i][j].clone();
+                lerpVec.lerp(lines[i][j+1],.5);
+                tempLine.push(lerpVec);
+                lerpVec.y-=25;
+                tempLine.push(lines[i][j+1]);
+                brokenLines.push(tempLine);
             }
         }
 
-        for(var i = 0 ; i < geo.vertices.length ; i++){
+        console.log(lines);
+        var line = [];
+        line.push(lines);
+        var b = new TREE();
+        var c = b.tubes(brokenLines,{lengthSegs:5,width:.1});
+        scene.add(c);
+        console.log(c);
 
-            // geo.vertices[i].color.setRGB(i,0,0);
-            // if(i<10);
-            // console.log(geo.vertices[i])
-            // geo.vertices[i].z+=Math.random()*.3;
+        var temp = new TREE();
 
-            q = (10+geo.vertices[i].y)/20;
-            g = -q+1;
+        // var all = temp.mergeMeshes(path);
+        // console.log(all);
+        // scene.add(new THREE.Mesh(all,path.params.mat));
 
-            geo.skinIndices.push( new THREE.Vector4(1,0,0,0 ));
-            geo.skinWeights.push( new THREE.Vector4(q,g,0,0 ));
+        mover = new THREE.Object3D();
 
-        }
-
-        // geo.computeVertexNormals();
-
-        geo.bones = [];
-
-        var bone = {};
-
-        bone.name="whatever";
-        bone.pos = [0,0,0];
-        bone.rot = [0,0,0];
-        bone.scl = [1,1,1];
-        bone.rotq = [0,0,0,1];
-        bone.parent = -1;
-
-        geo.bones.push(bone);
-
-        var bone = {};
-
-        bone.name="whatever2";
-        bone.pos = [0,-1,0];
-        bone.rot = [0,0,0];
-        bone.scl = [1,1,1];
-        bone.rotq = [0,0,0,1];
-        bone.parent = 0;
-
-        geo.bones.push(bone);
-
-        things = [];
-
-        for(var i = 0 ; i < 200 ; i++){
-            var thing = new THREE.SkinnedMesh(geo,material,false);
-            thing.scale = new THREE.Vector3(5,5,5);
-            thing.id=i;
-            thing.position.x = 250-Math.random()*500;
-            thing.position.y = (50-Math.random()*100);
-            thing.position.z = -thing.position.y*.1;
-            thing.position.y-=80;
+        camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 100000 );
+        camera.position.z = 1000;
+        console.log(camera);
+        // mover.add(camera);
+        // console.log(mover);
 
 
-            scene.add(thing);
-            things.push(thing);
-        }
-
-        // console.log(thing);
-        // scene.add(thing);
-
-        // postprocessing
         useComposer = true;
+        useDepth = true;
         composer = new THREE.EffectComposer( renderer );
         composer.addPass( new THREE.RenderPass( scene, camera ) );
 
-        // var dotScreenEffect = new THREE.ShaderPass( THREE.DotScreenShader );
-        // dotScreenEffect.uniforms[ 'scale' ].value = 4;
-        // composer.addPass( dotScreenEffect );
-
-        rgbEffect = new THREE.ShaderPass( THREE.testShader );
+        depthShader = THREE.ShaderLib[ "depthRGBA" ];
+        depthUniforms = THREE.UniformsUtils.clone( depthShader.uniforms );
+        depthMaterial = new THREE.ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms} );
+        depthMaterial.blending = THREE.NoBlending;
+        depthTarget = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat } );
+    
+        rgbEffect = new THREE.ShaderPass( THREE.depthNoiseShader );
+        
+        rgbEffect.uniforms['tDepth'].value = depthTarget;
         rgbEffect.uniforms[ 'amount' ].value = 0.0;//0015;
         rgbEffect.uniforms[ 'offer' ].value = 0.0;//0015;
+        rgbEffect.uniforms[ 'far' ].value = .5;//0015;
+
 
         rgbEffect.renderToScreen = true;
         composer.addPass( rgbEffect );
-        
 
     },
 
     draw:function(time){
         rgbEffect.uniforms[ 'offer' ].value = time;//0015;
 
+        // camera.position.set(0,0,-time);
 
-        offset = count*omouseX*.1;
+        // camera.lookAt(new THREE.Vector3(camera.position.x+omouseX*12,camera.position.y+omouseY*12,camera.position.z+100))
+        camera.rotation.y-=omouseX*.1;
+        camera.rotation.x=-omouseY;
+        camera.position.z-=Math.cos(camera.rotation.y)*2;
+        camera.position.x-=Math.sin(camera.rotation.y)*2;
+        camera.position.y-=Math.sin(-camera.rotation.x);
+        mover.position.x+=omouseX;
+        // tree.passFunc(tree.makeInfo([
+        //   [0,0,-2],{rz:0,ry:0,rz:0,nMult:omouseX,nFreq:omouseY*3},
+          
+        // ]),tree.transform)
+
+ 
+       
         
-        for(var i = 0 ; i < things.length ; i++){
-            // things[i].bones[1]._rotation.z = noise(.1+things[i].id+count*.1);
-            things[i].bones[1]._rotation.z = omouseY*4*noise(things[i].position.x/100+offset,things[i].position.y/100,things[i].position.z/100);
-
-        }
-
-
-      
     }
+}
+
+
+function makePole(){
+
+        tree = new TREE();
+        // scene.add(tree);
+
+        tree.generate({
+            joints:[10,1,5,8],
+            rads:[1,1,2,1],
+            divs:[1],
+            start:[7,7,0,4],
+            angles:[0,Math.PI/2],
+            length:[13,4,4,4],
+            width:[3,2,2,4],
+            end:[9,9],
+
+        })
+
+       joints = tree.makeList([0,0,-1,-1,0])
+       insulatorsRootLeft  = tree.makeList([0,0,-1,0,-1,0,0,-1,0]);
+       insulatorsRootRight = tree.makeList([0,0,-1,0,-1,1,0,-1,0]);
+
+       var array = [];
+
+       tree.passFunc([
+        insulatorsRootLeft,{arr:array},
+        insulatorsRootRight,{arr:array}
+        ],function(obj,args){args.arr.push(obj)})
+
+
+
+       // insulatorsRootRight = tree.makeList([0,0,-1,1,-1,1,1,-1,0])
+
+       insulatorsAll = tree.makeList([0,0,-1,-1,-1,-1,-1,-1,-2])
+
+        tree.passFunc([
+            joints, {rx:Math.PI/2},
+            insulatorsRootLeft,  {rz:0,rx:-Math.PI/2,      sc:.15},
+            insulatorsRootRight, {rz:Math.PI,rx:-Math.PI/2,sc:.15},
+
+            insulatorsAll,  {sinScale:1,sinScaleMult:.21,sinScaleFreq:2}
+        ],tree.transform)
+
+        tree.passFunc([
+            insulatorsAll,  {sinScale:Math.PI/2,sinScaleMult:.1*2}
+        ],function(obj,args){if(obj.joint%2==0){obj.jointMesh.scale.z=2;obj.jointMesh.scale.x=2}})
+        
+
+        //bark
+        sticks = new TREE();
+
+        sticks.generate({
+            joints:[1,10],
+            length:[3,2],
+            rads:[6,2],
+            width:[2],
+            angles:[Math.PI/2]
+        })
+
+        sticks.makeDictionary();
+        stick = sticks.makeList([0,-1,-1,-1,-1]);
+
+        sticks.passFunc([
+            stick,{sc:.9,rx:0,nFreq:.5,nMult:.1}
+        ],sticks.transform)
+
+        sticks.passFunc([
+            stick,{sc:.9,rx:0,nFreq:.9,nMult:.15,offsetter2:.001}
+        ],sticks.transform)
+
+        var sti = sticks.makeTubes();
+        // scene.add(sti);
+        sti.scale = new THREE.Vector3(.2,.08,.2);
+
+        var empty = new THREE.Geometry();
+
+        var stiGeo = sticks.mergeMeshes(sti);
+
+        //top
+
+        topper = new TREE();
+
+        console.log(topper);
+
+        topper.generate({
+            joints:[1,10],
+            length:[5,2],
+            rads:[12,1],
+            width:[1],
+            angles:[Math.PI/2]
+        });
+
+        topper.makeDictionary();
+        stick = topper.makeList([0,-1,-1,-1,-2]);
+
+        topper.passFunc([
+            stick,{sc:.9,rx:0,nFreq:.5,nMult:.1}
+        ],topper.transform)
+
+        topper.passFunc([
+            stick,{sc:.9,rz:.1,nFreq:.9,nMult:.15,offsetter2:.001}
+        ],topper.transform)
+
+        var topperg = topper.makeTubes();
+        // scene.add(topperg);
+        topperg.scale = new THREE.Vector3(.2,.02,.2);
+
+        var topp = topper.mergeMeshes(topperg);
+
+
+
+        tree.passFunc(tree.makeInfo([
+           [0,0,-1],{jointGeo:stiGeo,ballGeo:empty,ballGeo2:empty},
+           [0,0,-1,-1,-1,-1,-1],{jointGeo:stiGeo,ballGeo:empty,ballGeo2:empty},
+           [0,0,-3],{jointGeo:topp,ballGeo:empty,ballGeo2:empty},
+        ]),tree.setGeo)
+
+        tree.passFunc(tree.makeInfo([
+           [0,0,-1],{},
+           [0,0,-1,-1,-1,-1,-1],{}
+        ]),function(obj,args){obj.jointMesh.rotation.y=Math.random()*3})
+
+        tree.passFunc(tree.makeInfo([
+           [0,0,6],{length:10},
+           [0,0,6],{length:10},
+           [0,0,7],{length:10},
+           [0,0,7],{length:10},
+        ]),tree.appendBranch)
+        
+        tree.passFunc(tree.makeInfo([
+            [0,0,0,1,0],{scy:2,rz:.5,ry:Math.PI/2-.3},
+            [0,0,0,0,0],{scy:2,rz:.5,ry:-Math.PI/2+.3},
+            [0,0,0,1,-2],{rz:.1},
+            [0,0,0,0,-2],{rz:.1},
+            [0,0,1,2,0],{scy:2,rz:.5,ry:Math.PI/2-.3},
+            [0,0,1,1,0],{scy:2,rz:.5,ry:-Math.PI/2+.3},
+            [0,0,1,2,-2],{rz:.1},
+            [0,0,1,1,-2],{rz:.1},
+        ]),tree.transform)
+
+        tree.passFunc(tree.makeInfo([
+           [0,0,7],{tree:{joints:[5,5],rads:[1,10],angles:[1],length:[3,4],start:[4],angles:[pi],width:[1,3]}},
+        ]),tree.appendTree)
+
+         tree.passFunc(tree.makeInfo([
+           [0,0,1,3,0],{rz:1,ry:pi+pi/2},
+           [0,0,1,3,0,-1,-2],{rz:-.04},
+           [0,0,1,3,0,-1,1],{rz:-pi},
+           [0,0,1,3,0,-1,4],{rz:-pi},
+           [0,0,1,3,-2],{rz:.55},
+        ]),tree.transform)
+        
+         tree.passFunc(tree.makeInfo([
+           [0,0,9],{tree:{joints:[15,5],rads:[1,10],angles:[1],length:[3,1],start:[14],angles:[.5,pi],width:[1,1]}},
+        ]),tree.appendTree)
+
+         tree.passFunc(tree.makeInfo([
+          [0,0,3,0,0],{rz:.3},
+          [0,0,3,0,0,-1,-2],{rz:-.04},
+          [0,0,3,0,0,-1,3],{rz:-1},
+          [0,0,3,0,0,-1,4],{rz:-1},
+          [0,0,3,0,-2],{rz:.1},
+          [0,0,3,0,14],{rz:1},
+        ]),tree.transform)
+
+         tree.passFunc(tree.makeInfo([
+          [0,0,-2],{rz:0,ry:0,rz:0,nMult:Math.random()*.5,nFreq:Math.random()},
+          
+        ]),tree.transform)
+
+
+        var insulatorPositions = tree.worldPositionsArray(array);
+
+                 // console.log(insulatorPositions);
+
+
+        meshes = tree.mergeMeshes(tree);
+        meshes.insulatorPositions = insulatorPositions;
+
+
+
+        // tree.passFunc(tree.makeInfo([
+        //    [0,0,1,],{tree:{joints:[5,5],rads[1,10]}},
+        // ]),tree.transform)
+        return meshes;//new THREE.Mesh(meshes,tree.params.mat);
+
 }
