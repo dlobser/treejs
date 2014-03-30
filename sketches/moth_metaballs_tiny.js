@@ -1,13 +1,4 @@
 // convert -alpha opaque -resize 300 -delay 4 moth_*.png moh_02_300.gif
-/*
-
-ctrl-3 checks how many frames
-ctrl-1 turns on animation
-ctrl-t makes a model (or lots of models if 1 is true)
-ctrl-r makes metaballs
-
-*/
-
 imagesToSave = 0;
 
 sc1 = {
@@ -169,44 +160,82 @@ sc1 = {
             }
         }
 
-        if(var1){
-            if(!var2){
-                console.log("animated models");
-                var2=!var2;
-            }
-            // console.log("yep");
-            // var1=false;
-        }
-
-         if(var3){
-            console.log(imagesToSave);
-            var3=!var3;
-        }
-
         if(varR){
-
             tree = new TREE();
+            // tree.branch();
 
-            outputScale=1;
+            // console.log(empty);
+
+            // console.log(mothParts);
+
+            // report = [];
+
+            // for(var i = 0 ; i < mothParts.length ; i++){
+            //     var rep = mothParts[i].report();
+            //     for(var j = 0 ; j < rep.length ; j++){
+            //         report.push(rep[j]);
+            //     }
+            // }
+            // balls = tree.worldPositionsArray(report);
+
+            // flatArray = [];
+
+            // for (var i = 0; i < balls.length; i++) {
+            //     for (var j = 0; j < balls[i].length; j++) {
+            //         flatArray.push(balls[i][j]);
+            //     }
+            // }
+            // nFlat = [];
+            // nFlat.push(flatArray);
+            // console.log(nFlat);
+
+            outputScale=.33;
+
 
             bls = tree.metaBalls.init();
             tree.metaBalls.effect.animate=true;
             tree.metaBalls.setSize(150);
-            tree.metaBalls.setResolution(300);
-            tree.metaBalls.ballSize = .2;
+            tree.metaBalls.setResolution(150);
+            tree.metaBalls.ballSize = .65;
+            // tree.metaBalls.updateBalls();
             // tree.metaBalls.showBox();
 
             varR=false;
             tree.metaBalls.updateBalls(empty.vertices);
-            generated = tree.metaBalls.generateGeo();
-            scene.add(generated);
-            console.log(generated);
+              generated = tree.metaBalls.generateGeo();
+           scene.add(generated);
+           console.log(generated);
             scene.remove(mothShell);
 
-            mothShell.geometry.vertices=[];
-            mothShell.geometry.faces=[];
-            mothShell.geometry.dispose();
+                  mothShell.geometry.vertices=[];
+                  mothShell.geometry.faces=[];
+                  mothShell.geometry.dispose();
 
+              
+
+
+
+        //        report = [];
+
+        // for(var i = 0 ; i < mothParts.length ; i++){
+        //     var rep = mothParts[i].report();
+        //     for(var j = 0 ; j < rep.length ; j++){
+        //         report.push(rep[j]);
+        //     }
+        // }
+        // balls = tree.worldPositionsArray(report);
+
+        // flatArray = [];
+
+        // for (var i = 0; i < balls.length; i++) {
+        //     for (var j = 0; j < balls[i].length; j++) {
+        //         flatArray.push(balls[i][j]);
+        //     }
+        // }
+        // nFlat = [];
+        // nFlat.push(flatArray);
+
+        //         tree.metaBalls.updateBalls(flatArray);
         }
 
         if(varY){
@@ -227,225 +256,69 @@ sc1 = {
             varW = false;
         }
 
-        if(var1){
-             if(varT){
-
-                objName = "moth_"+countUp+".obj";
-                countUp++;
+         if(varT){
 
 
-                // scene.traverse(function(obj){obj.updateMatrixWorld()});
-                moth.traverse(function(obj){obj.updateMatrixWorld()});
+            scene.traverse(function(obj){obj.updateMatrixWorld()});
+           
+
+            var holder = new THREE.Object3D();
+
+            var wng = mothParts[6];
+
+            var bod = wng.worldPositionsArray(body.upperRibsLeft);
+            var bod2 = wng.worldPositionsArray(body.upperRibsRight);
+            var bod3 = wng.worldPositionsArray(body.lowerRibsLeft);
+            var bod4 = wng.worldPositionsArray(body.lowerRibsRight);
+
+            var ob = {zero:1,xy:0,divx:10,divy:10,off:{func:function(t){var p=0;if(t<8)p=10;return p;},points:1,freq:.5,mult:1,tipNoiseMult:5,tipNoiseFreq:.1,tipOff:-2,tipLength:2,tipPoint:0.01},
+                tubeArgs:{lengthSegs:12,widthSegs:2,minWidth:0.01,width:2}};
+            var ob2 = {zero:1,xy:0,divx:10,divy:10,off:{func:function(t){var p=0;if(t<8)p=10;return p;},points:1,freq:.5,mult:1,tipNoiseMult:5,tipNoiseFreq:.1,tipOff:2,tipLength:2,tipPoint:0.01},
+                tubeArgs:{lengthSegs:12,widthSegs:2,minWidth:0.01,width:2}};
+
+            for(var i = 0 ; i < bod.length ; i++){
+                 // bod[i].pop();
+                bod[i].shift();
                
-
-                var holder = new THREE.Object3D();
-
-                var wng = mothParts[6];
-
-                var bod = wng.worldPositionsArray(body.upperRibsLeft);
-                var bod2 = wng.worldPositionsArray(body.upperRibsRight);
-                var bod3 = wng.worldPositionsArray(body.lowerRibsLeft);
-                var bod4 = wng.worldPositionsArray(body.lowerRibsRight);
-
-                var ob = {zero:1,xy:0,divx:10,divy:10,off:{func:function(t){var p=0;if(t<8)p=10;return p;},points:1,freq:.5,mult:1,tipNoiseMult:5,tipNoiseFreq:.1,tipOff:-2,tipLength:2,tipPoint:0.01},
-                    tubeArgs:{lengthSegs:12,widthSegs:2,minWidth:0.01,width:2}};
-                var ob2 = {zero:1,xy:0,divx:10,divy:10,off:{func:function(t){var p=0;if(t<8)p=10;return p;},points:1,freq:.5,mult:1,tipNoiseMult:5,tipNoiseFreq:.1,tipOff:2,tipLength:2,tipPoint:0.01},
-                    tubeArgs:{lengthSegs:12,widthSegs:2,minWidth:0.01,width:2}};
-
-                for(var i = 0 ; i < bod.length ; i++){
-                     // bod[i].pop();
-                    bod[i].shift();
-                   
-                }
-                holder.add(weave(bod,ob));
-                holder.add(weave(bod2,ob2));
-               
-                holder.add(weave(mothParts[6],{divx:12,divy:2,zero:4,off:{skip:true},tubeArgs:{lengthSegs:6,widthSegs:2,minWidth:.2,width:.5}}));
-                holder.add(weave(mothParts[7],{divx:12,divy:2,zero:4,off:{skip:true},tubeArgs:{lengthSegs:6,widthSegs:2,minWidth:.2,width:.5}}));
-                holder.add(weave(mothParts[8],{divx:5,divy:10,zero:3,off:{skip:true},tubeArgs:{lengthSegs:6,widthSegs:2,minWidth:.2,width:.5}}));
-                holder.add(weave(mothParts[9],{divx:5,divy:10,zero:3,off:{skip:true},tubeArgs:{lengthSegs:6,widthSegs:2,minWidth:.2,width:.5}}));
-                // weave(mothParts[11],2,1);
-               
-                // scene.add(geo);
-                for(var i = 0 ; i < mothParts.length-1 ; i++){
-                    if(i>5 && i!=10) //wings
-                    holder.add(mothParts[i].makeTubes({widthSegs:2,lengthSegs:18,width:.6,minWidth:.1,func:function(t){return Math.sin(((t)/2)-1.5)*2}}));
-                    if(i==10)//head
-                    holder.add(mothParts[i].makeTubes({widthSegs:2,lengthSegs:8,width:.1,minWidth:.1}));
-
-                    if(i<=5)//legs
-                    holder.add(mothParts[i].makeTubes({widthSegs:2,lengthSegs:22,width:.5,minWidth:.1,func:function(t){return Math.sin(t/3)*2}}));
-
-                }
-                scene.add(holder);
-                console.log("thisFar");
-
-                empty = new THREE.Geometry();
-                holder.traverse(function(o){if(o.geometry){THREE.GeometryUtils.merge(empty,o.geometry)}});
-
-                scene.remove(holder);
-
-                holder.traverse(function(obj){if(obj.geometry){obj.geometry.vertices=[];obj.geometry.faces=[];obj.geometry.dispose();}});
-
-                var lngth = holder.children.length
-
-                for(var i = 0 ; i < lngth ; i++){
-                    holder.remove(holder.children[0]);
-                     if(holder.children[0]){
-                        if(holder.children[0].geometry)
-                            holder.children[0].geometry.dispose();
-                    }
-                    // console.log(holder.children);
-                }
-
-                if(countUp==1){
-                    tree = new TREE();
-                    bls = tree.metaBalls.init();
-                    tree.metaBalls.effect.animate=true;
-                    tree.metaBalls.setSize(150);
-                    tree.metaBalls.setResolution(150);
-                    tree.metaBalls.ballSize = .5;
-                    thisMat = new THREE.MeshLambertMaterial();
-                }
-
-                mothShell = new THREE.Mesh(empty,thisMat);
-                scene.add(mothShell);
-                // console.log(empty);
-                // scene.remove(moth); 
-
-                // var count=0;
-
-                outputScale=1;
-
-                tree.metaBalls.updateBalls(empty.vertices);
-
-                generated = tree.metaBalls.generateGeo();
-                scene.add(generated);
-
-
-
-                scene.remove(mothShell);
-
-                mothShell.geometry.vertices=[];
-                mothShell.geometry.faces=[];
-                mothShell.geometry.dispose();
-
-                // scene.traverse(function(obj){if(obj.geometry)count+=obj.geometry.vertices.length})
-                mothShell = [];
-                holder = [];
-                // console.log(count);
-                console.log(mothShell);
-                saver(objName);
-                generated = [];
-                // scene.remove(generated);
-
-                // generated.geometry.vertices=[];
-                // generated.geometry.faces=[];
-                // generated.geometry.dispose();
-
-                scene.traverse(function(obj){
-                    if(obj.geometry){
-                        obj.geometry.vertices=[];
-                        obj.geometry.faces=[];
-                        obj.geometry.dispose();
-                    }
-                    if(obj.material){
-                        obj.material.dispose();
-                    }
-                    if(obj.dispose){
-                        obj.dispose();
-                    }
-                });
-        //     holder.traverse(function(obj){if(obj.geometry){obj.geometry.vertices=[];obj.geometry.faces=[];obj.geometry.dispose();}});
-
-                var lngth = scene.children.length
-
-                for(var i = 0 ; i < lngth ; i++){
-                    console.log(scene.children[0]);
-                    scene.remove(scene.children[0]);
-                    if(scene.children[0]){
-                        if(scene.children[0].geometry)
-                            scene.children[0].geometry.dispose();
-                    }
-                }
-
-                scene = new THREE.Scene();
-
-                if(countUp>imagesToSave){
-                    countUp=0;
-                    varT = false;
-                }
-               
-               // varT=false;
             }
-        }
+            holder.add(weave(bod,ob));
+            holder.add(weave(bod2,ob2));
+           
+            holder.add(weave(mothParts[6],{divx:12,divy:2,zero:4,off:{skip:true},tubeArgs:{lengthSegs:6,widthSegs:2,minWidth:.2,width:.5}}));
+            holder.add(weave(mothParts[7],{divx:12,divy:2,zero:4,off:{skip:true},tubeArgs:{lengthSegs:6,widthSegs:2,minWidth:.2,width:.5}}));
+            holder.add(weave(mothParts[8],{divx:5,divy:10,zero:3,off:{skip:true},tubeArgs:{lengthSegs:6,widthSegs:2,minWidth:.2,width:.5}}));
+            holder.add(weave(mothParts[9],{divx:5,divy:10,zero:3,off:{skip:true},tubeArgs:{lengthSegs:6,widthSegs:2,minWidth:.2,width:.5}}));
+            // weave(mothParts[11],2,1);
+           
+            // scene.add(geo);
+            for(var i = 0 ; i < mothParts.length-1 ; i++){
+                if(i>5 && i!=10) //wings
+                holder.add(mothParts[i].makeTubes({widthSegs:2,lengthSegs:18,width:.6,minWidth:.1,func:function(t){return Math.sin(((t)/2)-1.5)*2}}));
+                if(i==10)//head
+                holder.add(mothParts[i].makeTubes({widthSegs:2,lengthSegs:8,width:.1,minWidth:.1}));
 
-        if(!var1){
-             if(varT){
+                if(i<=5)//legs
+                holder.add(mothParts[i].makeTubes({widthSegs:2,lengthSegs:22,width:.5,minWidth:.1,func:function(t){return Math.sin(t/3)*2}}));
 
-
-                scene.traverse(function(obj){obj.updateMatrixWorld()});
-               
-
-                var holder = new THREE.Object3D();
-
-                var wng = mothParts[6];
-
-                var bod = wng.worldPositionsArray(body.upperRibsLeft);
-                var bod2 = wng.worldPositionsArray(body.upperRibsRight);
-                var bod3 = wng.worldPositionsArray(body.lowerRibsLeft);
-                var bod4 = wng.worldPositionsArray(body.lowerRibsRight);
-
-               
-                var ob = {zero:1,xy:0,divx:10,divy:10,off:{func:function(t){var p=0;if(t<8)p=10;return p;},points:1,freq:.5,mult:1,tipNoiseMult:5,tipNoiseFreq:.1,tipOff:-2,tipLength:2,tipPoint:0.01},
-                    tubeArgs:{lengthSegs:12,widthSegs:2,minWidth:0.01,width:2}};
-                var ob2 = {zero:1,xy:0,divx:10,divy:10,off:{func:function(t){var p=0;if(t<8)p=10;return p;},points:1,freq:.5,mult:1,tipNoiseMult:5,tipNoiseFreq:.1,tipOff:2,tipLength:2,tipPoint:0.01},
-                    tubeArgs:{lengthSegs:12,widthSegs:2,minWidth:0.01,width:2}};
-
-                for(var i = 0 ; i < bod.length ; i++){
-                     // bod[i].pop();
-                    bod[i].shift();
-                   
-                }
-                holder.add(weave(bod,ob));
-                holder.add(weave(bod2,ob2));
-               
-                holder.add(weave(mothParts[6],{divx:12,divy:2,zero:4,off:{skip:true},tubeArgs:{lengthSegs:6,widthSegs:2,minWidth:.2,width:.5}}));
-                holder.add(weave(mothParts[7],{divx:12,divy:2,zero:4,off:{skip:true},tubeArgs:{lengthSegs:6,widthSegs:2,minWidth:.2,width:.5}}));
-                holder.add(weave(mothParts[8],{divx:5,divy:10,zero:3,off:{skip:true},tubeArgs:{lengthSegs:6,widthSegs:2,minWidth:.2,width:.5}}));
-                holder.add(weave(mothParts[9],{divx:5,divy:10,zero:3,off:{skip:true},tubeArgs:{lengthSegs:6,widthSegs:2,minWidth:.2,width:.5}}));
-                // weave(mothParts[11],2,1);
-               
-                // scene.add(geo);
-                for(var i = 0 ; i < mothParts.length-1 ; i++){
-                    if(i>5 && i!=10) //wings
-                    holder.add(mothParts[i].makeTubes({widthSegs:2,lengthSegs:18,width:.6,minWidth:.1,func:function(t){return Math.sin(((t)/2)-1.5)*2}}));
-                    if(i==10)//head
-                    holder.add(mothParts[i].makeTubes({widthSegs:2,lengthSegs:8,width:.1,minWidth:.1}));
-
-                    if(i<=5)//legs
-                    holder.add(mothParts[i].makeTubes({widthSegs:2,lengthSegs:22,width:.5,minWidth:.1,func:function(t){return Math.sin(t/3)*2}}));
-
-                }
-                // scene.add(holder);
-
-                empty = new THREE.Geometry();
-
-                holder.traverse(function(o){if(o.geometry){THREE.GeometryUtils.merge(empty,o.geometry)}});
-
-                mothShell = new THREE.Mesh(empty,new THREE.MeshLambertMaterial());
-                scene.add(mothShell);
-                console.log(empty);
-                scene.remove(moth); 
-
-                var count=0;
-
-                // scene.traverse(function(obj){if(obj.geometry)count+=obj.geometry.vertices.length})
-
-                // console.log(count);
-               
-               varT=false;
             }
+            // scene.add(holder);
+
+            empty = new THREE.Geometry();
+
+            holder.traverse(function(o){if(o.geometry){THREE.GeometryUtils.merge(empty,o.geometry)}});
+
+            mothShell = new THREE.Mesh(empty,new THREE.MeshLambertMaterial());
+            scene.add(mothShell);
+            console.log(empty);
+            scene.remove(moth); 
+
+            var count=0;
+
+            // scene.traverse(function(obj){if(obj.geometry)count+=obj.geometry.vertices.length})
+
+            // console.log(count);
+           
+           varT=false;
         }
 
         // if(varT){
@@ -625,7 +498,7 @@ Moth = {
         var flapSpeed = (flappity/15);
         imagesToSave = (1/flapSpeed)*Math.PI*2;
 
-        body.position.z=  (Math.cos(1+(flapSpeed*count))*5)*info.anim.flapHeight*3 * info.anim.jiggly;
+        body.position.z=  (Math.sin(1-(flapSpeed*count))*5)*info.anim.flapHeight*3 * info.anim.jiggly;
 
         args.Wings = {
 
@@ -692,16 +565,16 @@ Moth = {
         }
         args.Head = {
                 symmetry:         info.head.symmetry, 
-                leftAntRootrx :   info.head.leftAntRootRX + (.02*info.anim.flapHeight*(Math.cos(1+(-flapSpeed*count))*1))* info.anim.jiggly ,
+                leftAntRootrx :   info.head.leftAntRootRX,
                 leftAntRootry :   info.head.leftAntRootRY,
                 leftAntRootrz :   info.head.leftAntRootRZ - .2,
-                rightAntRootrx :  info.head.rightAntRootRX - (.02*info.anim.flapHeight*(Math.cos(1+(-flapSpeed*count))*10))* info.anim.jiggly ,
+                rightAntRootrx :  info.head.rightAntRootRX,
                 rightAntRootry :  info.head.rightAntRootRY,
                 rightAntRootrz :  info.head.rightAntRootRZ - .2,
-                leftAntAllrx :    info.head.leftAntAllRX + (.02*info.anim.flapHeight*(Math.cos(1+(-flapSpeed*count))*1))* info.anim.jiggly ,
+                leftAntAllrx :    info.head.leftAntAllRX + (.02*info.anim.flapHeight*(Math.cos(1.5+(-flapSpeed*count))*5))* info.anim.jiggly ,
                 leftAntAllry :    info.head.leftAntAllRY,
                 leftAntAllrz :    info.head.leftAntAllRZ,
-                rightAntAllrx :   info.head.rightAntAllRX - (.02*info.anim.flapHeight*(Math.cos(1+(-flapSpeed*count))*1))* info.anim.jiggly ,
+                rightAntAllrx :   info.head.rightAntAllRX - (.02*info.anim.flapHeight*(Math.cos(1.5+(-flapSpeed*count))*5))* info.anim.jiggly ,
                 rightAntAllry :   info.head.rightAntAllRY,
                 rightAntAllrz :   info.head.rightAntAllRZ,
                 proballrx:        info.head.probAllRX + (.02*info.anim.flapHeight*(Math.cos(1.5+(-flapSpeed*count))*5))* info.anim.jiggly ,
@@ -718,11 +591,11 @@ Moth = {
         for (var i = 1 ; i <= 6 ; i++){
             args["Leg"+i].rootrx  = info.legs["Leg"+i+"RootRX"]*Math.PI;
             args["Leg"+i].rootry  = info.legs["Leg"+i+"RootRY"]*Math.PI;
-            args["Leg"+i].rootrz  = info.legs["Leg"+i+"RootRZ"]*Math.PI + (.1*info.anim.flapHeight*(Math.sin(.5-(flapSpeed*count))*5))* info.anim.jiggly ;
+            args["Leg"+i].rootrz  = info.legs["Leg"+i+"RootRZ"]*Math.PI + (.1*info.anim.flapHeight*(Math.sin(.5+(-flapSpeed*count))*5))* info.anim.jiggly ;
             args["Leg"+i].femur   = info.legs["Leg"+i+"Femur"]*Math.PI;
             args["Leg"+i].tibia   = info.legs["Leg"+i+"Tibia"]*Math.PI;
             args["Leg"+i].utarsis = info.legs["Leg"+i+"UTarsis"]*Math.PI;
-            args["Leg"+i].ltarsis = info.legs["Leg"+i+"LTarsis"]*Math.PI + (.2*info.anim.flapHeight*(Math.sin(1-(flapSpeed*count))*5))* info.anim.jiggly;
+            args["Leg"+i].ltarsis = info.legs["Leg"+i+"LTarsis"]*Math.PI + (.2*info.anim.flapHeight*(Math.sin(1+(-flapSpeed*count))*5))* info.anim.jiggly;
         }
 
         args.Legs = {};
@@ -746,7 +619,7 @@ Moth = {
         moth.rotation.y = info.body.bodyRY*Math.PI;
         moth.rotation.z = info.body.bodyRZ*Math.PI;
 
-        head.rotation.x = info.head.headRX*Math.PI + (.1*info.anim.flapHeight*(Math.cos(1+(-flapSpeed*count))*1)) * info.anim.jiggly;
+        head.rotation.x = info.head.headRX*Math.PI + (.1*info.anim.flapHeight*(Math.cos(1+(-flapSpeed*count))*5)) * info.anim.jiggly;
         head.rotation.y = Math.PI+info.head.headRY*Math.PI;
         head.rotation.z = info.head.headRZ*Math.PI;
 
@@ -1469,7 +1342,7 @@ function weave(wng,args){
     var tubeArgs = {lengthSegs:2,width:1,minWidth:1.5};
     if(args.tubeArgs) tubeArgs = args.tubeArgs;
 
-    // console.log(args);
+    console.log(args);
 
     if(!args.off) args.off={};
 
@@ -1587,12 +1460,8 @@ return JSON.parse('{"body":{"bodyRX":0,"bodyRY":0,"bodyRZ":0,"abdomenRX":0,"abdo
 // return JSON.parse('{"body":{"bodyRX":-0.06957424714434057,"bodyRY":0.041190723433714105,"bodyRZ":0.019037729318103214,"abdomenRX":-0.16191824455848525,"abdomenRY":0.041190723433714105,"abdomenRZ":0.15010570824524305,"thoraxRX":0.47230578658644484,"thoraxRY":0.014799154334038,"thoraxRZ":0.15010570824524305},"anim":{"flapHeight":0,"flapSpeed":0,"jiggly":1},"head":{"symmetry":0,"headRX":-0.368569415081043,"headRY":0.177844629269156,"headRZ":0.08245243128964064,"leftAntRootRX":0.35306553911205074,"leftAntRootRY":-0.048663953282604866,"leftAntRootRZ":0,"leftAntAllRX":0.35306553911205074,"leftAntAllRY":0,"leftAntAllRZ":0,"rightAntRootRX":0.38170235356574067,"rightAntRootRY":0,"rightAntRootRZ":0,"rightAntAllRX":-0.39112050739957716,"rightAntAllRY":0.0599013389711065,"rightAntAllRZ":0,"probAllRX":-0.09396566979295695,"probAllRY":-0.026013095027428768,"probAllRZ":-0.026013095027428768,"probRootRX":-0.09396566979295695,"probRootRY":0.20049548752433188,"probRootRZ":0,"nFreqLeft":0.19520789288231155,"nFreqRight":0.4883720930232558,"nMultLeft":0.7815362931642,"nMultRight":0.6011275546159267},"wings":{"LeftWingRootRX":0.7214652273933817,"LeftWingRootRY":-0.13926738630330915,"LeftWingRootRZ":0,"RightWingRootRX":0.8120686604140861,"RightWingRootRY":0,"RightWingRootRZ":0.15010570824524305,"LUWingRootRX":0.03735024665257214,"LUWingRootRY":0.03735024665257214,"LUWingRootRZ":-0.12050739957716705,"LUWingAllRX":0,"LUWingAllRY":0,"LUWingAllRZ":0,"LUWingVeinsAllRX":0.10989205450362771,"LUWingVeinsAllRY":0.20049548752433188,"LUWingVeinsAllRZ":0,"LLWingRootRX":-0.003362236772252669,"LLWingRootRY":0.10500352360817478,"LLWingRootRZ":-0.07540521494009866,"LLWingAllRX":-0.007751937984496138,"LLWingAllRY":-0.030303030303030276,"LLWingAllRZ":0.014799154334038,"LLWingVeinsAllRX":0.1325429127588038,"LLWingVeinsAllRY":0.014799154334038,"LLWingVeinsAllRZ":0.0599013389711065,"RUWingRootRX":0.0599013389711065,"RUWingRootRY":0.04193947973809942,"RUWingRootRZ":-0.030303030303030276,"RUWingAllRX":0,"RUWingAllRY":0,"RUWingAllRZ":0,"RUWingVeinsAllRX":0.20049548752433188,"RUWingVeinsAllRY":-0.030303030303030276,"RUWingVeinsAllRZ":0.014799154334038,"RLWingRootRX":-0.0979563072586328,"RLWingRootRY":0.014799154334038,"RLWingRootRZ":0.08245243128964064,"RLWingAllRX":0,"RLWingAllRY":0,"RLWingAllRZ":0,"RLWingVeinsAllRX":0.24579720403468408,"RLWingVeinsAllRY":-0.030303030303030276,"RLWingVeinsAllRZ":0},"legs":{"symmetry":0.20049548752433188,"Leg1RootRX":-0.3431251105998938,"Leg1RootRY":-0.16191824455848525,"Leg1RootRZ":0.019288621482923318,"Leg1Femur":0.517607503096797,"Leg1Tibia":-0.13926738630330915,"Leg1UTarsis":0.2684480622898602,"Leg1LTarsis":-0.27517253583436563,"Leg2RootRX":-0.25252167757918953,"Leg2RootRY":-0.048663953282604866,"Leg2RootRZ":0.6988143691382056,"Leg2Femur":-0.9320474252344718,"Leg2Tibia":-0.5016811183861263,"Leg2UTarsis":-0.026013095027428768,"Leg2LTarsis":-0.4337285436205981,"Leg3RootRX":0.9479738099451425,"Leg3RootRY":-0.3657759688550699,"Leg3RootRZ":0.22314634577950798,"Leg3Femur":0.7441160856485578,"Leg3Tibia":-0.13926738630330915,"Leg3UTarsis":0.04193947973809942,"Leg3LTarsis":0.40435321182091655,"Leg4RootRX":-0.21071176885130372,"Leg4RootRY":-0.07540521494009866,"Leg4RootRZ":-0.12050739957716705,"Leg4Femur":0.7589852008456659,"Leg4Tibia":-0.21071176885130372,"Leg4UTarsis":0.26286116983791397,"Leg4LTarsis":-0.16560958421423533,"Leg5RootRX":0.15010570824524305,"Leg5RootRY":0.10500352360817478,"Leg5RootRZ":-0.07540521494009866,"Leg5Femur":0.5560253699788584,"Leg5Tibia":-0.2558139534883721,"Leg5UTarsis":0.2854122621564481,"Leg5LTarsis":-0.075,"Leg6RootRX":0.3305144467935166,"Leg6RootRY":-0.007751937984496138,"Leg6RootRZ":0.001,"Leg6Femur":0.398167723749119,"Leg6Tibia":-0.23326286116983797,"Leg6UTarsis":0.24031007751937983,"Leg6LTarsis":-0.3009161381254405}} ');
 // return JSON.parse('{"body":{"bodyRX":0,"bodyRY":0,"bodyRZ":0,"abdomenRX":0.03735024665257214,"abdomenRY":0.08245243128964064,"abdomenRZ":-0.052854122621564525,"thoraxRX":0.08245243128964064,"thoraxRY":0.0599013389711065,"thoraxRZ":-0.07540521494009866},"head":{"symmetry":0,"headRX":-0.5,"headRY":0,"headRZ":0,"leftAntRootRX":0.24031007751937983,"leftAntRootRY":0,"leftAntRootRZ":0,"leftAntAllRX":0.10500352360817478,"leftAntAllRY":0,"leftAntAllRZ":0,"rightAntRootRX":-1,"rightAntRootRY":0,"rightAntRootRZ":0,"rightAntAllRX":-0.23326286116983797,"rightAntAllRY":0,"rightAntAllRZ":0,"probAllRX":-0.0979563072586328,"probAllRY":-0.16560958421423533,"probAllRZ":-0.052854122621564525,"probRootRX":0.26286116983791397,"probRootRY":-0.751937984496124,"probRootRZ":0,"nFreqLeft":0.19520789288231155,"nFreqRight":0.4883720930232558,"nMultLeft":0.7815362931642,"nMultRight":0.6011275546159267},"wings":{"LUWingRootRX":0.12755461592670891,"LUWingRootRY":0.3305144467935166,"LUWingRootRZ":-0.16560958421423533,"LUWingAllRX":0,"LUWingAllRY":0,"LUWingAllRZ":0,"LUWingVeinsAllRX":0.03735024665257214,"LUWingVeinsAllRY":0.03735024665257214,"LUWingVeinsAllRZ":0,"LLWingRootRX":0.2854122621564481,"LLWingRootRY":0.10500352360817478,"LLWingRootRZ":-0.12050739957716705,"LLWingAllRX":-0.007751937984496138,"LLWingAllRY":-0.030303030303030276,"LLWingAllRZ":0.014799154334038,"LLWingVeinsAllRX":0.014799154334038,"LLWingVeinsAllRY":0.014799154334038,"LLWingVeinsAllRZ":0.0599013389711065,"RUWingRootRX":0.0599013389711065,"RUWingRootRY":-0.3009161381254405,"RUWingRootRZ":-0.030303030303030276,"RUWingAllRX":0,"RUWingAllRY":0,"RUWingAllRZ":0,"RUWingVeinsAllRX":0.014799154334038,"RUWingVeinsAllRY":-0.030303030303030276,"RUWingVeinsAllRZ":-0.052854122621564525,"RLWingRootRX":0.15010570824524305,"RLWingRootRY":-0.07540521494009866,"RLWingRootRZ":0.03735024665257214,"RLWingAllRX":0,"RLWingAllRY":0,"RLWingAllRZ":0,"RLWingVeinsAllRX":0.03735024665257214,"RLWingVeinsAllRY":-0.030303030303030276,"RLWingVeinsAllRZ":0},"legs":{"symmetry":0,"Leg1RootRX":-0.21071176885130372,"Leg1RootRY":-0.07540521494009866,"Leg1RootRZ":-0.12050739957716705,"Leg1Femur":0.7589852008456659,"Leg1Tibia":-0.21071176885130372,"Leg1UTarsis":0.26286116983791397,"Leg1LTarsis":-0.16560958421423533,"Leg2RootRX":0.15010570824524305,"Leg2RootRY":0.10500352360817478,"Leg2RootRZ":-0.07540521494009866,"Leg2Femur":0.5560253699788584,"Leg2Tibia":-0.2558139534883721,"Leg2UTarsis":0.2854122621564481,"Leg2LTarsis":-0.075,"Leg3RootRX":0.3305144467935166,"Leg3RootRY":-0.007751937984496138,"Leg3RootRZ":0.001,"Leg3Femur":0.398167723749119,"Leg3Tibia":-0.23326286116983797,"Leg3UTarsis":0.24031007751937983,"Leg3LTarsis":-0.3009161381254405,"Leg4RootRX":-0.21071176885130372,"Leg4RootRY":-0.07540521494009866,"Leg4RootRZ":-0.12050739957716705,"Leg4Femur":0.7589852008456659,"Leg4Tibia":-0.21071176885130372,"Leg4UTarsis":0.26286116983791397,"Leg4LTarsis":-0.16560958421423533,"Leg5RootRX":0.15010570824524305,"Leg5RootRY":0.10500352360817478,"Leg5RootRZ":-0.07540521494009866,"Leg5Femur":0.5560253699788584,"Leg5Tibia":-0.2558139534883721,"Leg5UTarsis":0.2854122621564481,"Leg5LTarsis":-0.075,"Leg6RootRX":0.3305144467935166,"Leg6RootRY":-0.007751937984496138,"Leg6RootRZ":0.001,"Leg6Femur":0.398167723749119,"Leg6Tibia":-0.23326286116983797,"Leg6UTarsis":0.24031007751937983,"Leg6LTarsis":-0.3009161381254405}}');
 
-//neverending story
-// return JSON.parse('{"body":{"bodyRX":0,"bodyRY":0,"bodyRZ":0,"abdomenRX":0.7866620713424091,"abdomenRY":0,"abdomenRZ":0,"thoraxRX":1,"thoraxRY":-0.09564018611063241,"thoraxRZ":-0.007409960365328261},"anim":{"flapHeight":0,"flapSpeed":0,"jiggly":1},"head":{"symmetry":0,"headRX":-0.5,"headRY":0,"headRZ":0,"leftAntRootRX":-0.34601832276250877,"leftAntRootRY":0.03735024665257214,"leftAntRootRZ":-0.23326286116983797,"leftAntAllRX":0.3756166314305849,"leftAntAllRY":0,"leftAntAllRZ":0,"rightAntRootRX":0.3305144467935166,"rightAntRootRY":-0.1430584918957012,"rightAntRootRZ":-0.18816067653276958,"rightAntAllRX":-0.4136715997181113,"rightAntAllRY":0,"rightAntAllRZ":0,"probAllRX":0,"probAllRY":0,"probAllRZ":0,"probRootRX":0,"probRootRY":0,"probRootRZ":0,"nFreqLeft":0.5560253699788584,"nFreqRight":0.4432699083861875,"nMultLeft":0.46582100070472165,"nMultRight":0.30796335447498246},"wings":{"LeftWingRootRX":0.7589852008456659,"LeftWingRootRY":0,"LeftWingRootRZ":0,"RightWingRootRX":0.6913319238900635,"RightWingRootRY":0,"RightWingRootRZ":0,"LUWingRootRX":0.0599013389711065,"LUWingRootRY":-0.007751937984496138,"LUWingRootRZ":-0.07540521494009866,"LUWingAllRX":-0.0979563072586328,"LUWingAllRY":0,"LUWingAllRZ":0,"LUWingVeinsAllRX":0.08245243128964064,"LUWingVeinsAllRY":0,"LUWingVeinsAllRZ":0,"LLWingRootRX":0.03735024665257214,"LLWingRootRY":-0.0979563072586328,"LLWingRootRZ":-0.007751937984496138,"LLWingAllRX":-0.007751937984496138,"LLWingAllRY":-0.052854122621564525,"LLWingAllRZ":0,"LLWingVeinsAllRX":0.1726568005637774,"LLWingVeinsAllRY":0,"LLWingVeinsAllRZ":0,"RUWingRootRX":-0.007751937984496138,"RUWingRootRY":-0.007751937984496138,"RUWingRootRZ":0.08245243128964064,"RUWingAllRX":0,"RUWingAllRY":0,"RUWingAllRZ":0,"RUWingVeinsAllRX":0.12755461592670891,"RUWingVeinsAllRY":0,"RUWingVeinsAllRZ":0,"RLWingRootRX":-0.007751937984496138,"RLWingRootRY":0.10500352360817478,"RLWingRootRZ":-0.007751937984496138,"RLWingAllRX":0,"RLWingAllRY":0,"RLWingAllRZ":0,"RLWingVeinsAllRX":0.2177589852008457,"RLWingVeinsAllRY":0,"RLWingVeinsAllRZ":0},"legs":{"symmetry":0.19520789288231155,"Leg1RootRX":-0.21071176885130372,"Leg1RootRY":-0.07540521494009866,"Leg1RootRZ":-0.12050739957716705,"Leg1Femur":1,"Leg1Tibia":0.014799154334038,"Leg1UTarsis":0.08245243128964064,"Leg1LTarsis":-0.16560958421423533,"Leg2RootRX":0.15010570824524305,"Leg2RootRY":0.10500352360817478,"Leg2RootRZ":-0.07540521494009866,"Leg2Femur":0.5560253699788584,"Leg2Tibia":-0.2558139534883721,"Leg2UTarsis":0.2854122621564481,"Leg2LTarsis":-0.075,"Leg3RootRX":0.3305144467935166,"Leg3RootRY":-0.007751937984496138,"Leg3RootRZ":0.001,"Leg3Femur":0.398167723749119,"Leg3Tibia":-0.23326286116983797,"Leg3UTarsis":0.24031007751937983,"Leg3LTarsis":-0.3009161381254405,"Leg4RootRX":-0.21071176885130372,"Leg4RootRY":-0.07540521494009866,"Leg4RootRZ":-0.12050739957716705,"Leg4Femur":0.7589852008456659,"Leg4Tibia":-0.21071176885130372,"Leg4UTarsis":0.26286116983791397,"Leg4LTarsis":-0.16560958421423533,"Leg5RootRX":0.15010570824524305,"Leg5RootRY":0.10500352360817478,"Leg5RootRZ":-0.07540521494009866,"Leg5Femur":0.5560253699788584,"Leg5Tibia":-0.2558139534883721,"Leg5UTarsis":0.2854122621564481,"Leg5LTarsis":-0.075,"Leg6RootRX":0.3305144467935166,"Leg6RootRY":-0.007751937984496138,"Leg6RootRZ":0.001,"Leg6Femur":0.398167723749119,"Leg6Tibia":-0.23326286116983797,"Leg6UTarsis":0.24031007751937983,"Leg6LTarsis":-0.3009161381254405}} ');
 
-//neverending variation
 
-// return JSON.parse('{"body":{"bodyRX":-0.6012461059190031,"bodyRY":-0.02526825891311868,"bodyRZ":-0.6012461059190031,"abdomenRX":0.6535126526278534,"abdomenRY":-0.07131481153778096,"abdomenRZ":-0.07131481153778096,"thoraxRX":-0.3204742523447177,"thoraxRY":-0.20721996106883733,"thoraxRZ":-0.007409960365328261},"anim":{"flapHeight":0,"flapSpeed":0,"jiggly":1},"head":{"symmetry":0,"headRX":-0.5,"headRY":0,"headRZ":0,"leftAntRootRX":-0.34601832276250877,"leftAntRootRY":0.03735024665257214,"leftAntRootRZ":-0.23326286116983797,"leftAntAllRX":0.3756166314305849,"leftAntAllRY":0,"leftAntAllRZ":0,"rightAntRootRX":0.3305144467935166,"rightAntRootRY":-0.1430584918957012,"rightAntRootRZ":-0.18816067653276958,"rightAntAllRX":-0.4136715997181113,"rightAntAllRY":0,"rightAntAllRZ":0,"probAllRX":-0.11661652804813305,"probAllRY":-0.003362236772252669,"probAllRZ":-0.026013095027428768,"probRootRX":0.019288621482923318,"probRootRY":0.3364006370553885,"probRootRZ":-0.003362236772252669,"nFreqLeft":0.5560253699788584,"nFreqRight":0.4432699083861875,"nMultLeft":0.46582100070472165,"nMultRight":0.30796335447498246},"wings":{"LeftWingRootRX":0.7589852008456659,"LeftWingRootRY":0,"LeftWingRootRZ":0,"RightWingRootRX":0.6913319238900635,"RightWingRootRY":0,"RightWingRootRZ":0,"LUWingRootRX":0.06459033799327552,"LUWingRootRY":-0.026013095027428768,"LUWingRootRZ":-0.003362236772252669,"LUWingAllRX":-0.048663953282604866,"LUWingAllRY":-0.003362236772252669,"LUWingAllRZ":0,"LUWingVeinsAllRX":0.08245243128964064,"LUWingVeinsAllRY":0,"LUWingVeinsAllRZ":0,"LLWingRootRX":-0.048663953282604866,"LLWingRootRY":-0.0979563072586328,"LLWingRootRZ":-0.007751937984496138,"LLWingAllRX":-0.007751937984496138,"LLWingAllRY":-0.052854122621564525,"LLWingAllRZ":0,"LLWingVeinsAllRX":0.1726568005637774,"LLWingVeinsAllRY":0,"LLWingVeinsAllRZ":0,"RUWingRootRX":-0.007751937984496138,"RUWingRootRY":-0.003362236772252669,"RUWingRootRZ":-0.003362236772252669,"RUWingAllRX":0,"RUWingAllRY":0,"RUWingAllRZ":0,"RUWingVeinsAllRX":0.12755461592670891,"RUWingVeinsAllRY":0,"RUWingVeinsAllRZ":0,"RLWingRootRX":-0.048663953282604866,"RLWingRootRY":0.10500352360817478,"RLWingRootRZ":-0.007751937984496138,"RLWingAllRX":0,"RLWingAllRY":0,"RLWingAllRZ":0,"RLWingVeinsAllRX":0.2177589852008457,"RLWingVeinsAllRY":0,"RLWingVeinsAllRZ":0},"legs":{"symmetry":0.19520789288231155,"Leg1RootRX":-0.21071176885130372,"Leg1RootRY":-0.07540521494009866,"Leg1RootRZ":-0.12050739957716705,"Leg1Femur":0.8120686604140861,"Leg1Tibia":0.014799154334038,"Leg1UTarsis":0.08245243128964064,"Leg1LTarsis":-0.16560958421423533,"Leg2RootRX":0.15010570824524305,"Leg2RootRY":0.10500352360817478,"Leg2RootRZ":-0.07540521494009866,"Leg2Femur":0.5560253699788584,"Leg2Tibia":-0.2558139534883721,"Leg2UTarsis":0.2854122621564481,"Leg2LTarsis":-0.075,"Leg3RootRX":0.3305144467935166,"Leg3RootRY":-0.007751937984496138,"Leg3RootRZ":0.001,"Leg3Femur":0.398167723749119,"Leg3Tibia":-0.23326286116983797,"Leg3UTarsis":0.24031007751937983,"Leg3LTarsis":-0.3009161381254405,"Leg4RootRX":-0.21071176885130372,"Leg4RootRY":-0.07540521494009866,"Leg4RootRZ":-0.12050739957716705,"Leg4Femur":0.7589852008456659,"Leg4Tibia":-0.21071176885130372,"Leg4UTarsis":0.26286116983791397,"Leg4LTarsis":-0.16560958421423533,"Leg5RootRX":0.15010570824524305,"Leg5RootRY":0.10500352360817478,"Leg5RootRZ":-0.07540521494009866,"Leg5Femur":0.5560253699788584,"Leg5Tibia":-0.2558139534883721,"Leg5UTarsis":0.2854122621564481,"Leg5LTarsis":-0.075,"Leg6RootRX":0.3305144467935166,"Leg6RootRY":-0.007751937984496138,"Leg6RootRZ":0.001,"Leg6Femur":0.398167723749119,"Leg6Tibia":-0.23326286116983797,"Leg6UTarsis":0.24031007751937983,"Leg6LTarsis":-0.3009161381254405}} ');
 // {"body":{"bodyRX":0,"bodyRY":0,"bodyRZ":0,"abdomenRX":-0.0979563072586328,"abdomenRY":0,"abdomenRZ":0,"thoraxRX":0.03735024665257214,"thoraxRY":0.0599013389711065,"thoraxRZ":0.03735024665257214},"head":{"symmetry":0.1726568005637774,"headRX":-0.5,"headRY":0,"headRZ":0,"leftAntRootRX":0,"leftAntRootRY":0,"leftAntRootRZ":0,"rightAntRootRX":-0.7970401691331924,"rightAntRootRY":0,"rightAntRootRZ":0,"leftAntAllRX":0,"leftAntAllRY":0,"leftAntAllRZ":-0.052854122621564525,"rightAntAllRX":-0.23326286116983797,"rightAntAllRY":-0.16560958421423533,"rightAntAllRZ":0.15010570824524305,"probAllRX":-0.1430584918957012,"probAllRY":0,"probAllRZ":0.08245243128964064,"probRootRX":-0.16560958421423533,"probRootRY":0,"probRootRZ":0},"wings":{"LUWingRootRX":0,"LUWingRootRY":0,"LUWingRootRZ":0,"LUWingAllRX":0,"LUWingAllRY":0,"LUWingAllRZ":-0.007751937984496138,"LUWingVeinsAllRX":0.03735024665257214,"LUWingVeinsAllRY":-0.007751937984496138,"LUWingVeinsAllRZ":-0.030303030303030276,"LLWingRootRX":-0.030303030303030276,"LLWingRootRY":0,"LLWingRootRZ":-0.052854122621564525,"LLWingAllRX":0,"LLWingAllRY":0,"LLWingAllRZ":0,"LLWingVeinsAllRX":0.03735024665257214,"LLWingVeinsAllRY":0.014799154334038,"LLWingVeinsAllRZ":-0.030303030303030276,"RUWingRootRX":0,"RUWingRootRY":-0.12050739957716705,"RUWingRootRZ":0.014799154334038,"RUWingAllRX":0,"RUWingAllRY":0,"RUWingAllRZ":0,"RUWingVeinsAllRX":0.014799154334038,"RUWingVeinsAllRY":-0.030303030303030276,"RUWingVeinsAllRZ":0,"RLWingRootRX":0,"RLWingRootRY":0,"RLWingRootRZ":0,"RLWingAllRX":0,"RLWingAllRY":0,"RLWingAllRZ":0,"RLWingVeinsAllRX":0.03735024665257214,"RLWingVeinsAllRY":0,"RLWingVeinsAllRZ":0},"legs":{"symmetry":0,"Leg1RootRX":-0.21071176885130372,"Leg1RootRY":-0.07540521494009866,"Leg1RootRZ":-0.12050739957716705,"Leg1Femur":0.7589852008456659,"Leg1Tibia":-0.21071176885130372,"Leg1UTarsis":0.26286116983791397,"Leg1LTarsis":-0.16560958421423533,"Leg2RootRX":0.15010570824524305,"Leg2RootRY":0.10500352360817478,"Leg2RootRZ":-0.07540521494009866,"Leg2Femur":0.5560253699788584,"Leg2Tibia":-0.2558139534883721,"Leg2UTarsis":0.2854122621564481,"Leg2LTarsis":-0.075,"Leg3RootRX":0.3305144467935166,"Leg3RootRY":-0.007751937984496138,"Leg3RootRZ":0.001,"Leg3Femur":0.398167723749119,"Leg3Tibia":-0.23326286116983797,"Leg3UTarsis":0.24031007751937983,"Leg3LTarsis":-0.3009161381254405,"Leg4RootRX":-0.21071176885130372,"Leg4RootRY":-0.07540521494009866,"Leg4RootRZ":-0.12050739957716705,"Leg4Femur":0.7589852008456659,"Leg4Tibia":-0.21071176885130372,"Leg4UTarsis":0.26286116983791397,"Leg4LTarsis":-0.16560958421423533,"Leg5RootRX":0.15010570824524305,"Leg5RootRY":0.10500352360817478,"Leg5RootRZ":-0.07540521494009866,"Leg5Femur":0.5560253699788584,"Leg5Tibia":-0.2558139534883721,"Leg5UTarsis":0.2854122621564481,"Leg5LTarsis":-0.075,"Leg6RootRX":0.3305144467935166,"Leg6RootRY":-0.007751937984496138,"Leg6RootRZ":0.001,"Leg6Femur":0.398167723749119,"Leg6Tibia":-0.23326286116983797,"Leg6UTarsis":0.24031007751937983,"Leg6LTarsis":-0.3009161381254405}} 
 }
 
