@@ -10,65 +10,42 @@ sc1 = {
         tree.generate({
             joints: [16,20,10,5],
             divs:   [1,1,2,4],
-            start:  [0,9,16,9],
-            angles: [0,0,Math.PI/2,-Math.PI/2],
-            length: [30,10,3,1],
+            start:  [0,10,16,9],
+            angles: [0,2,Math.PI/2,-Math.PI/2],
+            length: [10,10,3,1],
             rads:   [1,1,2,1],
             width:  [4,3,2,1]
         });
 
-        // scene.add(tree);
+        scene.add(tree);
 
 
         tree.passFunc(tree.makeInfo([
-            [0,0,0], {rx:0},
-            [0,0,[7,9]], {ry:0,rx:-.54},
-            [0,0,[9,15]], {ry:0,rz:.85},
-            // [0,0,[12,15]], {sc:.9},
-            [0,0,-1,0,-2], {sc:1.01,rx:-.01,rz:-.02},
+            [0,0,0], {rx:-.3},
+            [0,0,-1], {ry:.5,rz:.2,sc:1.1},
+            [0,0,[12,15]], {sc:.9},
+            [0,0,-1,0,-2], {rx:0,offMult:.0,freq:1,jMult:.02,jFract:4.5,jOffset:.2,offsetter3:0.01,jFreq:.02},
             // [0,0,-1,0,-2], {rz:0.01},//,freq:.1,offMult:-1,offsetter3:1},
-            [0,0,-1,0,-1,-1,0], {rz:pi},
+            [0,0,-1,0,-1,-1,0], {rz:.1},
 
-            [0,0,-1,0,-1,-1,-2], {rz:0},
+            [0,0,-1,0,-1,-1,-2], {rz:.2},
 
-            [0,0,-1,0,0], {rx:pi},
-            // [0,0,-1,0,1], {ry:Math.PI/2},
+            [0,0,-1,0,0], {rz:0},
+            [0,0,-1,0,1], {ry:Math.PI/2},
 
         ]),
         tree.transform);
 
-        tree.makeDictionary();
-
-        sk = tree.makeSkinnedGeo();
-        scene.add(sk);
-        console.log(tree);
-
-        blarb = tree.makeList([0,0,-1,0,-2]);
+        
         
 
     },
 
     draw:function(time){
-
-        tree.passFunc([
-           
-            blarb, {sc:1.01,rx:omouseY,rz:omouseY*2},
-           
-
-        ],
-        tree.transform,true);
-
-        
         if(var1){
             var poles = tree.reportLayers();
 
-            var stuff = (tree.worldPositionsMultiArray(poles));
-            
-            console.log(stuff[3]);
-            stuff[3].push(stuff[3][0]);
-            stuff[3].push(stuff[3][1]);
-            stuff[3].push(stuff[3][2]);
-            stuff[3].push(stuff[3][3]);
+             var stuff = (tree.worldPositionsMultiArray(poles));
             
             var Lines = [];
             
@@ -81,7 +58,7 @@ sc1 = {
                     // lines.push(stuff[3][i+j][4]);
                     if(i+j+1 < stuff[3].length-3){
                         var v = stuff[3][i+j][4].clone();
-                        v.y-=80;
+                        v.y-=160;
                         lines.push(v.lerp(stuff[3][i+j+4][4],.5));
                         lines.push(stuff[3][i+j+4][4]);
 
@@ -93,7 +70,7 @@ sc1 = {
             }
 
         
-            scene.add(tree.tubes(Lines,{lengthSegs:14,minWidth:2,width:.8}));
+            scene.add(tree.tubes(Lines,{lengthSegs:14,minWidth:2,width:2}));
             bargles = tree.makeTubes({widthSegs:12,lengthSegs:5,minWidth:1,width:2});
             scene.add(bargles);
             scene.remove(tree);

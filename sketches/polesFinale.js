@@ -17,7 +17,7 @@ sc1 = {
             width:  [4,3,2,1]
         });
 
-        // scene.add(tree);
+        scene.add(tree);
 
 
         tree.passFunc(tree.makeInfo([
@@ -37,28 +37,12 @@ sc1 = {
         ]),
         tree.transform);
 
-        tree.makeDictionary();
-
-        sk = tree.makeSkinnedGeo();
-        scene.add(sk);
-        console.log(tree);
-
-        blarb = tree.makeList([0,0,-1,0,-2]);
+        
         
 
     },
 
     draw:function(time){
-
-        tree.passFunc([
-           
-            blarb, {sc:1.01,rx:omouseY,rz:omouseY*2},
-           
-
-        ],
-        tree.transform,true);
-
-        
         if(var1){
             var poles = tree.reportLayers();
 
@@ -93,7 +77,7 @@ sc1 = {
             }
 
         
-            scene.add(tree.tubes(Lines,{lengthSegs:14,minWidth:2,width:.8}));
+            scene.add(tree.tubes(Lines,{lengthSegs:14,minWidth:2,width:1.4}));
             bargles = tree.makeTubes({widthSegs:12,lengthSegs:5,minWidth:1,width:2});
             scene.add(bargles);
             scene.remove(tree);
