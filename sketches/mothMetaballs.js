@@ -275,8 +275,8 @@ sc1 = {
 
                     if(i<=5)//legs
                     holder.add(mothParts[i].makeTubes({widthSegs:2,lengthSegs:22,width:.5,minWidth:.1,func:function(t){return Math.sin(t/3)*2}}));
-
                 }
+                
                 scene.add(holder);
                 console.log("thisFar");
 
