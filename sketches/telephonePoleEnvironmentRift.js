@@ -4,12 +4,6 @@ sc1 = {
     
     setup:function(){
 
-        // document.body.style.cursor = 'none';
-        document.body.style.cursor = 'url("assets/textures/dot.png"), auto';
-
-        poleObject = new THREE.Object3D();
-        scene.add(poleObject);
-
         tunnelTravel.setup();
 
         rift = true;
@@ -18,8 +12,8 @@ sc1 = {
         // light = new THREE.DirectionalLight( 0x113322 ); light.position.set( -1, 1, .5 ); scene.add( light );
         // // light = new THREE.DirectionalLight( 0x225533 ); light.position.set( 0, 1, 1 ); scene.add( light );
         light = new THREE.AmbientLight( 0x010203 ); scene.add( light );
-        webaudio = new WebAudio();
-        sounds = [];
+        // webaudio = new WebAudio();
+        // sounds = [];
 
         lightShader = {
 
@@ -145,7 +139,7 @@ sc1 = {
 
         var t = path.worldPositionsArray(path.report());
         // console.log(t[0]);
-        poleObject.add(path);
+        scene.add(path);
 
         balls = [];
 
@@ -159,7 +153,7 @@ sc1 = {
            
             var geo = poles[Math.floor(Math.random()*poles.length)];
             mpoles.push(new THREE.Mesh(geo,new THREE.MeshLambertMaterial({vertexColors:THREE.FaceColors})));
-            poleObject.add(mpoles[i]);
+            scene.add(mpoles[i]);
 
             var spheres = new THREE.Object3D();
 
@@ -203,14 +197,10 @@ sc1 = {
                     spheres.add(sph);
                     spheres.add(sph2);
 
-                   
                     balls.push(sph);
                 }
             }  
 
-            console.log(balls.length);
-
-            
             mpoles[i].add(spheres);
             mpoles[i].rotation.z = -pi;
             mpoles[i].insulators = [];
@@ -233,20 +223,6 @@ sc1 = {
           
         }
 
-        for (var j = 0 ; j < balls.length ; j++){
-            var vec = new THREE.Vector3();
-            balls[j].updateMatrixWorld();
-            vec.setFromMatrixPosition(balls[j].matrixWorld);
-
-            console.log(j);
-
-            // if(j==0){
-            sounds.push(makeSound(vec));
-            // }
-
-        }
-
-
         var brokenLines = [];
 
         for(var i = 0 ; i < lines.length ; i++){
@@ -262,23 +238,21 @@ sc1 = {
             }
         }
 
-        // console.log(lines);
+        console.log(lines);
         var line = [];
         line.push(lines);
         var b = new TREE();
         var c = b.tubes(brokenLines,{lengthSegs:5,width:.4});
-        poleObject.add(c);
-        // console.log(c);
+        scene.add(c);
+        console.log(c);
 
         var temp = new TREE();
 
         mover = new THREE.Object3D();
 
-        camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 500 );
+        // camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 500 );
         // camera.position.z = 100;
         // console.log(camera);
-
-
        
        controls = new THREE.FlyControls( camera );
 
@@ -351,63 +325,16 @@ sc1 = {
 
         // console.log(controls);
 
-        sounds.push(makeSound(tunnel.position));
-        sounds.push(makeSound(tunnel.position));
-        sounds.push(makeSound(tunnel.position));
-
-        controls.moveState.forward=1;
-        var2=false;
-        var3=false;
-
-        controls.moveState.forward=1;
-        controls.moveState = { up: 0, down: 0, left: 0, right: 0, forward: 1, back: 0, pitchUp: 0, pitchDown: 0, yawLeft: 0, yawRight: 0, rollLeft: 0, rollRight: 0 };
-        controls.moveVector = new THREE.Vector3( 0, 0, -1 );
-        controls.object.position = new THREE.Vector3( 50, 20, 50 );
-            // var3=true;
 
     },
 
     draw:function(time){
 
-                // document.body.style.cursor = 'none';
-        document.body.style.cursor = 'url("assets/textures/dot.png"), auto';
+        tunnelTravel.draw();
 
-        if(count>300){
-            for (var j = 0 ; j < sounds.length ; j++){
-                if(camera.position.distanceTo(sounds[j].position)<5){
-                    var2=true;
-                }
-            }
-        }
-
-        if(var2){
-            tunnelTravel.add();
-            var4=true;
-            var2=false;
-        }
-        if(var3){
-            tunnelTravel.remove();
-            
-            var3=false;
-        }
-
-        if(tunnel.position.z>900){
-            tunnelTravel.remove();
-            controls.moveState.forward=1;
-            controls.moveState = { up: 0, down: 0, left: 0, right: 0, forward: 1, back: 0, pitchUp: 0, pitchDown: 0, yawLeft: 0, yawRight: 0, rollLeft: 0, rollRight: 0 };
-            controls.moveVector = new THREE.Vector3( 0, 0, -1 );
-            controls.object.position = new THREE.Vector3( Math.random()*-900, 20, Math.random()*-300 );
-            // var3=true;
-            var4=false;
-        }
-
-        // console.log(controls);
-
-        if(var4)
-            tunnelTravel.draw();
-
+        // console.log(camera);
         cr = new THREE.Vector3(camera.rotation.x,camera.rotation.y,camera.rotation.z);
-
+        // cr.normalize();
         shaderMaterial.uniforms["camAngle"].value = new THREE.Vector3(cr.x,cr.y,cr.z);
 
         // console.log(camera.rotation.y);
@@ -439,13 +366,9 @@ sc1 = {
 
         // }
 
-        // console.log(controls.object);
-
-        camera.updateMatrixWorld();
-
-        for(var i = 0 ; i < sounds.length ; i++){
-            sounds[i].update(camera);
-        }
+        // for(var i = 0 ; i < sounds.length ; i++){
+        //     sounds[i].update(camera);
+        // }
         
         // camera.rotation.y-=omouseX*.1;
         // // camera.rotation.x=-omouseY;
@@ -680,11 +603,9 @@ tunnelTravel = {
     
     setup:function(){
 
-        tunnelmover=1;
-
         rift=true;
 
-        // camera.position.z=1000;
+        camera.position.z=1000;
 
         tree = new TREE();
 
@@ -712,58 +633,21 @@ tunnelTravel = {
             
         ]),tree.axisRotate);
         
-        tun = tree.makeTubes();
-
-        empty = new THREE.Geometry();
-        tun.traverse(function(o){if(o.geometry){THREE.GeometryUtils.merge(empty,o.geometry)}});
-
-        lit = new THREE.AmbientLight();
-
-        // scene.add(lit);
-
-        tunnel = new THREE.Mesh(empty,new THREE.MeshLambertMaterial());
-        // scene.add(tunnel);
-
-    },
-
-    add:function(){
+        tunnel = tree.makeTubes();
 
         scene.add(tunnel);
-        scene.add(lit);
-        tunnel.position.z=0;
-        // camera.position.z=1000;
-        // camera.rotation.x = 0;
-        // camera.rotation.y = 0;
-        // camera.rotation.z = 0;
 
-        controls.moveState = { up: 0, down: 0, left: 0, right: 0, forward: 0, back: 0, pitchUp: 0, pitchDown: 0, yawLeft: 0, yawRight: 0, rollLeft: 0, rollRight: 0 };
-        controls.moveVector = new THREE.Vector3( 0, 0, 0 );
-        controls.rotationVector = new THREE.Vector3( 0, 0, 0 );
-
-        console.log(controls);
-        controls.object.position = new THREE.Vector3( 0, 0, 920 );
-        controls.object.rotation = new THREE.Euler( 0, 0, 0 );
-
-        // this.object.quaternion.multiply( this.tmpQuaternion );
-
-        // expose the rotation vector for convenience
-        // this.object.rotation.setFromQuaternion( this.object.quaternion, this.object.rotation.order );
-        scene.remove(poleObject);
-    },
-
-    remove:function(){
-        tunnel.position.z=0;
-        tunnelmover=1;
-        scene.remove(tunnel);
-        scene.remove(lit);
-        scene.add(poleObject);
     },
 
     draw:function(time){
-        tunnel.position.z+=tunnelmover;
-        tunnelmover*=1.01;
+
+    
+        tunnel.position.z+=1;
         tunnel.rotation.x = .001*.1;
         tunnel.rotation.z = pi;
-        tunnel.rotation.y = pi+.459*.1;  
+        tunnel.rotation.y = pi+.459*.1;
+
+       
+       
     }
 }

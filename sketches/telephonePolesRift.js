@@ -4,23 +4,109 @@ sc1 = {
     
     setup:function(){
 
+        rift = true;
+
         // light = new THREE.DirectionalLight( 0x332211); light.position.set( 1, 1, -.5 ); scene.add( light );
         // light = new THREE.DirectionalLight( 0x113322 ); light.position.set( -1, 1, .5 ); scene.add( light );
         // // light = new THREE.DirectionalLight( 0x225533 ); light.position.set( 0, 1, 1 ); scene.add( light );
-                light = new THREE.AmbientLight( 0x091215 ); scene.add( light );
-
-                rift=true;
-
+        light = new THREE.AmbientLight( 0x010203 ); scene.add( light );
         // webaudio = new WebAudio();
-
         // sounds = [];
+
+        lightShader = {
+
+            uniforms : {
+                "camAngle": { type: "v3", value: new THREE.Vector3(0,0,0) },
+            },
+
+            vertexShader : [
+           
+               " varying vec3 vNormal;",
+               "varying vec2 vUV; ",
+               // "varying vec3 vecNormal;",
+
+               " void main() {",
+               "    vUV = uv;",
+               "     vNormal = (modelViewMatrix * vec4(normal, 0.0)).xyz;",
+               // "     vecNormal = (modelMatrix * vec4(normal, 0.0)).xyz;
+
+               "     gl_Position = projectionMatrix *",
+               "                   modelViewMatrix *",
+               "                   vec4(position,1.0);",
+               " }",
+            
+            ].join("\n"),
+
+            fragmentShader : [
+
+               " // same name and type as VS",
+               " varying vec3 vNormal;",
+               " uniform vec3 camAngle;",
+                 "varying vec2 vUV; ",
+                // "varying vec3 vViewPosition;",
+               // "vec3 viewPosition = normalize( vViewPosition );",
+               " void main() {",
+               "     // calc the dot product and clamp",
+               "     // 0 -> 1 rather than -1 -> 1",
+               "     vec3 light = vec3(0.5,0.2,1.0);",
+               "     vec4 ramp = vec4(vUV.y);",
+               "     // ensure it's normalized",
+               "     light = normalize(light);",
+              
+               "     // calculate the dot product of",
+               "     // the light to the vertex normal",
+               "     float dProd = max(0.0, dot( vNormal, camAngle ));",
+              
+               // "     // feed into our frag colour",
+               "     gl_FragColor = ramp*vec4(vec3(1.,.9,.5), pow(vNormal.z,2.));",
+                  
+                "}",
+
+            ].join("\n")
+                
+        }
+
+        // console.log()
+
+        shaderMaterial = new THREE.ShaderMaterial({
+            uniforms: lightShader.uniforms,
+            vertexShader:   lightShader.vertexShader,
+            fragmentShader: lightShader.fragmentShader,
+            transparent:true
+        });
+
+         shaderMaterial2 = new THREE.ShaderMaterial({
+            uniforms: lightShader.uniforms,
+            vertexShader:   lightShader.vertexShader,
+            fragmentShader: lightShader.fragmentShader,
+            transparent:true
+        });
+
+        shaderMaterial2.side = THREE.BackSide;
+
+        
+
+        bob = new THREE.MeshLambertMaterial();
+        // console.log(bob);
 
         var poles = [];
         lamp=true;
 
+
+        var material = new THREE.MeshLambertMaterial({color:0xffffff,skinning:true,vertexColors:THREE.FaceColors});
+
         for ( i = 0 ; i < 3 ; i++){
             poles[i] = makePole();
-            // scene.add(poles[i]);
+
+            var geo = poles[i];
+            for(var j = 0 ; j < geo.faces.length ; j++){
+                geo.faces[j].color.setRGB((
+                     geo.vertices[geo.faces[j].a].y/50)-.5,
+                    (geo.vertices[geo.faces[j].a].y/50)-.35,
+                    (geo.vertices[geo.faces[j].a].y/50)+.1);
+            
+            }
+            
         }
 
         var mpoles = [];
@@ -45,7 +131,7 @@ sc1 = {
 
         var empty = new THREE.Geometry();
 
-         path.passFunc(path.makeInfo([
+        path.passFunc(path.makeInfo([
                 [0,0,-1],{jointGeo:empty,ballGeo:empty,ballGeo2:empty}
             ]),path.setGeo)
 
@@ -53,32 +139,18 @@ sc1 = {
         // console.log(t[0]);
         scene.add(path);
 
+        balls = [];
+
         for( i = 0 ; i < t[0].length-1 ; i++){
 
             var poser;
 
-            // if(i==0){
             poser = new THREE.Vector3(0,-100,0);
-                    // -500+Math.random()*1000,
-                    // -100,
-                    // -500+Math.random()*1000
-                    
-                    // );
-            // }
-            // else{
-            //     poser  = new THREE.Vector3(
-            //   mpoles[i-1].position.x+(-.5+Math.random())*420,
-            //    -100,
-            //   mpoles[i-1].position.z+(-.5+Math.random())*420
-             
-            //     );
-            // }
-            // if(t[0][i].position)
+            
             poser = t[0][i];
-            // console.log(t[0][i].position);
-
+           
             var geo = poles[Math.floor(Math.random()*poles.length)];
-            mpoles.push(new THREE.Mesh(geo,new THREE.MeshLambertMaterial()));
+            mpoles.push(new THREE.Mesh(geo,new THREE.MeshLambertMaterial({vertexColors:THREE.FaceColors})));
             scene.add(mpoles[i]);
 
             var spheres = new THREE.Object3D();
@@ -90,34 +162,49 @@ sc1 = {
                 var c = b[b.length-1];
                 var ob = new THREE.Object3D();
                 ob.position = c;
-
                 spheres.add(ob);
             }  
-            console.log(geo.lamp);
+
             for(var j = 0 ; j < geo.lamp.length ; j++){
                 if(geo.lamp.length>0){
-                    var b = geo.lamp[j][geo.lamp.length-1];
-                    // console.log(b);
-                   
-                    var ob = new THREE.PointLight(0xffaa33,1,200);
-                    ob.position = b;
-                    ob.position.x=-30;
-                                        // ob.position.y-=5;
+                    // console.log(geo.lamp[j].length)
+                    var b = geo.lamp[j][geo.lamp[j].length-1];
+                    var ob = new THREE.PointLight(0xffaa33,2,100);
+                    var ob2 = new THREE.PointLight(0xffaa33,.2,500);
 
-                    // scene.add(ob);
+                    var lightCone2 = new THREE.Mesh(new THREE.CylinderGeometry(0,100,100,40,1,true),shaderMaterial);
+                    var lightCone1 = new THREE.Mesh(new THREE.CylinderGeometry(0,100,100,40,1,true),shaderMaterial2);
 
+                    var sph = lightCone1;  
+                    var sph2 = lightCone2; 
+
+                    sph.position = new THREE.Vector3(b.x,b.y,b.z);
+                    sph2.position = new THREE.Vector3(b.x,b.y,b.z);
+                    for(var k = 0 ; k < sph.geometry.vertices.length ; k++){
+                        sph.geometry.vertices[k].y-=50;
+                        sph2.geometry.vertices[k].y-=50;
+                    }
+                    sph.rotation.z=-.4;
+                    sph2.rotation.z=-.4;
+
+                    ob.position =new THREE.Vector3(b.x,b.y-2,b.z);
+                    // ob.position.x=-30;
+                    // sph.position.y = b.y-50;
                     spheres.add(ob);
+                    spheres.add(ob2);
+                    spheres.add(sph);
+                    spheres.add(sph2);
+
+                    balls.push(sph);
                 }
             }  
+
             mpoles[i].add(spheres);
-            // mpoles[i].position = poser;
             mpoles[i].rotation.z = -pi;
             mpoles[i].insulators = [];
-
-            // mpoles[i].updateMatrixWorld();
             spheres.updateMatrixWorld();
+
             for(var j = 0 ; j < spheres.children.length ; j++){
-                // console.log(spheres);
                 var vec = new THREE.Vector3();
                 mpoles[i].updateMatrixWorld();
                 spheres.updateMatrixWorld();
@@ -132,8 +219,6 @@ sc1 = {
                 // }
             }
           
-            // console.log(mpoles[i].position);
-            // console.log(mpoles[i].insulatorPositions[0][8]);
         }
 
         var brokenLines = [];
@@ -161,128 +246,136 @@ sc1 = {
 
         var temp = new TREE();
 
-        // var all = temp.mergeMeshes(path);
-        // console.log(all);
-        // scene.add(new THREE.Mesh(all,path.params.mat));
-
         mover = new THREE.Object3D();
 
-        camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 500 );
-        camera.position.z = 100;
-        console.log(camera);
-        // mover.add(camera);
-        // console.log(mover);
+        // camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 500 );
+        // camera.position.z = 100;
+        // console.log(camera);
+       
+       controls = new THREE.FlyControls( camera );
+
+                controls.movementSpeed = .1;
+                controls.domElement = container;
+                controls.rollSpeed = .001;//Math.PI / 24;
+                controls.autoForward = true;
+                controls.dragToLook = false;
 
 
-        // useComposer = true;
-        // useDepth = true;
-        // composer = new THREE.EffectComposer( renderer );
-        // composer.addPass( new THREE.RenderPass( scene, camera ) );
+        useComposer = true;
+        useDepth = true;
+        composer = new THREE.EffectComposer( renderer );
+        composer.addPass( new THREE.RenderPass( scene, camera ) );
 
-        // depthShader = THREE.ShaderLib[ "depthRGBA" ];
-        // depthUniforms = THREE.UniformsUtils.clone( depthShader.uniforms );
-        // depthMaterial = new THREE.ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms} );
-        // depthMaterial.blending = THREE.NoBlending;
-        // depthTarget = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat } );
+        depthShader = THREE.ShaderLib[ "depthRGBA" ];
+        depthUniforms = THREE.UniformsUtils.clone( depthShader.uniforms );
+        depthMaterial = new THREE.ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms} );
+        depthMaterial.blending = THREE.NoBlending;
+        depthTarget = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat } );
     
-        // rgbEffect = new THREE.ShaderPass( THREE.depthNoiseShader );
+        rgbEffect = new THREE.ShaderPass( THREE.depthNoiseShader );
         
-        // rgbEffect.uniforms['tDepth'].value = depthTarget;
-        // rgbEffect.uniforms[ 'amount' ].value = 0.0;//0015;
-        // rgbEffect.uniforms[ 'offer' ].value = 0.0;//0015;
-        // rgbEffect.uniforms[ 'amt1' ].value = 0.005;//0015;
-        // rgbEffect.uniforms[ 'amt2' ].value = 0.005;//0015;
-        // rgbEffect.uniforms[ 'amt3' ].value = 0.005;//0015;
-        // rgbEffect.uniforms[ 'amt4' ].value = 0.005;//0015;
+        rgbEffect.uniforms['tDepth'].value = depthTarget;
+        rgbEffect.uniforms[ 'amount' ].value = 0.0;//0015;
+        rgbEffect.uniforms[ 'offer' ].value = 0.0;//0015;
+        rgbEffect.uniforms[ 'amt1' ].value = 0.005;//0015;
+        rgbEffect.uniforms[ 'amt2' ].value = 0.005;//0015;
+        rgbEffect.uniforms[ 'amt3' ].value = 0.005;//0015;
+        rgbEffect.uniforms[ 'amt4' ].value = 0.005;//0015;
 
-        // rgbEffect.uniforms[ 'far' ].value = .5;//0015;
-
-
-        // rgbEffect.renderToScreen = true;
-        // composer.addPass( rgbEffect );
-
-        //  rebuildGui({sliders:1,values:{
-        //     symmetry:0,
-        //     speed1:0,
-        //     speed2:0,
-        //     focus:0,
-        //     freq1a:1,
-        //     freq1b:0,
-        //     freq2a:1,
-        //     freq2b:0,
-        //     freq3a:1,
-        //     freq3b:0,
-        //     freq4a:1,
-        //     freq4b:0,
-        //     amt1:1,
-        //     amt2:0,
-        //     amt3:1,
-        //     amt4:0,
-        // }});
-        // data.speed1 = 1;
-        // data.speed2 = .1;
-        // data.freq1a = 1;
-        // data.freq1b = 1;
-        // data.freq2a = 1;
-        // data.freq2b = 1;
-        // data.freq3a = 1;
-        // data.freq3b = 1;
-        // data.freq4a = 1;
-        // data.freq4b = 1;
-        // data.amt1 = .1;
-        // data.amt2 = .1;
-        // data.amt3 = .1;
-        // data.amt4 = .1;
+        rgbEffect.uniforms[ 'far' ].value = .5;//0015;
 
 
+        rgbEffect.renderToScreen = true;
+        composer.addPass( rgbEffect );
+
+         rebuildGui({sliders:1,values:{
+            symmetry:0,
+            speed1:0,
+            speed2:0,
+            focus:0,
+            freq1a:1,
+            freq1b:0,
+            freq2a:1,
+            freq2b:0,
+            freq3a:1,
+            freq3b:0,
+            freq4a:1,
+            freq4b:0,
+            amt1:1,
+            amt2:0,
+            amt3:1,
+            amt4:0,
+        }});
+        data.speed1 = 1;
+        data.speed2 = .1;
+        data.freq1a = 1;
+        data.freq1b = 1;
+        data.freq2a = 1;
+        data.freq2b = 1;
+        data.freq3a = 1;
+        data.freq3b = 1;
+        data.freq4a = 1;
+        data.freq4b = 1;
+        data.amt1 = .1;
+        data.amt2 = .1;
+        data.amt3 = .1;
+        data.amt4 = .1;
+
+        // console.log(controls);
 
 
     },
 
     draw:function(time){
 
-        // rgbEffect.uniforms[ 'offer' ].value = count*data.speed1*data.speed2;//0015;
-        // rgbEffect.uniforms[ 'far' ].value = data.focus*.5;//0015;
-        // rgbEffect.uniforms[ 'freq1' ].value = data.freq1a*data.freq1b*256;//0015;
-        // rgbEffect.uniforms[ 'freq2' ].value = data.freq2a*data.freq2b*256;//0015;
-        // rgbEffect.uniforms[ 'freq3' ].value = data.freq3a*data.freq3b*256;//0015;
-        // rgbEffect.uniforms[ 'freq4' ].value = data.freq4a*data.freq4b*256;//0015;
-        // rgbEffect.uniforms[ 'amt1' ].value = data.amt1*.1;//0015;
-        // rgbEffect.uniforms[ 'amt2' ].value = data.amt2*.1;//0015;
-        // rgbEffect.uniforms[ 'amt3' ].value = data.amt3*.1;//0015;
-        // rgbEffect.uniforms[ 'amt4' ].value = data.amt4*.1;//0015;
 
-        // if(data.symmetry>0){
-        //     rgbEffect.uniforms[ 'freq1' ].value = data.freq1a*data.freq1b*256;//0015;
-        //     rgbEffect.uniforms[ 'freq2' ].value = data.freq2a*data.freq2b*256;//0015;
-        //     rgbEffect.uniforms[ 'freq3' ].value = data.freq1a*data.freq1b*256;//0015;
-        //     rgbEffect.uniforms[ 'freq4' ].value = data.freq2a*data.freq2b*256;//0015;
-        //     rgbEffect.uniforms[ 'amt1' ].value = data.amt1*.1;//0015;
-        //     rgbEffect.uniforms[ 'amt2' ].value = data.amt2*.1;//0015;
-        //     rgbEffect.uniforms[ 'amt3' ].value = data.amt1*.1;//0015;
-        //     rgbEffect.uniforms[ 'amt4' ].value = data.amt2*.1;//0015;
+        // console.log(camera);
+        cr = new THREE.Vector3(camera.rotation.x,camera.rotation.y,camera.rotation.z);
+        // cr.normalize();
+        shaderMaterial.uniforms["camAngle"].value = new THREE.Vector3(cr.x,cr.y,cr.z);
 
+        // console.log(camera.rotation.y);
+        // for(var i = 0 ; i < balls.length ; i++){
+        //     balls[i].position.x = -.189*200;
+        //     balls[i].position.y = (.335*400)-(omouseX*10);
         // }
+
+        rgbEffect.uniforms[ 'offer' ].value = count*data.speed1*data.speed2;//0015;
+        rgbEffect.uniforms[ 'far' ].value = data.focus*.5;//0015;
+        rgbEffect.uniforms[ 'freq1' ].value = data.freq1a*data.freq1b*256;//0015;
+        rgbEffect.uniforms[ 'freq2' ].value = data.freq2a*data.freq2b*256;//0015;
+        rgbEffect.uniforms[ 'freq3' ].value = data.freq3a*data.freq3b*256;//0015;
+        rgbEffect.uniforms[ 'freq4' ].value = data.freq4a*data.freq4b*256;//0015;
+        rgbEffect.uniforms[ 'amt1' ].value = data.amt1*.1;//0015;
+        rgbEffect.uniforms[ 'amt2' ].value = data.amt2*.1;//0015;
+        rgbEffect.uniforms[ 'amt3' ].value = data.amt3*.1;//0015;
+        rgbEffect.uniforms[ 'amt4' ].value = data.amt4*.1;//0015;
+
+        if(data.symmetry>0){
+            rgbEffect.uniforms[ 'freq1' ].value = data.freq1a*data.freq1b*256;//0015;
+            rgbEffect.uniforms[ 'freq2' ].value = data.freq2a*data.freq2b*256;//0015;
+            rgbEffect.uniforms[ 'freq3' ].value = data.freq1a*data.freq1b*256;//0015;
+            rgbEffect.uniforms[ 'freq4' ].value = data.freq2a*data.freq2b*256;//0015;
+            rgbEffect.uniforms[ 'amt1' ].value = data.amt1*.1;//0015;
+            rgbEffect.uniforms[ 'amt2' ].value = data.amt2*.1;//0015;
+            rgbEffect.uniforms[ 'amt3' ].value = data.amt1*.1;//0015;
+            rgbEffect.uniforms[ 'amt4' ].value = data.amt2*.1;//0015;
+
+        }
 
         // for(var i = 0 ; i < sounds.length ; i++){
         //     sounds[i].update(camera);
         // }
-        // rgbEffect.uniforms[ 'offer' ].value = time;//0015;
+        
+        // camera.rotation.y-=omouseX*.1;
+        // // camera.rotation.x=-omouseY;
+        // camera.quaternion.setFromAxisAngle(camera.rotation,omouseY*10);
 
-        // camera.position.set(0,0,-time);
-
-        // camera.lookAt(new THREE.Vector3(camera.position.x+omouseX*12,camera.position.y+omouseY*12,camera.position.z+100))
-        camera.rotation.y-=omouseX*.1;
-        camera.rotation.x=-omouseY;
-        camera.position.z-=Math.cos(camera.rotation.y)*2;
-        camera.position.x-=Math.sin(camera.rotation.y)*2;
-        camera.position.y-=Math.sin(-camera.rotation.x);
-        mover.position.x+=omouseX;
-        // tree.passFunc(tree.makeInfo([
-        //   [0,0,-2],{rz:0,ry:0,rz:0,nMult:omouseX,nFreq:omouseY*3},
-          
-        // ]),tree.transform)
-
+        // camera.position.z-=Math.cos(camera.rotation.y)*2;
+        // camera.position.x-=Math.sin(camera.rotation.y)*2;
+        // camera.position.y-=Math.sin(-camera.rotation.x);
+        // mover.position.x+=omouseX;
+       
  
        
         
@@ -337,74 +430,74 @@ function makePole(){
         ],function(obj,args){if(obj.joint%2==0){obj.jointMesh.scale.z=2;obj.jointMesh.scale.x=2}})
         
 
-        //bark
-        sticks = new TREE();
+        // //bark
+        // sticks = new TREE();
 
-        sticks.generate({
-            joints:[1,10],
-            length:[3,2],
-            rads:[6,2],
-            width:[2],
-            angles:[Math.PI/2]
-        })
+        // sticks.generate({
+        //     joints:[1,10],
+        //     length:[3,2],
+        //     rads:[6,2],
+        //     width:[2],
+        //     angles:[Math.PI/2]
+        // })
 
-        sticks.makeDictionary();
-        stick = sticks.makeList([0,-1,-1,-1,-1]);
+        // sticks.makeDictionary();
+        // stick = sticks.makeList([0,-1,-1,-1,-1]);
 
-        sticks.passFunc([
-            stick,{sc:.9,rx:0,nFreq:.5,nMult:.1}
-        ],sticks.transform)
+        // sticks.passFunc([
+        //     stick,{sc:.9,rx:0,nFreq:.5,nMult:.1}
+        // ],sticks.transform)
 
-        sticks.passFunc([
-            stick,{sc:.9,rx:0,nFreq:.9,nMult:.15,offsetter2:.001}
-        ],sticks.transform)
+        // sticks.passFunc([
+        //     stick,{sc:.9,rx:0,nFreq:.9,nMult:.15,offsetter2:.001}
+        // ],sticks.transform)
 
-        var sti = sticks.makeTubes();
-        // scene.add(sti);
-        sti.scale = new THREE.Vector3(.2,.08,.2);
+        // var sti = sticks.makeTubes();
+        // // scene.add(sti);
+        // sti.scale = new THREE.Vector3(.2,.08,.2);
 
-        var empty = new THREE.Geometry();
+        // var empty = new THREE.Geometry();
 
-        var stiGeo = sticks.mergeMeshes(sti);
+        // var stiGeo = sticks.mergeMeshes(sti);
 
         //top
 
-        topper = new TREE();
+        // topper = new TREE();
 
-        console.log(topper);
+        // console.log(topper);
 
-        topper.generate({
-            joints:[1,10],
-            length:[5,2],
-            rads:[12,1],
-            width:[1],
-            angles:[Math.PI/2]
-        });
+        // topper.generate({
+        //     joints:[1,10],
+        //     length:[5,2],
+        //     rads:[12,1],
+        //     width:[1],
+        //     angles:[Math.PI/2]
+        // });
 
-        topper.makeDictionary();
-        stick = topper.makeList([0,-1,-1,-1,-2]);
+        // topper.makeDictionary();
+        // stick = topper.makeList([0,-1,-1,-1,-2]);
 
-        topper.passFunc([
-            stick,{sc:.9,rx:0,nFreq:.5,nMult:.1}
-        ],topper.transform)
+        // topper.passFunc([
+        //     stick,{sc:.9,rx:0,nFreq:.5,nMult:.1}
+        // ],topper.transform)
 
-        topper.passFunc([
-            stick,{sc:.9,rz:.1,nFreq:.9,nMult:.15,offsetter2:.001}
-        ],topper.transform)
+        // topper.passFunc([
+        //     stick,{sc:.9,rz:.1,nFreq:.9,nMult:.15,offsetter2:.001}
+        // ],topper.transform)
 
-        var topperg = topper.makeTubes();
-        // scene.add(topperg);
-        topperg.scale = new THREE.Vector3(.2,.02,.2);
+        // var topperg = topper.makeTubes();
+        // // scene.add(topperg);
+        // topperg.scale = new THREE.Vector3(.2,.02,.2);
 
-        var topp = topper.mergeMeshes(topperg);
+        // var topp = topper.mergeMeshes(topperg);
 
 
 
-        tree.passFunc(tree.makeInfo([
-           [0,0,-1],{jointGeo:stiGeo,ballGeo:empty,ballGeo2:empty},
-           [0,0,-1,-1,-1,-1,-1],{jointGeo:stiGeo,ballGeo:empty,ballGeo2:empty},
-           [0,0,-3],{jointGeo:topp,ballGeo:empty,ballGeo2:empty},
-        ]),tree.setGeo)
+        // tree.passFunc(tree.makeInfo([
+        //    [0,0,-1],{jointGeo:stiGeo,ballGeo:empty,ballGeo2:empty},
+        //    [0,0,-1,-1,-1,-1,-1],{jointGeo:stiGeo,ballGeo:empty,ballGeo2:empty},
+        //    [0,0,-3],{jointGeo:topp,ballGeo:empty,ballGeo2:empty},
+        // ]),tree.setGeo)
 
         tree.passFunc(tree.makeInfo([
            [0,0,-1],{},
@@ -442,7 +535,7 @@ function makePole(){
         ]),tree.transform)
 
           var lampArray = [];
-
+          console.log(lamp);
         if(lamp==true){
         
             tree.passFunc(tree.makeInfo([
