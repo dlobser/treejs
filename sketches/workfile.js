@@ -3,72 +3,71 @@ sc1 = {
     
     setup:function(){
         
+        frameRate=1;
+
         tree = new TREE();
-        
-        tree.generate({
-            joints:[100,10],
-            divs:[1,5],
-            rads:[1,2],
-        })
-        
+        tree.branch(300);
+        tree.branch(300);
+        tree.branch(300);
+        tree.branch(300);
+        tree.branch(300);
+        tree.branch(300);
+
+
         scene.add(tree);
-        
         tree.makeDictionary();
-        
-        spine = tree.makeList([0,0,-1]);
-        
-        codeName = "edwards";
-       
-        // tree.applyFunc([
-        //     spine, {amount:10},
-        // ],tree.appendBranch);
-        
-         branches = tree.makeList([0,0,-1,-1,-1]);
+        tree.rotation.z=pi;
+        // tree.position.x=-100;
+
+        rootBranch = tree.makeList([0,0,-2])
+        rootRoot = tree.makeList([0,0,0])
+        rootBranch2 = tree.makeList([0,1,-2])
+          rootRoot2 = tree.makeList([0,1,0])
+        rootBranch3 = tree.makeList([0,2,-2])
+          rootRoot3 = tree.makeList([0,2,0])
+        rootBranch4 = tree.makeList([0,3,-2])
+          rootRoot4 = tree.makeList([0,3,0])
+        rootBranch5 = tree.makeList([0,4,-2])
+          rootRoot5 = tree.makeList([0,4,0])
+        rootBranch6 = tree.makeList([0,5,-2])
+          rootRoot6 = tree.makeList([0,5,0])
+
+        imagesToSave = (Math.PI*2)/.2;
+        countUp=0;
     },
 
     draw:function(time){
-        
+        time=time*3;
+        time=time*3;
+        time=time*3;
         tree.applyFunc([
-            spine, {rz:data.var3,nFreq:data.var1,nMult:data.var2},
-            branches, {rz:data.var4,nFreq:data.var5,nMult:data.var6}
-        ],tree.transform);
+            rootBranch,  {rz:(Math.sin(count*.2))*.02},
+            rootBranch2, {rz:(Math.sin(count*.2))*-.02},
+              rootRoot2, {rz:pi*2},
+            rootBranch3, {rz:(Math.sin(.2+count*.2))*.02},
+              // rootRoot3, {rz:pi*2},
+            rootBranch4, {rz:(Math.sin(.2+count*.2))*-.02},
+              rootRoot4, {rz:pi*2},
+            rootBranch5, {rz:(Math.sin(.4+count*.2))*.02},
+              // rootRoot5, {rz:pi*2},
+            rootBranch6, {rz:(Math.sin(.4+count*.2))*-.02},
+              rootRoot6, {rz:pi*2},
 
-        if(var1){
-            savePlot(tree);
-            var1=false;
-        }
+            // rootRoot, {rz:0,jFreq:.4,jMult:-.3,jOff:omouseX*5+time}
 
-    }
-}
-
-function savePlot(t,scale){
-
-    var sc = scale || 1;
-
-    var p = tree.worldPositionsArray(tree.report());
-    var print = "$0=150.00 \n$1=150.00 \n$2=20.00 \n$4=3000.000 (default feed, mm/min) \n$5=3000.000 (default seek, mm/min) \n$8=20.00\n";
-    print += "G1 X0 Y0 Z0\n";
-    print += "G1 X0 Y0 Z40";
-
-    for(var i = 0 ; i < p.length ; i++){
-
-        print+="";
+        ],tree.transform)
         
-        for(var j = 0 ; j < p[i].length ; j++){
 
-            if(j==0){
-                print += "G1 X"+p[i][j].x*sc + " Y"+p[i][j].y*sc + " Z" + 40 + "\n";
-            }
-
-            print += "G1 X"+p[i][j].x*sc + " Y"+p[i][j].y*sc + " Z" + -40 + "\n";
-
-            if(j==p[i].length-1){
-                 print += "G1 X"+p[i][j].x*sc + " Y"+p[i][j].y*sc + " Z" + 40 + "\n";
+        if(varE){
+            saveIMG("sine_"+count+".png");
+            countUp++;
+            if(countUp>imagesToSave){
+                countUp=0;
+                varE = false;
             }
         }
-
+        
     }
-
-    var blob = new Blob([print], {type: "text/plain;charset=ANSI"});
-    saveAs(blob, "plot.gcode");
 }
+
+

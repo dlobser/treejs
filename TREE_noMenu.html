@@ -1,0 +1,76 @@
+
+<html>
+  <head>
+    <title>TREE.js</title>
+ 
+    <style>
+    #container{
+		width:500px
+	}
+	body{
+		background-color:white;
+		margin:0;
+		padding:0;
+	}
+	 body {
+        overflow: hidden;
+    }
+    
+    #editor { 
+        margin: 0;
+        margin-right:50%;
+        margin-bottom:100px;
+        position: absolute;
+        z-index:1;
+        background-color:transparent;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+    </style>
+	</head>
+<body>
+	
+
+		
+				<div id="info"  style="font-family:sans-serif;font-size:.002em;color:gray;z-index:10;position:absolute">
+					<span style="font-size:.001px" id="mouseInfoX">x: y:</span><br>
+					<span style="font-size:.001px" id="mouseInfoY">x: y:</span>
+				</div>
+			
+			<div id="container">
+		</div>
+		
+		<script>
+
+
+		scriptSource = "sketches/workfile.js";
+
+
+		</script>
+
+		<script src="lib/dat.gui.min.js"></script>
+		<script src="lib/three.js"></script>
+		<script src="lib/library.js"></script>
+		<script src="lib/blob.js"></script>
+		
+		<script src="lib/webAudio.js"></script>
+		<script src="lib/jsfxGen.js"></script>
+
+
+		<script src="lib/TREE.js"></script>
+		<script src="lib/fungus.js"></script>
+
+		<script src="lib/ace/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
+
+		<div id="editor"></div> 
+		<script src="lib/setupAce.js"></script>
+
+		<script src="lib/template.js"></script>
+
+
+	</body>
+</html>
+
+

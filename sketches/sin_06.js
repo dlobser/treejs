@@ -10,19 +10,30 @@ sc1 = {
         scene.add(tree);
         tree.makeDictionary();
         tree.rotation.z=-pi;
-        tree.position.x=-50;
+        tree.position.x=0;
 
         rootBranch = tree.makeList([0,0,-2])
         rootRoot = tree.makeList([0,0,0])
+
+        imagesToSave = (Math.PI*2)/.2;
+        countUp=0;
     },
 
     draw:function(time){
         time=time*3;
         tree.applyFunc([
-            rootBranch, {rx:0,rz:0,jFreq:.072,jMult:.04,jOff:count*-.1,jFract:.02,sc:1.001},
-            // rootRoot, {rz:0,jFreq:.4,jMult:-.3,jOff:omouseX*5+time}
+            rootBranch, {rx:0,rz:0,jFreq:.1,jMult:mouseX*.1,jOff:count*-.2,jFract:mouseY*.1,sc:.9999},
 
         ],tree.transform)
+
+        if(varE){
+            saveIMG("sine_"+count+".png");
+            countUp++;
+            if(countUp>imagesToSave){
+                countUp=0;
+                varE = false;
+            }
+        }
         
     }
 }

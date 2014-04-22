@@ -1,36 +1,40 @@
+
 sc1 = {
     
     setup:function(){
 
-        document.body.style.cursor = 'url("assets/textures/dot.png"), auto';
+        // gradMap = THREE.ImageUtils.loadTexture('assets/textures/particle.png');
 
+        // var geo = new THREE.PlaneGeometry(4000,4000,10,10);
+        // ball = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({color:0xFFFFFF,transparent:true,opacity:1, map:gradMap,emissive:0xffeebb}));
+        // scene.add(ball);
 
-        gradMap = THREE.ImageUtils.loadTexture('assets/textures/particle.png');
+        // var geo = new THREE.PlaneGeometry(1000,1000,10,10);
+        // ball2 = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({color:0xFFFFFF,transparent:true,opacity:1, map:gradMap,emissive:0xffffff}));
+        // ball.position.z=10;
+        // scene.add(ball2);
 
-        var geo = new THREE.PlaneGeometry(4000,4000,10,10);
-        ball = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({color:0xFFFFFF,transparent:true,opacity:1, map:gradMap,emissive:0xffeebb}));
-        scene.add(ball);
+        // noLights = true;
 
-        var geo = new THREE.PlaneGeometry(1000,1000,10,10);
-        ball2 = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({color:0xFFFFFF,transparent:true,opacity:1, map:gradMap,emissive:0xffffff}));
-        ball.position.z=10;
-        scene.add(ball2);
+        // scene.add(new THREE.PointLight(new THREE.Color(0x99eeff),2,100));
+        // scene.add(new THREE.PointLight(new THREE.Color(0x99eeff),2,100));
+        // scene.add(new THREE.PointLight(new THREE.Color(0x99eeff),2,100));
 
-
-        noLights = true;
 
         mth = new gMoth();
         mth.construct();
-        console.log(mth.children);
+        console.log(mth.p);
         // scene.add(mth);
 
-        mth.position.x = 10;
-        mth.position.y = 30;
 
-        lgt = new THREE.PointLight(new THREE.Color(0x99eeff),2,1500);
-        lgt2 = new THREE.PointLight(new THREE.Color(0xff9900),2,3000)
-        scene.add(lgt)
-        scene.add(lgt2);
+
+        // mth.position.x = 10;
+        // mth.position.y = 30;
+
+        // lgt = new THREE.PointLight(new THREE.Color(0x99eeff),2,1500);
+        // lgt2 = new THREE.PointLight(new THREE.Color(0xff9900),2,3000)
+        // scene.add(lgt)
+        // scene.add(lgt2);
         
         // rift = true;
 
@@ -62,74 +66,134 @@ sc1 = {
 
         )
 
+
+        useComposer = true;
+        useDepth = true;
+        composer = new THREE.EffectComposer( renderer );
+        composer.addPass( new THREE.RenderPass( scene, camera ) );
+
+        depthShader = THREE.ShaderLib[ "depthRGBA" ];
+        depthUniforms = THREE.UniformsUtils.clone( depthShader.uniforms );
+        depthMaterial = new THREE.ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms, skinning:true } );
+        depthMaterial.blending = THREE.NoBlending;
+        depthTarget = new THREE.WebGLRenderTarget( window.innerWidth*2, window.innerHeight*2, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat } );
+    
+        rgbEffect = new THREE.ShaderPass( THREE.depthNoiseShader );
+        
+        rgbEffect.uniforms['tDepth'].value = depthTarget;
+        rgbEffect.uniforms[ 'amount' ].value = 0.0;//0015;
+        rgbEffect.uniforms[ 'offer' ].value = 0.0;//0015;
+
+        rgbEffect.renderToScreen = true;
+        composer.addPass( rgbEffect , "tDepth");
+
         moths = [];
         parents = [];
 
-        for(var i = 0 ; i < 50 ; i++){
+        for(var i = 0 ; i < 20 ; i++){
             parents[i] = new THREE.Object3D();
             moths[i] = cloner(mth);
             parents[i].add(moths[i]);
 
             scene.add(parents[i]);
-            moths[i].position.x = (1.12-(Math.random()))*-2000;
-            // moths[i].position.y = (Math.random()-.5)*1000;
+            moths[i].position.z = (.5-(Math.random()))*-500;
+            moths[i].position.x = (.5-(Math.random()))*-2000;
+
+            moths[i].position.y = (Math.random()-.5)*200;
             moths[i].rotation.x = -pi;
-            parents[i].rotation.x = -.5+Math.random();
+            moths[i].rotation.z = -pi;
+
+            // parents[i].rotation.x = Math.random();
 
         }
 
-        webaudio = new WebAudio();
-        sound = makeSound(new THREE.Vector3(),440);
-        sound2 = makeSound(new THREE.Vector3(),880);
-        sound3 = makeSound(new THREE.Vector3(),220);
+        // webaudio = new WebAudio();
+        // sound = makeSound(new THREE.Vector3(),440);
+        // sound2 = makeSound(new THREE.Vector3(),880);
+        // sound3 = makeSound(new THREE.Vector3(),220);
 
-        console.log(sound);
+        // console.log(sound);
+        imagesToSave = 10;
+        countUp = 0;
 
     },
 
     draw:function(time){
 
-        sound.update(camera);
+        // sound.update(camera);
         speed = mouseX*50;
-        // console.log(mth);
-        sc = Math.sin(time*speed)+1;
-        sc2 = Math.sin(time*speed*2)+1;
-        ball.scale = new THREE.Vector3(sc,sc,sc);
-        lgt2.intensity = sc;//ball.scale*10;
-        lgt.intensity = sc2;
+        imagesToSave = speed*pi;
+        // // console.log(mth);
+        // sc = Math.sin(time*speed)+1;
+        // sc2 = Math.sin(time*speed*2)+1;
+        // ball.scale = new THREE.Vector3(sc,sc,sc);
+        // lgt2.intensity = sc;//ball.scale*10;
+        // lgt.intensity = sc2;
 
-        // sound.position.z = 
+        // // sound.position.z = 
 
-        sc3 = Math.sin(time*speed*.5)+1;
-        sc4 = Math.cos(.5*time*speed*2.3)+1;
-        sound.dryGainNode.gain.value = sc*200;
-        sound2.dryGainNode.gain.value = sc2*100;
-        sound3.dryGainNode.gain.value = sc3*100;
+        // sc3 = Math.sin(time*speed*.5)+1;
+        // sc4 = Math.cos(.5*time*speed*2.3)+1;
+        // sound.dryGainNode.gain.value = sc*200;
+        // sound2.dryGainNode.gain.value = sc2*100;
+        // sound3.dryGainNode.gain.value = sc3*100;
 
 
 
         for(var i = 0 ; i < moths.length ; i++){
 
-            // moths[i].rotation.x += Math.random()*.06;// = new THREE.Vector3(Math.random()*pi,Math.random()*pi,Math.random()*pi);
-            // moths[i].rotation.y += Math.random()*.06;
-            // moths[i].rotation.z += Math.random()*.06;
+            var mth = moths[i];
 
-            parents[i].rotation.y+=speed*(.5+(noise(i*.3)*.2))*-.01;
+            // mth.rotation.x += Math.random()*.06;// = new THREE.Vector3(Math.random()*pi,Math.random()*pi,Math.random()*pi);
+            // mth.rotation.y += Math.random()*.06;
+            // mth.rotation.z += Math.random()*.06;
 
-            moths[i].position.y = Math.cos(1+i+time*speed)*13;
-            moths[i].p.ULWing.bones[1].rotation.y =     Math.cos(i+time*speed)*.5;
-            moths[i].p.ULWing.bones[0].rotation.y =     Math.sin(i+time*speed);
-            moths[i].p.URWing.bones[1].rotation.y =    -Math.cos(i+time*speed)*.5;
-            moths[i].p.URWing.bones[0].rotation.y =    -Math.sin(i+time*speed);
-            moths[i].p.LLWing.bones[1].rotation.y =( Math.cos(.2+i+time*speed)*.95)*.5;
-            moths[i].p.LLWing.bones[0].rotation.y =( Math.sin(.2+i+time*speed)*.95)-.2;
-            moths[i].p.LRWing.bones[1].rotation.y =(-Math.cos(.2+i+time*speed)*.95)*.5;
-            moths[i].p.LRWing.bones[0].rotation.y =(-Math.sin(.2+i+time*speed)*.95)+.2;
+            // mth.rotation.x+=Math.random();
+            // mth.rotation.y+=Math.random();
+            // mth.rotation.z+=Math.random();
 
-            moths[i].p.body.bones[1].rotation.z = Math.sin(1+time*speed*2)*.1;
-            moths[i].p.body.bones[1].rotation.x = Math.sin(time*speed)*.5;
+            // mth.position.x=(.5-Math.random())*300;
+            // mth.position.y=(.5-Math.random())*300;
+            // mth.position.z=(.5-Math.random())*300;
 
+            mth.scale = new THREE.Vector3(.2,.2,.2);
+            mth.position.y = Math.cos(2+i+time*speed)*3;
+            mth.position.x+=(i*.1)+1;
+            if(mth.position.x>300){
+                mth.position.x=-300;
+            }
+            mth.p.ULWing.bones[1].rotation.y =     Math.cos(i+time*speed)*.5;
+            mth.p.ULWing.bones[0].rotation.y =     Math.sin(i+time*speed);
+            mth.p.URWing.bones[1].rotation.y =    -Math.cos(i+time*speed)*.5;
+            mth.p.URWing.bones[0].rotation.y =    -Math.sin(i+time*speed);
+            mth.p.LLWing.bones[1].rotation.y =( Math.cos(.2+i+time*speed)*.95)*.5;
+            mth.p.LLWing.bones[0].rotation.y =( Math.sin(.2+i+time*speed)*.95)-.2;
+            mth.p.LRWing.bones[1].rotation.y =(-Math.cos(.2+i+time*speed)*.95)*.5;
+            mth.p.LRWing.bones[0].rotation.y =(-Math.sin(.2+i+time*speed)*.95)+.2;
+
+            mth.p.leftAnt.bones[0].rotation.z =     .2;
+            mth.p.rightAnt.bones[0].rotation.z =    -.2;
+
+            mth.p.leftAnt.bones[1].rotation.x =     Math.sin(i+time*speed)*.5;
+            mth.p.rightAnt.bones[1].rotation.x =    Math.sin(i+time*speed)*.5;
+
+            for(var k = 0 ; k < mth.p.legs.length ; k++){
+                 mth.p.legs[k].bones[1].rotation.z =     Math.sin(i+time*speed)*.5;
+            }
+            mth.p.body.bones[1].rotation.z = Math.sin(1+time*speed*2)*.1;
+            mth.p.body.bones[1].rotation.x = Math.sin(time*speed)*.5;
         }
+
+        if(varE){
+            saveIMG("moth_"+count+".png");
+            countUp++;
+            if(countUp>imagesToSave){
+                countUp=0;
+                varE = false;
+            }
+        }
+
+        // }
 
         // // mth.ULWing.position.y = omouseY*100;
 
@@ -490,9 +554,10 @@ function cloner(obj){
     }
     returner.p.body = returner.children[10];
     returner.p.head = returner.children[11];
-    returner.p.leftAnt =  returner.children[11].children[16];
-    returner.p.rightAnt = returner.children[11].children[17];
+    returner.p.leftAnt =  returner.children[11].children[2];
+    returner.p.rightAnt = returner.children[11].children[3];
 
+    console.log(returner.children[11]);
   
     returner.p.rightAnt.bones[0].rotation.x = 1;
     returner.p.rightAnt.bones[0].position.x = 2;
@@ -1214,14 +1279,34 @@ gMoth.prototype.construct = function(){
 
     ant.branch(10);
 
+    ant.makeDictionary();
+
+    ears = ant.makeList([0,0,-2])
+
+    ant.applyFunc([
+        ears,   {sc:.9,rx:.1}
+    ],ant.transform);
+
+    // empty = new THREE.Geometry();
+    // ant.traverse(function(o){if(o.geometry){THREE.GeometryUtils.merge(empty,o.geometry)}});
+
+    empty = ant.makeTubes();
+    console.log(empty.children[0].geometry);
+
+    leftAnt = skin(empty.children[0].geometry,"Y",0,100);
+
     // ant.passFunc(ant.makeInfo([
     //     [0,0,-1],{sc:.9}
     // ]),ant.transform);
 
-    ant.makeDictionary();
 
-    leftAnt = ant.makeSkinnedGeo();
-    leftAnt.material.vertexColors=THREE.FaceColors;
+    // blahAnt = ant.makeSkinnedGeo();
+    // blahAnt = skin(empty.children[0].geometry,"Y",0,100);
+    // scene.add(blahAnt);
+    // leftAnt.material.vertexColors=THREE.FaceColors;
+    // leftAnt.material.skinning = true;
+
+
 
     rightAnt = leftAnt.clone();
 
@@ -1235,17 +1320,14 @@ gMoth.prototype.construct = function(){
 
     rightAnt.bones[0].rotation.x = 1;
 
-    for(var i = 1 ; i < rightAnt.bones.length ; i++){
-        rightAnt.bones[i].rotation.x = .1;
-        rightAnt.bones[i].scale = new THREE.Vector3(.9,.9,.9);
-    }
+  
 
-    leftAnt.bones[0].rotation.x = 1;
+    // leftAnt.bones[0].rotation.x = 1;
 
-    for(var i = 1 ; i < rightAnt.bones.length ; i++){
-        leftAnt.bones[i].rotation.x = .1;
-        leftAnt.bones[i].scale = new THREE.Vector3(.9,.9,.9);
-    }
+    // for(var i = 1 ; i < rightAnt.bones.length ; i++){
+    //     leftAnt.bones[i].rotation.x = .1;
+    //     leftAnt.bones[i].scale = new THREE.Vector3(.9,.9,.9);
+    // }
 
     
     head = Head.setup();
@@ -1271,16 +1353,30 @@ gMoth.prototype.construct = function(){
     eye2.position.y = -.43*5;
 
     eye2.scale = new THREE.Vector3(.69,.69,.69);
+
     tubeHead.add(eye1);
     tubeHead.add(eye2);
-    tubeHead.add(leftAnt);
-    tubeHead.add(rightAnt);
 
-    this.p.head=tubeHead;
+    empty = new THREE.Geometry();
+    tubeHead.traverse(function(o){if(o.geometry){THREE.GeometryUtils.merge(empty,o.geometry)}});
+
+    headGeo = skin(empty,"Y",0,-200);
+    // bodGeo = skin(empty,"Y",0,-200);
+    // bodGeo = skin(empty,"Y",0,-200);
+
+
+
+    headGeo.add(leftAnt);
+    headGeo.add(rightAnt);
+
+    console.log(headGeo);
+
+    this.p.head=headGeo;
     this.p.leftAnt = leftAnt;
     this.p.rightAnt = rightAnt;
 
-    this.add(tubeHead);
+    this.add(headGeo);
+
 
     this.p.body.scale = new THREE.Vector3(.65,.65,.65);
     this.p.ULWing.position.x=-.11*100;
@@ -1335,5 +1431,50 @@ gMoth.prototype.construct = function(){
     this.p.legs[2].rotation.y = pi+.07*6;
     this.p.legs[5].rotation.y = pi+.07*-6;
 
+}
+
+
+dyna = function(params){
+
+    THREE.Object3D.call(this);
+
+    this.acceleration = new THREE.Vector3(0,0,0);
+    this.velocity = new THREE.Vector3(0,0,0);
+    this.mass = .01;
+    this.damp = .01;
+    this.maxVelocity = 15;
+    this.angle = 1;
+    this.trail = [];
+    this.maxTrailSize = 500;
+    this.aimNodes = [];
+    this.age = 0;
+
+    this.geo = new THREE.CylinderGeometry(.1,2,10);
+    this.mat = new THREE.MeshLambertMaterial();
+
+    var mat = new THREE.Matrix4();
+
+    mat.makeRotationX( Math.PI/2 );
+    this.geo.applyMatrix(mat);
+
+    // this.aim = new THREE.Object3D();
+    // this.aim.up = new THREE.Vector3(0,1,0);
+    // this.aimCheck = new THREE.Object3D();
+
+    // scene.add(this.aim);
+    // this.add(this.aimCheck);
+}
+
+dyna.prototype = Object.create(THREE.Object3D.prototype);
+
+dyna.prototype.applyForce = function(force){
+
+    this.acceleration.add(force.clone().divideScalar(this.mass));
+}
+
+dyna.prototype.moveToward = function(obj){
+
+    var pos = new THREE.Vector3().subVectors(this.position,obj.position);
+    this.applyForce(pos.negate());
 }
 

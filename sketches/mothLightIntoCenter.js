@@ -2,18 +2,17 @@ sc1 = {
     
     setup:function(){
 
-        document.body.style.cursor = 'url("assets/textures/dot.png"), auto';
-
-
         gradMap = THREE.ImageUtils.loadTexture('assets/textures/particle.png');
 
         var geo = new THREE.PlaneGeometry(4000,4000,10,10);
         ball = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({color:0xFFFFFF,transparent:true,opacity:1, map:gradMap,emissive:0xffeebb}));
         scene.add(ball);
+        ball.rotation.x=-pi;
 
         var geo = new THREE.PlaneGeometry(1000,1000,10,10);
         ball2 = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({color:0xFFFFFF,transparent:true,opacity:1, map:gradMap,emissive:0xffffff}));
-        ball.position.z=10;
+        ball.position.y=10;
+        ball2.rotation.x=-pi;
         scene.add(ball2);
 
 
@@ -28,7 +27,9 @@ sc1 = {
         mth.position.y = 30;
 
         lgt = new THREE.PointLight(new THREE.Color(0x99eeff),2,1500);
-        lgt2 = new THREE.PointLight(new THREE.Color(0xff9900),2,3000)
+        lgt.position.y=1500;
+        lgt2 = new THREE.PointLight(new THREE.Color(0xff9900),2,3000);
+        lgt2.position.y=3000;
         scene.add(lgt)
         scene.add(lgt2);
         
@@ -64,17 +65,22 @@ sc1 = {
 
         moths = [];
         parents = [];
+        parents2= [];
 
         for(var i = 0 ; i < 50 ; i++){
             parents[i] = new THREE.Object3D();
+            parents2[i] = new THREE.Object3D();
+
             moths[i] = cloner(mth);
             parents[i].add(moths[i]);
+            parents2[i].add(parents[i]);
 
-            scene.add(parents[i]);
-            moths[i].position.x = (1.12-(Math.random()))*-2000;
+            scene.add(parents2[i]);
+            moths[i].position.z = 500;//(1.12-(Math.random()))*-2000;
             // moths[i].position.y = (Math.random()-.5)*1000;
-            moths[i].rotation.x = -pi;
-            parents[i].rotation.x = -.5+Math.random();
+            // moths[i].rotation.x = -pi;
+            parents[i].position.z = 500;
+
 
         }
 
@@ -114,7 +120,10 @@ sc1 = {
             // moths[i].rotation.y += Math.random()*.06;
             // moths[i].rotation.z += Math.random()*.06;
 
-            parents[i].rotation.y+=speed*(.5+(noise(i*.3)*.2))*-.01;
+            // parents[i].rotation.y+=speed*(.5+(noise(i*.3)*.2))*-.01;
+
+            parents2[i].rotation.y = ((i*pi*4)/50);
+            parents[i].rotation.x -= speed*i*.001;//*(.5+(noise(i*.3)*.2))*-.01;
 
             moths[i].position.y = Math.cos(1+i+time*speed)*13;
             moths[i].p.ULWing.bones[1].rotation.y =     Math.cos(i+time*speed)*.5;

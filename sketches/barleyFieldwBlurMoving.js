@@ -10,7 +10,8 @@ sc1 = {
         tree.params.jointGeo = new THREE.CylinderGeometry( 1,1,1,5,1),
         tree.params.mat = new THREE.MeshLambertMaterial({ color:0xffffff, shading: THREE.SmoothShading,vertexColors:THREE.FaceColors }),
 
-    
+        document.body.style.cursor = 'url("assets/textures/dot.png"), auto';
+
 
         tree.generate({
             joints: [40,5],
@@ -185,7 +186,8 @@ sc1 = {
         data.amt4 = .1;
 
         
-
+        countUp=0;
+        imagesToSave = 900;
     },
 
     draw:function(time){
@@ -210,6 +212,15 @@ sc1 = {
             rgbEffect.uniforms[ 'amt3' ].value = data.amt1*.1;//0015;
             rgbEffect.uniforms[ 'amt4' ].value = data.amt2*.1;//0015;
 
+        }
+
+         if(varE){
+            saveIMG("seq_"+countUp+".png");
+            countUp++;
+            if(countUp>imagesToSave){
+                countUp=0;
+                varE = false;
+            }
         }
 
         /*painterly
@@ -246,12 +257,15 @@ sc1 = {
         rgbEffect.uniforms[ 'freq4' ].value = 0.34*-0.0481*256;//0015;
 */
 
-        offset = count*omouseX*.1;
+        offset = count*.216*.1;
         
         for(var i = 0 ; i < things.length ; i++){
             // things[i].bones[1]._rotation.z = noise(.1+things[i].id+count*.1);
-            things[i].bones[1]._rotation.z = omouseY*4*noise(things[i].position.x/100+offset,things[i].position.y/100,things[i].position.z/100);
-
+            things[i].bones[1]._rotation.z = .216*4*noise(things[i].position.x/100+offset,things[i].position.y/100,things[i].position.z/100);
+            things[i].position.x-=1;
+            if(things[i].position.x<-250){
+                things[i].position.x=250;
+            }
         }
 
 
