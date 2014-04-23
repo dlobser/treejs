@@ -4,6 +4,11 @@ sc1 = {
 
 	setup:function(){
 
+		/*
+			demonstrates the use of a video texture, 
+			a lofted solid surface, 
+			and passing a function to makeTubes
+		*/
 
 		videoSetup();
 

@@ -4,6 +4,10 @@ sc1 = {
 
 	setup:function(){
 
+		/*
+			Demonstrates offset values using
+			jOff, jMult, jFract etc
+		*/
 
 		tree = new TREE();
 
@@ -30,7 +34,6 @@ sc1 = {
 			[0,0,0,[0,9],[0,9]],{rz:Math.PI*-.11,sc:.9,jOffset:2.3,offMult:.2,freq:1.4,jFract:1,jFreq:.8,jMult:.1},
 			[0,0,0,[0,9],[0,9],0,"all"],{sc:.7,rz:Math.PI*.11,offMult:.2,freq:1.4,jOffset:2.3},
 		]),tree.transform);
-
 
 		// scene.add(tree.makeTubes({widthSegs:12,lengthSegs:3,minWidth:1.5}));
 		

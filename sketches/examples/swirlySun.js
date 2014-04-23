@@ -11,14 +11,12 @@ sc1 = {
 			rads:[1,3]
 
 		});
-        
-		data.var1 = -0.025530620603356757;
-		data.var2 = -0.6318671233390458;
-		data.var3 = -0.3286988719712013;
-		data.var4 = 0.03943400468975278;
-		data.var5 = -0.328;
-		data.var6 = 0.8623192584024739;
-		data.var7 = 0.7973546331093644;
+
+		// You can use this command in the console to print slider values as an object,
+		// then pass that into setSliders to set these values when the sketch runs.
+		// console.log(JSON.stringify(data));
+
+		setSliders({"var1":-0.025,"var2":-0.6,"var3":-0.3,"var4":0.04,"var5":-0.3,"var6":0.86,"var7":0.8});
 
 		scene.add(tree);
 

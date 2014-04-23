@@ -2,6 +2,12 @@ sc1 = {
     
     setup:function(){
 
+        /*
+            A fairly complicated tree structure
+            which uses a second tree as the geometry
+            for the joints of the first
+        */
+
         tree = new TREE();
 
         tree.generate({

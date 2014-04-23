@@ -11,34 +11,52 @@
 		background-color:white;
 		margin:0;
 		padding:0;
+		text-decoration:none;
+
 	}
 	 body {
         overflow: hidden;
     }
+    a:link {color:#999999;text-decoration:none;}      /* unvisited link */
+	a:visited {color:#999999;text-decoration:none;}  /* visited link */
+	a:hover {color:#333333;text-decoration:none;}  /* mouse over link */
+	a:active {color:#999999;text-decoration:none;}  /* selected link */
    
-	.classname {
-		-moz-box-shadow:inset 0px 14px 13px 0px #ffffff;
-		-webkit-box-shadow:inset 0px 14px 13px 0px #ffffff;
+	.buttonb {
+		-moz-box-shadow:inset 0px 6px 3px 0px #ffffff;
+		-webkit-box-shadow:inset 0px 6px 3px 0px #ffffff;
 		box-shadow:inset 0px 14px 13px 0px #ffffff;
 		background-color:#f9f9f9;
 		border:1px solid #dcdcdc;
 		display:inline-block;
 		color:#666666;
 		font-family:Arial;
-		font-size:12px;
+		font-size:10px;
 		font-weight:bold;
 		font-style:normal;
-		height:24px;
-		line-height:16px;
+		height:18px;
+		line-height:5px;
 		width:59px;
 		text-decoration:none;
 		text-align:center;
 		text-shadow:-3px -1px 7px #ffffff;
-	}.classname:hover {
+	}.buttonb:hover {
 		background-color:#e9e9e9;
-	}.classname:active {
+	}.buttonb:active {
 		position:relative;
 		top:1px;
+	}
+	}.buttonb:visited {
+		text-decoration:none !important;
+		border:none;
+	}
+	}.buttonb:focus {
+		text-decoration:none !important;
+		border:none;
+		outline:none;
+	}
+	*:focus {
+	    outline: none;
 	}
     
     #editor { 
@@ -64,11 +82,11 @@
 					<span id="mouseInfoY">x: y:</span>
 				</div>
 			<div style="position:absolute;z-index:5;padding-left:200px">
-				<input type="button" id="buttonid" value="saveObj" style="width:75px"onclick="saver()" style="position:absolute"  class="classname">
-				<input type="button" id="buttonid" value="showCode" style="width:75px"onclick="activateAce()" style="position:absolute"class="classname">
-				<input type="button" id="buttonid" value="runCode" style="width:75px"onclick="updateCode()" style="position:relative"class="classname">
+				<input type="button" id="buttonid" value="saveObj" style="width:55px"onclick="saver()" style="position:absolute"  class="buttonb">
+				<input type="button" id="buttonid" value="showCode" style="width:65px"onclick="activateAce()" style="position:absolute"class="buttonb">
+				<input type="button" id="buttonid" value="runCode" style="width:55px"onclick="updateCode()" style="position:relative"class="buttonb">
 
-			<select id="select" style="width:150px"class="classname">
+			<select id="select" style="width:150px"class="buttonb">
 				<option value="1">sine wave simple</option>
 				<option value="2">sine wave fractal</option>
 				<option value="3">FunHouse Mirror</option>
@@ -77,11 +95,21 @@
 				<option value="6">Furry Moth</option>
 				<option value="7">Dancing Centipede</option>
 				<option value="8">Stick Figure</option>
+				<option value="9">starfish</option>
+				<option value="10">starfish animating</option>
+				<option value="11">starfish stick</option>
+				<option value="12">starfish save images</option>
+				<option value="13">basics</option>
+				<option value="13">simple</option>
+				<option value="13">creature</option>
+
+
+
 			</select>
-			<input type="button" id="buttonid" value="applyPreset" style="width:90px"onclick="applyPreset()"class="classname">
+			<input type="button" id="buttonid" value="applyPreset" style="width:70px"onclick="applyPreset()"class="buttonb">
 
 
-				<a href="README.html" target="_newtab">readme</a>
+				<a href="README.html" target="_newtab" style="font-family:sans-serif"><input type="button" id="buttonid" value="readMe" style="width:50px"onclick=""class="buttonb"></a>
 			</div>
 			<div id="container">
 		</div>
