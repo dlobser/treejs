@@ -1,7 +1,7 @@
 sc1 = {
     
-    //funhouse mirror
-
+    //Creature design by Talya Stein
+    
     setup:function(){
 
         tree = new TREE();

@@ -41,6 +41,11 @@ ctrl+W will make varW true - as with the others, useful for quick keyboard short
 `pmouseX` previous position of mouseX  
 `opMouseX` same but with omouseX  
 
+###User Media Input
+`audioValues` is an array of length 1024 of audio samples - use `enableAudioInput()` to use it
+`videoSetup()` `material.map = videoTexture` `videoAnimate()` to use texture from webcam
+
+
 ####GUI 
 
 `h` hides dat.gui - you can access the values on the sliders like this:  

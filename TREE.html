@@ -12,7 +12,7 @@
 		margin:0;
 		padding:0;
 		text-decoration:none;
-
+		/*cursor: none !important; */
 	}
 	 body {
         overflow: hidden;
@@ -86,7 +86,7 @@
 				<input type="button" id="buttonid" value="showCode" style="width:65px"onclick="activateAce()" style="position:absolute"class="buttonb">
 				<input type="button" id="buttonid" value="runCode" style="width:55px"onclick="updateCode()" style="position:relative"class="buttonb">
 
-			<select id="select" style="width:150px"class="buttonb">
+			<select id="select" style="width:150px"class="buttonb" onChange="applyPreset()">
 				<option value="1">sine wave simple</option>
 				<option value="2">sine wave fractal</option>
 				<option value="3">FunHouse Mirror</option>
@@ -95,18 +95,24 @@
 				<option value="6">Furry Moth</option>
 				<option value="7">Dancing Centipede</option>
 				<option value="8">Stick Figure</option>
-				<option value="9">starfish</option>
-				<option value="10">starfish animating</option>
-				<option value="11">starfish stick</option>
-				<option value="12">starfish save images</option>
-				<option value="13">basics</option>
-				<option value="13">simple</option>
-				<option value="13">creature</option>
+				<option value="9">Starfish</option>
+				<option value="10">Starfish animating</option>
+				<option value="11">Starfish stick</option>
+				<option value="12">Starfish save images</option>
+				<option value="13">Basics</option>
+				<option value="13">Simple</option>
+				<option value="13">Creature</option>
+				<option value="13">Blobby Surface</option>
+				<option value="13">Not an L-System</option>
+				<option value="14">Sierpinski</option>
+				<option value="15">Microphone Input</option>
+
+
 
 
 
 			</select>
-			<input type="button" id="buttonid" value="applyPreset" style="width:70px"onclick="applyPreset()"class="buttonb">
+			<!--<input type="button" id="buttonid" value="applyPreset" style="width:70px"onclick="applyPreset()"class="buttonb">-->
 
 
 				<a href="README.html" target="_newtab" style="font-family:sans-serif"><input type="button" id="buttonid" value="readMe" style="width:50px"onclick=""class="buttonb"></a>

@@ -4,13 +4,10 @@ sc1 = {
 
     setup:function(){
 
-        videoSetup();
-
         tree = new TREE();
         scene.add(tree);
 
         var phere = sphere(25,20);
-        phere.material.map = videoTexture;
         scene.add(phere);
         phere.rotation.y=-Math.PI/2
 
@@ -36,8 +33,6 @@ sc1 = {
     },
 
     draw:function(time){
-
-        videoAnimate();
 
         tree.xform(tree.makeInfo([
             //head and body
