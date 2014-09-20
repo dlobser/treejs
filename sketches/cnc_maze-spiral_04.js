@@ -1,12 +1,17 @@
 
 makeMaze = false;
-size = 50; //maze size
-ruler=true;
-
-spiralDiameter = 2.546;
+size = 20; //maze size
+ruler=false
 
 loaded = false;
 
+function imgLoad(){
+
+   imgTexture = THREE.ImageUtils.loadTexture( "assets/depthImages/moth2.jpg" );
+   imagedata = getImageData( imgTexture.image );
+   color = getPixel( imagedata, 10, 10 );
+   loaded = true;
+}
 
 sc1 = {
     
@@ -119,7 +124,35 @@ sc1 = {
             }
 
             else{
-                spiralize();
+                var deep = 0;
+
+                for(var k = 0 ; k < 4 ; k++){
+
+                    var ln = [];
+                    for(var i = 0 ; i < 1600 ; i++){
+                        for(var j = 0 ; j < 1 ; j++){
+                            sph.geometry.vertices.push(new THREE.Vector3(
+                                Math.sin(i*.1)*(i*(1+Math.sin(i*.731+(i*.0001))*.043))*.001,//*(i*.0023+Math.sin(Math.sin(i*1.05))*(i*.001)),
+                                Math.cos(i*.1)*(i*(1+Math.sin(i*.731+(i*.0001))*.043))*.001,//*(i*.0023+Math.cos(Math.sin(i*1.05))*(i*.001)),
+                                // Math.sin(i*.3)*i*.005+((i*.001)*(1+Math.sin(i*1.043))),
+                                // Math.cos(i*.3)*i*.005+((i*.001)*(1+Math.cos(i*1.043))),
+                                (1+Math.sin(i*.6+(i*.01)))
+                                    *(k+1)*-.03
+                                ));
+                            ln.push(sph.geometry.vertices[sph.geometry.vertices.length-1]);
+                            if(sph.geometry.vertices[sph.geometry.vertices.length-1].z<deep){
+                                deep = sph.geometry.vertices[sph.geometry.vertices.length-1].z;
+                                // console.log(deep);
+                            }
+                        }
+
+                    }
+                     lines.push(ln);
+                    
+                }
+
+                var deep = 0;
+                var2=true;
             }
 
             up = 0;
@@ -128,10 +161,6 @@ sc1 = {
             
 
             }
-            rebuildGui({values:{nothing:0,outputScale:1},sliders:15})
-            setSliders({"var1":1,"var2":0,"var3":.731,"var4":.1,"var5":.06,"var6":.1,"var7":.1,
-                "var8":.6,"var9":.1,"var10":.1,"var11":.75,"var12":.16,"var13":.25,"outputScale":.2513});  
-            // varY=true;
         },
     
     draw:function(time){
@@ -173,8 +202,48 @@ sc1 = {
         }
         if(var2){
 
-            makeLines();
-            scene.remove(sph);
+            var up = 0;
+            var lines2=[];
+            for(var i = 0 ; i < lines.length ; i++){
+                    if(lines[i].length>1){
+                        lines2.push(lines[i]);
+                        up++;
+                }
+            }
+
+            var maze = new THREE.Object3D();
+
+            for(var i = 0 ; i < lines2.length ; i++){
+
+                var geo = new THREE.Geometry();
+                var line = new THREE.SplineCurve3(lines2[i]);
+
+                var nLine = [];
+
+                var segs = 5;
+
+                for(var j = 0 ; j < lines2[i].length*segs ; j++){
+                    geo.vertices.push(line.getPointAt(j/(lines2[i].length*segs)));
+                    nLine.push(line.getPointAt(j/(lines2[i].length*segs)));
+                }
+
+                //straight lines
+                //  for(var j = 0 ; j < lines2[i].length*segs ; j++){
+                //     geo.vertices.push(lines2[i][j]);//line.getPointAt(j/(lines2[i].length*segs)));
+                //     // nLine.push(line.getPointAt(j/(lines2[i].length*segs)));
+                //     nLine.push(lines2[i][j]);
+                //     // console.log(j/lines2[i].length);
+                // }
+
+                linesOut.push(nLine);
+
+                thisLine = new THREE.Line(geo,new THREE.LineBasicMaterial({color:0x888888}));
+                maze.add(thisLine);
+            }
+
+            maze.position.x=-size/20;
+            maze.position.y=-size/20;
+            scene.add(maze);
 
             var2=false;
         }
@@ -185,186 +254,13 @@ sc1 = {
             varE=false;
         }
         if(var3){
-            spiralDiameter = data.outputScale*10;
-
-            varY=false;
-             makeLines();
-            scene.remove(sph);
-
             saveSBP2(linesOut,"hot");
             // savePS(linesOut,"hot");
             console.log('hi');
             var3=false;
         }
-        if(var4){
-            // spiralDiameter = data.outputScale*10;
-
-            varY=false;
-             makeLines();
-            scene.remove(sph);
-
-            saveGCode(linesOut,"hot");
-            // savePS(linesOut,"hot");
-            console.log('hi');
-            var4=false;
-        }
-        if(varY){
-            pillar();
-        }
 
     }
-}
-
-function pillar(){
-
-    var deep = 0;
-
-    if(sph){
-        sph.geometry.vertices = null;
-        sph.geometry.faces = null;
-        sph.geometry.dispose();
-        sph.material.dispose();
-        scene.remove(sph);
-        sph = null;
-        sph = new THREE.Line(new THREE.Geometry(),new THREE.LineBasicMaterial({color:0x888888}));
-        scene.add(sph);
-        // console.log(scene.children);
-    }
-
-    lines = [];
-
-    
-    var ln = [];
-    var zed = .3;
-    for(var i = 0 ; i < data.var12*10000 ; i++){
-            // var zed = data.var13*i*.001;
-            var ex =  Math.sin(( i * data.var8 * 3 ) + ( Math.sin(i*data.var9*.01) )) * data.var7+Math.sin(data.var10 * 3 + i* (data.var2*.01+.1))* (100*(1+Math.sin(i*data.var3*( ( i*data.var4*.00001 ) ) )*(data.var5)))*(data.var6*.1)+Math.sin(i*.1)*30;//*(i*.0023+Math.sin(Math.sin(i*1.05))*(i*.001)),
-            var why = Math.cos(( i * data.var8 * 3 ) + ( Math.sin(i*data.var9*.01) )) * data.var7+Math.cos(data.var10 * 3 + i*(data.var2*.01+.1)) * (100*(1+Math.sin(i*data.var3*( ( i*data.var4*.00001 ) ) )*(data.var5)))*(data.var6*.1)+Math.cos(i*.1)*30;//*(i*.0023+Math.cos(Math.sin(i*1.05))*(i*.001)),
-            if(i>64)
-            zed += .27/64;
-            // console.log(ex);
-            sph.geometry.vertices.push(new THREE.Vector3(
-                ex,why,zed
-                ));
-            ln.push(sph.geometry.vertices[sph.geometry.vertices.length-1]);
-            
-            }
-        
-
-     lines.push(ln);
-        
-    
-
-    var deep = 0;
-    // var2=true;
-
-}
-
-function spiralize(){
-
-    var deep = 0;
-
-    if(sph){
-        sph.geometry.vertices = null;
-        sph.geometry.faces = null;
-        sph.geometry.dispose();
-        sph.material.dispose();
-        scene.remove(sph);
-        sph = null;
-        sph = new THREE.Line(new THREE.Geometry(),new THREE.LineBasicMaterial({color:0x888888}));
-        scene.add(sph);
-        // console.log(scene.children);
-    }
-
-    lines = [];
-
-    for(var k = 0 ; k < 3 ; k++){
-
-        var ln = [];
-        for(var i = 0 ; i < data.var12*10000 ; i++){
-            for(var j = 0 ; j < 1 ; j++){
-                var zed = (1+Math.sin(i*data.var8+(i*(data.var9*.053))))*(k+1)*-(.75/12)*(i*(data.var10*.006));
-                var ex = Math.sin(i* (data.var2*.01+.1))*(i*(1+Math.sin(i*data.var3+(i*(data.var4*.1)))*(data.var5)))*(data.var6*.01)+Math.sin(i*.1)*i*i*.0000005;//*(i*.0023+Math.sin(Math.sin(i*1.05))*(i*.001)),
-                var why = Math.cos(i*(data.var2*.01+.1))*(i*(1+Math.cos(i*data.var3+(i*(data.var4*.1)))*(data.var5)))*(data.var6*.01)+Math.cos(i*.1)*i*i*.0000005;//*(i*.0023+Math.cos(Math.sin(i*1.05))*(i*.001)),
-                // console.log(ex);
-                if(i>data.var12*10000-Math.PI*21){
-                    zed=(k+1)*-(data.var11/3);
-                    // ex =  Math.sin(i*.1)*(data.var7*28);
-                    // why = Math.cos(i*.1)*(data.var7*28);
-                }
-                sph.geometry.vertices.push(new THREE.Vector3(
-// ex,why,                                Math.cos(i*.1)*(i*(1+Math.sin(i*.731+(i*.0001))*.06))*.001+Math.cos(i*.1)*i*i*.0000005,//*(i*.0023+Math.cos(Math.sin(i*1.05))*(i*.001)),
-                    // Math.sin(i*.3)*i*.005+((i*.001)*(1+Math.sin(i*1.043))),
-                    // Math.cos(i*.3)*i*.005+((i*.001)*(1+Math.cos(i*1.043))),
-                    ex,why,zed
-                    ));
-                ln.push(sph.geometry.vertices[sph.geometry.vertices.length-1]);
-                if(sph.geometry.vertices[sph.geometry.vertices.length-1].z<deep){
-                    deep = sph.geometry.vertices[sph.geometry.vertices.length-1].z;
-                    // console.log(deep);
-                }
-            }
-
-        }
-         lines.push(ln);
-        
-    }
-
-    var deep = 0;
-    // var2=true;
-}
-
-function imgLoad(){
-
-   imgTexture = THREE.ImageUtils.loadTexture( "assets/depthImages/moth2.jpg" );
-   imagedata = getImageData( imgTexture.image );
-   color = getPixel( imagedata, 10, 10 );
-   loaded = true;
-}
-
-function makeLines(){
-    var up = 0;
-    var lines2=[];
-    for(var i = 0 ; i < lines.length ; i++){
-            if(lines[i].length>1){
-                lines2.push(lines[i]);
-                up++;
-        }
-    }
-
-    var maze = new THREE.Object3D();
-
-    for(var i = 0 ; i < lines2.length ; i++){
-
-        var geo = new THREE.Geometry();
-        var line = new THREE.SplineCurve3(lines2[i]);
-
-        var nLine = [];
-
-        var segs = 4;
-
-        for(var j = 0 ; j < lines2[i].length*segs ; j++){
-            geo.vertices.push(line.getPointAt(j/(lines2[i].length*segs)));
-            nLine.push(line.getPointAt(j/(lines2[i].length*segs)));
-        }
-
-        //straight lines
-        //  for(var j = 0 ; j < lines2[i].length*segs ; j++){
-        //     geo.vertices.push(lines2[i][j]);//line.getPointAt(j/(lines2[i].length*segs)));
-        //     // nLine.push(line.getPointAt(j/(lines2[i].length*segs)));
-        //     nLine.push(lines2[i][j]);
-        //     // console.log(j/lines2[i].length);
-        // }
-
-        linesOut.push(nLine);
-
-        thisLine = new THREE.Line(geo,new THREE.LineBasicMaterial({color:0x888888}));
-        maze.add(thisLine);
-    }
-
-    // maze.position.x=-size/20;
-    // maze.position.y=-size/20;
-    scene.add(maze);
 }
 
 function saveToSBP(arr){
@@ -425,8 +321,8 @@ function saveSBP(arr,name) {
 
     for(var i = 0 ; i < arr.length ; i++){
 
-        var offX = ((arr[i].x-MinX)/MinX*2)*(2.546/2);
-        var offY = ((arr[i].y-MinY)/MinY*2)*(2.546/2);
+        var offX = arr[i].x-MinX;
+        var offY = arr[i].y-MinY;
         output+="M3,"+offX.toFixed(4);
         output+=","  +offY.toFixed(4);
         output+=","  +arr[i].z.toFixed(4);
@@ -439,6 +335,7 @@ function saveSBP(arr,name) {
     var blob = new Blob([output], {type: "text/plain;charset=ANSI"});
     saveAs(blob, name);
 }
+
 
 function saveSBP2(arr,name) {
 
@@ -470,15 +367,10 @@ function saveSBP2(arr,name) {
     console.log(MinY);
     console.log(minZ);
 
-    if(spiralDiameter<0)
-        spiralDiameter = minX*-2;
-
     for(var i = 0 ; i < arr.length ; i++){
 
-            // var offX = arr[i][0].x-MinX;
-            // var offY = arr[i][0].y-MinY;
-             var offX = (( arr[i][0].x-MinX ) / ( MinX*-2 )) * ( spiralDiameter );
-             var offY = (( arr[i][0].y-MinY ) / ( MinY*-2 )) * ( spiralDiameter );
+            var offX = arr[i][0].x-MinX;
+            var offY = arr[i][0].y-MinY;
 
             output+="J3,"+offX.toFixed(4);
             output+=","  +offY.toFixed(4);
@@ -487,8 +379,8 @@ function saveSBP2(arr,name) {
 
         for(j = 0 ; j < arr[i].length ; j++){
 
-            var offX = (( arr[i][j].x-MinX ) / ( MinX*-2 )) * ( spiralDiameter );
-            var offY = (( arr[i][j].y-MinY ) / ( MinY*-2 )) * ( spiralDiameter );
+            var offX = arr[i][j].x-MinX;
+            var offY = arr[i][j].y-MinY;
 
             output+="M3,"+offX.toFixed(4);
             output+=","  +offY.toFixed(4);
@@ -497,8 +389,8 @@ function saveSBP2(arr,name) {
         }
             var end = arr[i].length-1;
 
-            var offX = (( arr[i][end].x-MinX ) / ( MinX*-2 )) * ( spiralDiameter );
-            var offY = (( arr[i][end].y-MinY ) / ( MinY*-2 )) * ( spiralDiameter );
+            var offX = arr[i][end].x-MinX;
+            var offY = arr[i][end].y-MinY;
 
             output+="J3,"+offX.toFixed(4);
             output+=","  +offY.toFixed(4);
@@ -512,84 +404,6 @@ function saveSBP2(arr,name) {
     var blob = new Blob([output], {type: "text/plain;charset=ANSI"});
     saveAs(blob, name);
 }
-
-
-function saveGCode(arr,name) {
-
-    // var scaleOut = outputScale || 1;
-
-    // var name = name || "tree.obj";
-
-    var minX = 0;
-    var minY = 0;
-    var minZ = 0;
-
-    for(var i = 0 ; i < arr.length ; i++){
-        for(j = 0 ; j < arr[i].length ; j++){
-            if(minX>arr[i][j].x)
-                minX = arr[i][j].x;
-            if(minY>arr[i][j].y)
-                minY = arr[i][j].y;
-            if(minZ>arr[i][j].z)
-                minZ = arr[i][j].z;
-        }
-    }
-
-    MinX = 0;//minX;
-    MinY = 0;//minY;
-
-    var output = " \nM73 P0 (enable build progress)\nG21 (set units to mm)\nG90 (set positioning to absolute)\nG10 P1 X-16.5 Y0 Z0 (Designate T0 Offset)\nG55 (Recall offset cooridinate system)\n(**** begin homing ****)\nG162 X Y F2500 (home XY axes maximum)\nG161 Z F1100 (home Z axis minimum)\nG92 Z-5 (set Z to -5)\nG1 Z0.0 (move Z to ÔøΩ0?)\nG161 Z F100 (home Z axis minimum)\nM132 X Y Z A B (Recall stored home offsets for XYZAB axis)\n(**** end homing ****)\nG1 X112 Y-73 Z155 F3300.0 (move to waiting position)\nG130 X0 Y0 A0 B0 (Lower stepper Vrefs while heating)\nM6 T0 (wait for toolhead, and HBP to reach temperature)\nM104 S230 T0 (set extruder temperature)\nM6 T0 (wait for toolhead, and HBP to reach temperature)\nG130 X127 Y127 A127 B127 (Set Stepper motor Vref to defaults)\nM108 R3.0 T0\nG0 X112 Y-73 (Position Nozzle)\nG0 Z0.2 (Position Height)\nM108 R4.0 (Set Extruder Speed)\nM101 (Start Extruder)\nG4 P1500 (Create Anchor)\n";
-
-    console.log(MinX);
-    console.log(MinY);
-    console.log(minZ);
-
-    if(spiralDiameter<0)
-        spiralDiameter = minX*-2;
-
-    for(var i = 0 ; i < arr.length ; i++){
-
-            // // var offX = arr[i][0].x-MinX;
-            // // var offY = arr[i][0].y-MinY;
-            //  var offX = (( arr[i][0].x-MinX ) / ( MinX*-2 )) * ( spiralDiameter );
-            //  var offY = (( arr[i][0].y-MinY ) / ( MinY*-2 )) * ( spiralDiameter );
-
-            // output+="G1 X"+arr[i][j].x;
-            // output+=" Y"  +arr[i][j].y;
-            // output+=" Z" + arr[i][j].z;
-            // output+=" F5400";
-            // output+='\n';
-
-        for(j = 0 ; j < arr[i].length ; j++){
-
-            // var offX = (( arr[i][j].x-MinX ) / ( MinX*-2 )) * ( spiralDiameter );
-            // var offY = (( arr[i][j].y-MinY ) / ( MinY*-2 )) * ( spiralDiameter );
-
-           output+="G1 X"+arr[i][j].x;
-            output+=" Y"  +arr[i][j].y;
-            output+=" Z" + arr[i][j].z;
-            output+=" F5400";
-            output+='\n';
-        }
-            // var end = arr[i].length-1;
-
-            // var offX = (( arr[i][end].x-MinX ) / ( MinX*-2 )) * ( spiralDiameter );
-            // var offY = (( arr[i][end].y-MinY ) / ( MinY*-2 )) * ( spiralDiameter );
-
-            // output+="J3,"+offX.toFixed(4);
-            // output+=","  +offY.toFixed(4);
-            // output+=",.2" ;
-            // output+='\n';
-    }
-    // return output;
-    // document.write(output);
-    console.log("hio");
-    // alert("saved!");
-    var blob = new Blob([output], {type: "text/plain;charset=ANSI"});
-    saveAs(blob, name);
-}
-
-
 
 
 function savePS(arr,name) {
@@ -643,6 +457,7 @@ function savePS(arr,name) {
     saveAs(blob, name);
 }
 
+
 function getImageData( image ) {
 
     var canvas = document.createElement( 'canvas' );
@@ -653,12 +468,14 @@ function getImageData( image ) {
     context.drawImage( image, 0, 0 );
 
     return context.getImageData( 0, 0, image.width, image.height );
+
 }
 
 function getPixel( imagedata, x, y ) {
 
     var position = ( x + imagedata.width * y ) * 4, data = imagedata.data;
     return { r: data[ position ], g: data[ position + 1 ], b: data[ position + 2 ], a: data[ position + 3 ] };
+
 }
 
 function Node(){
@@ -720,6 +537,8 @@ function Node(){
         //     scl(this.ball,.0001);
     }
 }
+
+
 
 function pathFind(arr,tNode,stack){
 
@@ -924,6 +743,7 @@ function findMissing(arr){
     }
 
     return arr[visit];
+
 }
 
 function scl(obj,size){
